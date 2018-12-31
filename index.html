@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Sound</title>
+        <script src="main.js"></script>
+    </head>
+
+    <body>
+        <div id="elm"></div>
+        <script>
+            var storedState = localStorage.getItem('sound-ui-elm');
+            var startingState = storedState ? JSON.parse(storedState) : null;
+            var app = Elm.Main.init({ flags: startingState });
+            app.ports.setStorage.subscribe(function(state) {
+                localStorage.setItem('sound-ui-elm', JSON.stringify(state));
+            });
+        </script>
+    </body>
+</html>

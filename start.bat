@@ -1,0 +1,1 @@
+elm-live src\App.elm --open -- --output=main.js
