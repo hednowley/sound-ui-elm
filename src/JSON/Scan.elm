@@ -16,5 +16,4 @@ statusDecoder =
 
 
 responseDecoder : Decoder Response
-responseDecoder =
-    field "subsonic-response" (field "scanStatus" statusDecoder)
+responseDecoder = field "data" statusDecoder

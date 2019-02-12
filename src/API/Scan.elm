@@ -1,18 +1,32 @@
-module API.Scan exposing (startScan)
+module API.Scan exposing (startScan, getStatus)
 
 import Http
+import JSON.Scan
 import Model
 import Msg
-import JSON.Scan
+
 
 startScan : Model.Model -> Cmd Msg.Msg
 startScan model =
     Http.request
-        { method = "POST"
-        , headers = []
-        , body = Http.emptyBody 
+        { method = "GET"
+        , headers = [ Http.header "Authorization" ("Bearer " ++ Maybe.withDefault "" model.token) ]
+        , body = Http.emptyBody
         , timeout = Nothing
         , tracker = Nothing
-        , url = "http://hednowley.synology.me:171/api/startScan"
-        , expect = Http.expectJson Msg.GotStartScanResponse JSON.Scan.responseDecoder
+        , url = "http://hednowley.synology.me:171/api/startscan"
+        , expect = Http.expectJson Msg.GotScanStatusResponse JSON.Scan.responseDecoder
+        }
+
+
+getStatus : Model.Model -> Cmd Msg.Msg
+getStatus model =
+    Http.request
+        { method = "GET"
+        , headers = [ Http.header "Authorization" ("Bearer " ++ Maybe.withDefault "" model.token) ]
+        , body = Http.emptyBody
+        , timeout = Nothing
+        , tracker = Nothing
+        , url = "http://hednowley.synology.me:171/api/getscanstatus"
+        , expect = Http.expectJson Msg.GotScanStatusResponse JSON.Scan.responseDecoder
         }

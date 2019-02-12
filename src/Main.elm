@@ -1,22 +1,22 @@
-port module Main exposing (..)
+port module Main exposing (emptyModel, init, main, setStorage, subscriptions, update, updateWithStorage, view, viewInput)
 
+import API.Authenticate
+import API.Scan
 import Browser
 import Browser.Navigation as Nav exposing (Key)
 import Html exposing (Html, a, button, div, input, section, text)
 import Html.Attributes exposing (class, href, placeholder, type_, value)
 import Html.Events exposing (onClick, onInput)
 import Http
+import JSON.Authenticate
 import Json.Decode exposing (Decoder, field, map2, string)
 import Json.Encode as Encode
-import Pages.Home as Home
-import Pages.Login as Login
-import Url exposing (Url)
-import JSON.Authenticate
-import API.Authenticate
 import Model exposing (Model)
 import Msg exposing (..)
-import API.Authenticate
-import API.Scan
+import Pages.Home as Home
+import Pages.Login as Login
+import Time
+import Url
 
 
 main : Program (Maybe Model) Model Msg
@@ -48,11 +48,12 @@ updateWithStorage msg model =
     )
 
 
-init : Maybe Model -> Url -> Key -> ( Model, Cmd Msg )
+init : Maybe Model -> Url.Url -> Key -> ( Model, Cmd Msg )
 init maybeModel url navKey =
     ( Maybe.withDefault emptyModel maybeModel
     , Cmd.none
     )
+
 
 emptyModel : Model
 emptyModel =
@@ -61,11 +62,18 @@ emptyModel =
     , message = ""
     , isLoggedIn = False
     , token = Nothing
+    , isScanning = False
+    , scanCount = Nothing
     }
+
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+    if model.isScanning then
+        Time.every 500 ScannerTick
+
+    else
+        Sub.none
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -86,9 +94,8 @@ update msg model =
         SubmitLogin ->
             ( model, API.Authenticate.authenticate model )
 
-        StartScan -> 
+        StartScan ->
             ( model, API.Scan.startScan model )
-
 
         LogOut ->
             ( { model
@@ -114,13 +121,16 @@ update msg model =
                 Err _ ->
                     ( { model | message = "Error!" }, Cmd.none )
 
-        GotStartScanResponse response ->
+        GotScanStatusResponse response ->
             case response of
                 Ok r ->
-                    ( model , Cmd.none )
+                    ( { model | isScanning = r.isScanning, scanCount = Just r.count }, Cmd.none )
 
                 Err _ ->
                     ( { model | message = "Scan failed!" }, Cmd.none )
+
+        ScannerTick newTime ->
+            ( model, API.Scan.getStatus model )
 
 
 
@@ -129,11 +139,11 @@ update msg model =
 
 view : Model -> Browser.Document Msg
 view model =
-    { title = "App"
+    { title = "Sound"
     , body =
         [ case model.isLoggedIn of
             False ->
-                div []
+                div [ class "login__wrap" ]
                     [ text model.message
                     , viewInput "text" "Name" model.username UsernameChanged
                     , viewInput "password" "PasswordChanged" model.password PasswordChanged
@@ -142,8 +152,10 @@ view model =
 
             True ->
                 div []
-                    [ text "Welcome"
-                    , text ("Your token is: " ++ (Maybe.withDefault "?" model.token))
+                    [ text "Welcome" 
+
+                    {- , text ("Your token is: " ++ Maybe.withDefault "?" model.token) -}
+                    , text ("Scanned: " ++ (Maybe.withDefault 0 model.scanCount |> String.fromInt))
                     , button [ onClick LogOut ] [ text "Log out" ]
                     , button [ onClick StartScan ] [ text "Start scan" ]
                     ]

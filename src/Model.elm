@@ -1,8 +1,9 @@
 module Model exposing (Model)
 
 import Browser
-import Url
 import Http
+import Url
+
 
 type alias Model =
     { username : String
@@ -10,4 +11,6 @@ type alias Model =
     , message : String
     , isLoggedIn : Bool
     , token : Maybe String
+    , isScanning : Bool
+    , scanCount : Maybe Int
     }

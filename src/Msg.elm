@@ -5,6 +5,7 @@ import Url
 import Http
 import JSON.Authenticate
 import JSON.Scan
+import Time
 
 type Msg
     = OnUrlChange Url.Url
@@ -15,4 +16,5 @@ type Msg
     | StartScan
     | LogOut
     | GotAuthenticateResponse (Result Http.Error JSON.Authenticate.Response)
-    | GotStartScanResponse (Result Http.Error JSON.Scan.Response)
+    | GotScanStatusResponse (Result Http.Error JSON.Scan.Response)
+    | ScannerTick Time.Posix
