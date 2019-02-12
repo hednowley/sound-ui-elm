@@ -1,6 +1,6 @@
-port module Main exposing (init, main, subscriptions)
+port module Main exposing (..)
 
-import Browser exposing (UrlRequest)
+import Browser
 import Browser.Navigation as Nav exposing (Key)
 import Html exposing (Html, a, button, div, input, section, text)
 import Html.Attributes exposing (class, href, placeholder, type_, value)
@@ -11,6 +11,12 @@ import Json.Encode as Encode
 import Pages.Home as Home
 import Pages.Login as Login
 import Url exposing (Url)
+import JSON.Authenticate
+import API.Authenticate
+import Model exposing (Model)
+import Msg exposing (..)
+import API.Authenticate
+import API.Scan
 
 
 main : Program (Maybe Model) Model Msg
@@ -48,63 +54,14 @@ init maybeModel url navKey =
     , Cmd.none
     )
 
-
-type alias Model =
-    { username : String
-    , password : String
-    , message : String
-    , isLoggedIn : Bool
-    , token : String
-    }
-
-
 emptyModel : Model
 emptyModel =
     { username = ""
     , password = ""
     , message = ""
     , isLoggedIn = False
-    , token = ""
+    , token = Nothing
     }
-
-
-type Msg
-    = OnUrlChange Url
-    | OnUrlRequest UrlRequest
-    | UsernameChanged String
-    | PasswordChanged String
-    | Submit
-    | LogOut
-    | GotResponse (Result Http.Error ApiResponse)
-
-
-type alias ApiResponse =
-    { status : String, token : String }
-
-
-userEncoder : Model -> Encode.Value
-userEncoder model =
-    Encode.object
-        [ ( "username", Encode.string model.username )
-        , ( "password", Encode.string model.password )
-        ]
-
-
-responseDecoder : Decoder ApiResponse
-responseDecoder =
-    map2 ApiResponse
-        (field "status" string)
-        (field "data" (field "token" string))
-
-
-authenticate : Model -> Cmd Msg
-authenticate model =
-    Http.post
-        { body = (Http.jsonBody << userEncoder) model
-        , url = "http://hednowley.synology.me:171/api/authenticate"
-        , expect = Http.expectJson GotResponse responseDecoder
-        }
-
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -126,31 +83,44 @@ update msg model =
         PasswordChanged password ->
             ( { model | password = password }, Cmd.none )
 
-        Submit ->
-            ( model, authenticate model )
+        SubmitLogin ->
+            ( model, API.Authenticate.authenticate model )
+
+        StartScan -> 
+            ( model, API.Scan.startScan model )
+
 
         LogOut ->
             ( { model
                 | isLoggedIn = False
                 , username = ""
                 , password = ""
+                , token = Nothing
               }
             , Cmd.none
             )
 
-        GotResponse response ->
+        GotAuthenticateResponse response ->
             case response of
                 Ok r ->
                     ( { model
                         | message = ""
                         , isLoggedIn = True
-                        , token = r.token
+                        , token = Just r.token
                       }
                     , Cmd.none
                     )
 
                 Err _ ->
                     ( { model | message = "Error!" }, Cmd.none )
+
+        GotStartScanResponse response ->
+            case response of
+                Ok r ->
+                    ( model , Cmd.none )
+
+                Err _ ->
+                    ( { model | message = "Scan failed!" }, Cmd.none )
 
 
 
@@ -167,14 +137,15 @@ view model =
                     [ text model.message
                     , viewInput "text" "Name" model.username UsernameChanged
                     , viewInput "password" "PasswordChanged" model.password PasswordChanged
-                    , button [ onClick Submit ] [ text "Login" ]
+                    , button [ onClick SubmitLogin ] [ text "Login" ]
                     ]
 
             True ->
                 div []
                     [ text "Welcome"
-                    , text ("Your token is: " ++ model.token)
+                    , text ("Your token is: " ++ (Maybe.withDefault "?" model.token))
                     , button [ onClick LogOut ] [ text "Log out" ]
+                    , button [ onClick StartScan ] [ text "Start scan" ]
                     ]
         ]
     }
