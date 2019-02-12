@@ -1,6 +1,7 @@
 "use strict";
 
 require('./index.html');
+require("./src/css/reset.css")
 require("./src/sass/styles.scss")
 var Elm = require("./src/Main.elm");
 

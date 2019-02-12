@@ -4,7 +4,7 @@ import API.Authenticate
 import API.Scan
 import Browser
 import Browser.Navigation as Nav exposing (Key)
-import Html exposing (Html, a, button, div, input, section, text)
+import Html exposing (Html, a, button, div, form, input, section, text)
 import Html.Attributes exposing (class, href, placeholder, type_, value)
 import Html.Events exposing (onClick, onInput)
 import Http
@@ -136,6 +136,10 @@ update msg model =
 
 -- VIEWS
 
+onClickNoBubble : msg -> Html.Attribute msg
+onClickNoBubble message =
+    Html.Events.custom "click" (Json.Decode.succeed { message = message, stopPropagation = True, preventDefault = True })
+
 
 view : Model -> Browser.Document Msg
 view model =
@@ -145,14 +149,17 @@ view model =
             False ->
                 div [ class "login__wrap" ]
                     [ text model.message
-                    , viewInput "text" "Name" model.username UsernameChanged
-                    , viewInput "password" "PasswordChanged" model.password PasswordChanged
-                    , button [ onClick SubmitLogin ] [ text "Login" ]
+                    , form [ class "login__container" ]
+                        [ div [ class "login__logo " ] [ text "Sound." ]
+                        , viewInput "text" "Username" model.username UsernameChanged
+                        , viewInput "password" "Password" model.password PasswordChanged
+                        , button [ onClickNoBubble SubmitLogin, class "login__submit" ] [ text "Login" ]
+                        ]
                     ]
 
             True ->
                 div []
-                    [ text "Welcome" 
+                    [ text "Welcome"
 
                     {- , text ("Your token is: " ++ Maybe.withDefault "?" model.token) -}
                     , text ("Scanned: " ++ (Maybe.withDefault 0 model.scanCount |> String.fromInt))
@@ -165,4 +172,4 @@ view model =
 
 viewInput : String -> String -> String -> (String -> msg) -> Html msg
 viewInput t p v toMsg =
-    input [ type_ t, placeholder p, value v, onInput toMsg ] []
+    input [ type_ t, placeholder p, value v, onInput toMsg, class "login__input" ] []

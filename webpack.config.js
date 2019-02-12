@@ -7,7 +7,7 @@ module.exports = {
         filename: "index.js"
     },
 
-    resolve: { extensions: [".elm", ".js", ".scss"] },
+    resolve: { extensions: [".elm", ".js", ".scss", ".css"] },
     module: {
         rules: [
             {
@@ -34,6 +34,13 @@ module.exports = {
                     "style-loader", // creates style nodes from JS strings
                     "css-loader", // translates CSS into CommonJS
                     "sass-loader" // compiles Sass to CSS, using Node Sass by default
+                ]
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    "style-loader", // creates style nodes from JS strings
+                    "css-loader", // translates CSS into CommonJS
                 ]
             }
         ],
