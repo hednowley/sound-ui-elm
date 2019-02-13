@@ -5,6 +5,7 @@ import Url
 import Http
 import JSON.Authenticate
 import JSON.Scan
+import JSON.Ticket
 import Time
 
 type Msg
@@ -17,4 +18,9 @@ type Msg
     | LogOut
     | GotAuthenticateResponse (Result Http.Error JSON.Authenticate.Response)
     | GotScanStatusResponse (Result Http.Error JSON.Scan.Response)
+    | GotTicketResponse (Result Http.Error String)
     | ScannerTick Time.Posix
+    | WebsocketIn String
+    | WebsocketOut String
+    | OpenWebsocket String
+    | WebsocketOpened Bool

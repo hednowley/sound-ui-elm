@@ -2,10 +2,11 @@ port module Main exposing (emptyModel, init, main, setStorage, subscriptions, up
 
 import API.Authenticate
 import API.Scan
+import API.Ticket
 import Browser
 import Browser.Navigation as Nav exposing (Key)
 import Html exposing (Html, a, button, div, form, input, section, text)
-import Html.Attributes exposing (class, href, placeholder, type_, value)
+import Html.Attributes exposing (class, href, placeholder, type_, value, name)
 import Html.Events exposing (onClick, onInput)
 import Http
 import JSON.Authenticate
@@ -17,6 +18,8 @@ import Pages.Home as Home
 import Pages.Login as Login
 import Time
 import Url
+import Config
+import Debug
 
 
 main : Program (Maybe Model) Model Msg
@@ -33,6 +36,10 @@ main =
 
 port setStorage : Model -> Cmd msg
 
+port websocketOpen : String -> Cmd msg
+port websocketOpened : (Bool -> msg) -> Sub msg
+port websocketIn : (String -> msg) -> Sub msg
+port websocketOut : String -> Cmd msg
 
 {-| We want to `setStorage` on every update. This function adds the setStorage
 command for every step of the update function.
@@ -62,18 +69,17 @@ emptyModel =
     , message = ""
     , isLoggedIn = False
     , token = Nothing
+    , websocketTicket = Nothing
     , isScanning = False
     , scanCount = Nothing
+    , websocketInbox = []
     }
 
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    if model.isScanning then
-        Time.every 500 ScannerTick
-
-    else
-        Sub.none
+    websocketOpened WebsocketOpened
+    {- Sub.batch [ websocketOpened WebsocketOpened, websocketIn WebsocketIn ] -}
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -115,7 +121,7 @@ update msg model =
                         , isLoggedIn = True
                         , token = Just r.token
                       }
-                    , Cmd.none
+                    , API.Ticket.getTicket r.token
                     )
 
                 Err _ ->
@@ -129,9 +135,35 @@ update msg model =
                 Err _ ->
                     ( { model | message = "Scan failed!" }, Cmd.none )
 
+        GotTicketResponse response ->
+            case response of
+                Ok r ->
+                    ( { model | websocketTicket = Just r }, websocketOpen Config.ws )
+
+                Err _ ->
+                    ( model, websocketOpen "noo" )
+
         ScannerTick newTime ->
             ( model, API.Scan.getStatus model )
 
+        WebsocketIn message -> 
+            ( { model | websocketInbox = message :: model.websocketInbox }, Cmd.none )
+
+        WebsocketOut message -> 
+            ( model, websocketOut message )
+
+        OpenWebsocket url -> 
+            ( model, websocketOpen url )
+
+        WebsocketOpened _ -> 
+            ( model, sendTicket model.websocketTicket )
+
+
+sendTicket: Maybe String -> Cmd Msg
+sendTicket ticket =
+    case ticket of
+        Nothing -> Cmd.none
+        Just t -> websocketOut t
 
 
 -- VIEWS
@@ -151,8 +183,8 @@ view model =
                     [ text model.message
                     , form [ class "login__container" ]
                         [ div [ class "login__logo " ] [ text "Sound." ]
-                        , viewInput "text" "Username" model.username UsernameChanged
-                        , viewInput "password" "Password" model.password PasswordChanged
+                        , viewInput "username" "text" "Username" model.username UsernameChanged
+                        , viewInput "password" "password" "Password" model.password PasswordChanged
                         , button [ onClickNoBubble SubmitLogin, class "login__submit" ] [ text "Login" ]
                         ]
                     ]
@@ -170,6 +202,6 @@ view model =
     }
 
 
-viewInput : String -> String -> String -> (String -> msg) -> Html msg
-viewInput t p v toMsg =
-    input [ type_ t, placeholder p, value v, onInput toMsg, class "login__input" ] []
+viewInput : String -> String -> String -> String -> (String -> msg) -> Html msg
+viewInput n t p v toMsg =
+    input [ name n, type_ t, placeholder p, value v, onInput toMsg, class "login__input" ] []

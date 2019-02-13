@@ -4,6 +4,7 @@ import Http
 import JSON.Scan
 import Model
 import Msg
+import Config
 
 
 startScan : Model.Model -> Cmd Msg.Msg
@@ -14,7 +15,7 @@ startScan model =
         , body = Http.emptyBody
         , timeout = Nothing
         , tracker = Nothing
-        , url = "http://hednowley.synology.me:171/api/startscan"
+        , url = Config.root ++ "/api/startscan"
         , expect = Http.expectJson Msg.GotScanStatusResponse JSON.Scan.responseDecoder
         }
 
@@ -27,6 +28,6 @@ getStatus model =
         , body = Http.emptyBody
         , timeout = Nothing
         , tracker = Nothing
-        , url = "http://hednowley.synology.me:171/api/getscanstatus"
+        , url = Config.root ++ "/api/getscanstatus"
         , expect = Http.expectJson Msg.GotScanStatusResponse JSON.Scan.responseDecoder
         }
