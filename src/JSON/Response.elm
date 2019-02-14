@@ -1,36 +1,39 @@
-module JSON.Response exposing (responseDecoder)
 
-import Json.Decode exposing (Decoder, bool, decodeString, field, string)
+{-
+module JSON.Response exposing (decodeError, decodeResponse)
 
-
-type Status a
-    = Success a
-    | Fail a
-    | Error String
-
+import Json.Decode exposing (Decoder, bool, decodeString, fail, field, string)
 
 statusDecoder : Decoder String
 statusDecoder =
     field "status" string
 
-decodeError : String -> String
+
+decodeErrorMessage : String -> String
+decodeErrorMessage response =
+    case decodeString (field "message" string) response of
+        Ok str ->
+            str
+
+        Err _ ->
+            "Unknown error"
+
+decodeError : String -> Maybe String
 decodeError response =
-    case decodeString (field "message" string) response of 
-        Ok str -> str
-        Err _ -> "Unknown error"
+    case decodeString statusDecoder response of
+        Ok str ->
+            case str of
+                "error" ->
+                    Just <| decodeErrorMessage response
 
-decodeData : String -> Decoder a -> a
-decodeData response decoder =
-    let
-        dataDecoder = field "data" decoder
-    in
-    case decodeString dataDecoder response of 
-        Ok a -> a
-        Err _ -> "Unknown error"
+                _ ->
+                    Nothing
 
-responseDecoder : String -> Decoder a -> Status a
-responseDecoder response decoder =
+        Err _ ->
+            Just "Unknown status"
 
+decodeResponse : String -> Decoder a -> Decoder b -> Status a
+decodeResponse response successDecoder failDecoder =
     case decodeString statusDecoder response of
         Ok str ->
             case str of
@@ -48,3 +51,23 @@ responseDecoder response decoder =
 
         Err _ ->
             Error "Unknown status"
+
+
+
+decodeData : String -> Decoder a -> a
+decodeData response decoder =
+    let
+        dataDecoder =
+            field "data" decoder
+    in
+    case decodeString dataDecoder response of
+        Ok a ->
+            a
+
+        Err _ ->
+            "Unknown error"
+
+
+
+
+-}

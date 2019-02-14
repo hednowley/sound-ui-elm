@@ -20,6 +20,7 @@ import Time
 import Url
 import Config
 import Debug
+import JSON.Request
 
 
 main : Program (Maybe Model) Model Msg
@@ -39,7 +40,7 @@ port setStorage : Model -> Cmd msg
 port websocketOpen : String -> Cmd msg
 port websocketOpened : (Bool -> msg) -> Sub msg
 port websocketIn : (String -> msg) -> Sub msg
-port websocketOut : String -> Cmd msg
+port websocketOut : Encode.Value -> Cmd msg
 
 {-| We want to `setStorage` on every update. This function adds the setStorage
 command for every step of the update function.
@@ -162,7 +163,9 @@ sendTicket: Maybe String -> Cmd Msg
 sendTicket ticket =
     case ticket of
         Nothing -> Cmd.none
-        Just t -> websocketOut t
+        Just t -> websocketOut
+            <| JSON.Request.makeRequest 10 "hello"
+            <| JSON.Request.makeHandshakeRequest t
 
 
 -- VIEWS

@@ -30,8 +30,7 @@ app.ports.websocketOpen.subscribe(url => {
 });
 
 app.ports.websocketOut.subscribe(message => {
-    //console.log(message);
     if (socket && socket.readyState === 1) {
-        socket.send(message);
+        socket.send(JSON.stringify(message));
     }
 });

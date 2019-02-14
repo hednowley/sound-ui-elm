@@ -6,6 +6,7 @@ import Http
 import JSON.Authenticate
 import JSON.Scan
 import JSON.Ticket
+import Json.Encode
 import Time
 
 type Msg
@@ -21,6 +22,6 @@ type Msg
     | GotTicketResponse (Result Http.Error String)
     | ScannerTick Time.Posix
     | WebsocketIn String
-    | WebsocketOut String
+    | WebsocketOut Json.Encode.Value
     | OpenWebsocket String
     | WebsocketOpened Bool
