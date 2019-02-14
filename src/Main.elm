@@ -78,8 +78,7 @@ emptyModel =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    websocketOpened WebsocketOpened
-    {- Sub.batch [ websocketOpened WebsocketOpened, websocketIn WebsocketIn ] -}
+    Sub.batch [ websocketOpened WebsocketOpened, websocketIn WebsocketIn ]
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -147,7 +146,7 @@ update msg model =
             ( model, API.Scan.getStatus model )
 
         WebsocketIn message -> 
-            ( { model | websocketInbox = message :: model.websocketInbox }, Cmd.none )
+            ( { model | websocketInbox = (Debug.log "in" message) :: model.websocketInbox }, Cmd.none )
 
         WebsocketOut message -> 
             ( model, websocketOut message )
