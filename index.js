@@ -17,20 +17,21 @@ let socket;
 window.app = app;
 
 app.ports.websocketOpen.subscribe(url => {
-    //console.log("opening socket " + url)
     socket = new WebSocket(url);
     socket.onopen = () => {
-        //console.log("Socket open")
         app.ports.websocketOpened.send(true);
     }
     socket.onmessage = message => {
-        console.log(message)
+        console.log("in")
+        console.log(message.data)
         app.ports.websocketIn.send(message.data);
     }
 });
 
 app.ports.websocketOut.subscribe(message => {
     if (socket && socket.readyState === 1) {
+        console.log("out")
+        console.log(message)
         socket.send(JSON.stringify(message));
     }
 });

@@ -5,11 +5,14 @@ import API.Scan
 import API.Ticket
 import Browser
 import Browser.Navigation as Nav exposing (Key)
+import Config
+import Debug
 import Html exposing (Html, a, button, div, form, input, section, text)
-import Html.Attributes exposing (class, href, placeholder, type_, value, name)
+import Html.Attributes exposing (class, href, name, placeholder, type_, value)
 import Html.Events exposing (onClick, onInput)
 import Http
 import JSON.Authenticate
+import JSON.Request
 import Json.Decode exposing (Decoder, field, map2, string)
 import Json.Encode as Encode
 import Model exposing (Model)
@@ -18,9 +21,6 @@ import Pages.Home as Home
 import Pages.Login as Login
 import Time
 import Url
-import Config
-import Debug
-import JSON.Request
 
 
 main : Program (Maybe Model) Model Msg
@@ -37,10 +37,18 @@ main =
 
 port setStorage : Model -> Cmd msg
 
+
 port websocketOpen : String -> Cmd msg
+
+
 port websocketOpened : (Bool -> msg) -> Sub msg
+
+
 port websocketIn : (String -> msg) -> Sub msg
+
+
 port websocketOut : Encode.Value -> Cmd msg
+
 
 {-| We want to `setStorage` on every update. This function adds the setStorage
 command for every step of the update function.
@@ -74,6 +82,7 @@ emptyModel =
     , isScanning = False
     , scanCount = Nothing
     , websocketInbox = []
+    , websocketId = 1
     }
 
 
@@ -99,9 +108,6 @@ update msg model =
 
         SubmitLogin ->
             ( model, API.Authenticate.authenticate model )
-
-        StartScan ->
-            ( model, API.Scan.startScan model )
 
         LogOut ->
             ( { model
@@ -146,29 +152,49 @@ update msg model =
         ScannerTick newTime ->
             ( model, API.Scan.getStatus model )
 
-        WebsocketIn message -> 
-            ( { model | websocketInbox = (Debug.log "in" message) :: model.websocketInbox }, Cmd.none )
+        WebsocketIn message ->
+            ( { model | websocketInbox = message :: model.websocketInbox }, Cmd.none )
 
-        WebsocketOut message -> 
-            ( model, websocketOut message )
-
-        OpenWebsocket url -> 
+        OpenWebsocket url ->
             ( model, websocketOpen url )
 
-        WebsocketOpened _ -> 
-            ( model, sendTicket model.websocketTicket )
+        StartScan ->
+            sendMessage model (Just <| startScan True)
+
+        WebsocketOpened _ ->
+            sendMessage model (sendTicket model.websocketTicket)
 
 
-sendTicket: Maybe String -> Cmd Msg
+sendMessage : Model -> Maybe ( String, Encode.Value ) -> ( Model, Cmd Msg )
+sendMessage model data =
+    case data of
+        Nothing ->
+            ( model, Cmd.none )
+
+        Just ( method, params ) ->
+            ( { model | websocketId = model.websocketId + 1 }
+            , websocketOut <|
+                JSON.Request.makeRequest model.websocketId method params
+            )
+
+
+sendTicket : Maybe String -> Maybe ( String, Encode.Value )
 sendTicket ticket =
     case ticket of
-        Nothing -> Cmd.none
-        Just t -> websocketOut
-            <| JSON.Request.makeRequest 10 "hello"
-            <| JSON.Request.makeHandshakeRequest t
+        Nothing ->
+            Nothing
+
+        Just t ->
+            Just ( "handshake", JSON.Request.makeHandshakeRequest t )
+
+startScan : Bool -> ( String, Encode.Value )
+startScan shouldUpdate =
+    ( "startScan", JSON.Request.makeStartScanRequest shouldUpdate )
+
 
 
 -- VIEWS
+
 
 onClickNoBubble : msg -> Html.Attribute msg
 onClickNoBubble message =

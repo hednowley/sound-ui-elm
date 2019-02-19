@@ -1,4 +1,4 @@
-module JSON.Request exposing (makeRequest, makeHandshakeRequest)
+module JSON.Request exposing (makeRequest, makeHandshakeRequest, makeStartScanRequest)
 
 import Json.Encode
 
@@ -17,3 +17,8 @@ makeHandshakeRequest : String -> Json.Encode.Value
 makeHandshakeRequest ticket =
     Json.Encode.object
         [ ( "ticket", Json.Encode.string ticket ) ]
+
+makeStartScanRequest : Bool -> Json.Encode.Value
+makeStartScanRequest update =
+    Json.Encode.object
+        [ ( "update", Json.Encode.bool update ) ]

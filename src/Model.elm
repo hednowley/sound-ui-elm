@@ -15,4 +15,5 @@ type alias Model =
     , isScanning : Bool
     , scanCount : Maybe Int
     , websocketInbox : List String
+    , websocketId : Int
     }
