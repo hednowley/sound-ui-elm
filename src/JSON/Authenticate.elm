@@ -1,19 +1,10 @@
-module JSON.Authenticate exposing (Response, userEncoder, responseDecoder)
+module JSON.Authenticate exposing (Response, responseDecoder)
 
-import Model
 import Json.Decode exposing (Decoder, field, map2, string)
 import Json.Encode
 
 type alias Response =
     { status : String, token : String }
-
-
-userEncoder : Model.Model -> Json.Encode.Value
-userEncoder model =
-    Json.Encode.object
-        [ ( "username", Json.Encode.string model.username )
-        , ( "password", Json.Encode.string model.password )
-        ]
 
 
 responseDecoder : Decoder Response

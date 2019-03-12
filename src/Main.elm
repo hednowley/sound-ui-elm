@@ -7,6 +7,7 @@ import Browser
 import Browser.Navigation as Nav exposing (Key)
 import Config
 import Debug
+import Dict
 import Html exposing (Html, a, button, div, form, input, section, text)
 import Html.Attributes exposing (class, href, name, placeholder, type_, value)
 import Html.Events exposing (onClick, onInput)
@@ -15,15 +16,14 @@ import JSON.Authenticate
 import JSON.Request
 import Json.Decode exposing (Decoder, field, map2, string)
 import Json.Encode as Encode
-import Model exposing (Model)
+import Model exposing (Model, PackedModel)
 import Msg exposing (..)
-import Pages.Home as Home
-import Pages.Login as Login
 import Time
 import Url
+import WebsocketListener exposing (..)
 
 
-main : Program (Maybe Model) Model Msg
+main : Program (Maybe PackedModel) Model Msg
 main =
     Browser.application
         { init = init
@@ -35,7 +35,7 @@ main =
         }
 
 
-port setStorage : Model -> Cmd msg
+port setStorage : PackedModel -> Cmd msg
 
 
 port websocketOpen : String -> Cmd msg
@@ -50,9 +50,13 @@ port websocketIn : (String -> msg) -> Sub msg
 port websocketOut : Encode.Value -> Cmd msg
 
 
-{-| We want to `setStorage` on every update. This function adds the setStorage
-command for every step of the update function.
+
+{-
+   We want to `setStorage` on every update.
+   This function adds the setStorage command for every step of the update function.
 -}
+
+
 updateWithStorage : Msg -> Model -> ( Model, Cmd Msg )
 updateWithStorage msg model =
     let
@@ -60,13 +64,18 @@ updateWithStorage msg model =
             update msg model
     in
     ( newModel
-    , Cmd.batch [ setStorage newModel, cmds ]
+    , Cmd.batch [ setStorage <| Model.pack <| newModel, cmds ]
     )
 
 
-init : Maybe Model -> Url.Url -> Key -> ( Model, Cmd Msg )
+init : Maybe PackedModel -> Url.Url -> Key -> ( Model, Cmd Msg )
 init maybeModel url navKey =
-    ( Maybe.withDefault emptyModel maybeModel
+    ( case maybeModel of
+        Just packed ->
+            Model.unpack packed
+
+        Nothing ->
+            emptyModel
     , Cmd.none
     )
 
@@ -81,7 +90,7 @@ emptyModel =
     , websocketTicket = Nothing
     , isScanning = False
     , scanCount = Nothing
-    , websocketInbox = []
+    , websocketListeners = Dict.empty
     , websocketId = 1
     }
 
@@ -149,43 +158,71 @@ update msg model =
                 Err _ ->
                     ( model, websocketOpen "noo" )
 
-        ScannerTick newTime ->
-            ( model, API.Scan.getStatus model )
-
         WebsocketIn message ->
-            ( { model | websocketInbox = message :: model.websocketInbox }, Cmd.none )
+            ( model, Cmd.none )
 
         OpenWebsocket url ->
             ( model, websocketOpen url )
 
         StartScan ->
-            sendMessage model (Just <| startScan True)
+            sendMessage model (Just <| startScan True) Nothing
 
         WebsocketOpened _ ->
-            sendMessage model (sendTicket model.websocketTicket)
+            let
+                ( request, listener ) =
+                    sendTicket model.websocketTicket
+            in
+            sendMessage model request listener
 
 
-sendMessage : Model -> Maybe ( String, Encode.Value ) -> ( Model, Cmd Msg )
-sendMessage model data =
+sendMessage : Model -> Maybe ( String, Encode.Value ) -> Maybe WebsocketListener -> ( Model, Cmd Msg )
+sendMessage model data maybeListener =
     case data of
         Nothing ->
             ( model, Cmd.none )
 
         Just ( method, params ) ->
-            ( { model | websocketId = model.websocketId + 1 }
+            let
+                newModel =
+                    addListener model maybeListener
+            in
+            ( { newModel
+                | websocketId = newModel.websocketId + 1
+              }
             , websocketOut <|
-                JSON.Request.makeRequest model.websocketId method params
+                JSON.Request.makeRequest newModel.websocketId method params
             )
 
 
-sendTicket : Maybe String -> Maybe ( String, Encode.Value )
+addListener : Model -> Maybe WebsocketListener -> Model
+addListener model maybeListener =
+    case maybeListener of
+        Just listener ->
+            { model | websocketListeners = Dict.insert model.websocketId listener model.websocketListeners }
+
+        Nothing ->
+            model
+
+
+sendTicket : Maybe String -> ( Maybe ( String, Encode.Value ), Maybe WebsocketListener )
 sendTicket ticket =
     case ticket of
         Nothing ->
-            Nothing
+            ( Nothing, Nothing )
 
         Just t ->
-            Just ( "handshake", JSON.Request.makeHandshakeRequest t )
+            ( Just ( "handshake", JSON.Request.makeHandshakeRequest t ), Just onTicketResponse )
+
+
+onTicketResponse : WebsocketListener
+onTicketResponse ticket =
+    Cmd.none
+
+
+getArtists : Model -> ( Model, Cmd Msg )
+getArtists model =
+    sendMessage model (Just ( "getArtists", Encode.null )) Nothing
+
 
 startScan : Bool -> ( String, Encode.Value )
 startScan shouldUpdate =

@@ -21,7 +21,6 @@ type Msg
     | GotAuthenticateResponse (Result Http.Error JSON.Authenticate.Response)
     | GotScanStatusResponse (Result Http.Error JSON.Scan.Response)
     | GotTicketResponse (Result Http.Error String)
-    | ScannerTick Time.Posix
     | WebsocketIn String
     | OpenWebsocket String
     | WebsocketOpened Bool
