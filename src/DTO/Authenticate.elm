@@ -1,7 +1,6 @@
-module JSON.Authenticate exposing (Response, responseDecoder)
+module DTO.Authenticate exposing (Response, responseDecoder)
 
 import Json.Decode exposing (Decoder, field, map2, string)
-import Json.Encode
 
 type alias Response =
     { status : String, token : String }

@@ -1,13 +1,9 @@
 module Msg exposing (Msg(..))
 
 import Browser
-import Http
-import JSON.Authenticate
-import JSON.Scan
-import JSON.Ticket
-import Json.Encode
-import Time
+import Rest.Msg
 import Url
+import Ws.Msg
 
 
 type Msg
@@ -16,11 +12,6 @@ type Msg
     | UsernameChanged String
     | PasswordChanged String
     | SubmitLogin
-    | StartScan
     | LogOut
-    | GotAuthenticateResponse (Result Http.Error JSON.Authenticate.Response)
-    | GotScanStatusResponse (Result Http.Error JSON.Scan.Response)
-    | GotTicketResponse (Result Http.Error String)
-    | WebsocketIn String
-    | OpenWebsocket String
-    | WebsocketOpened Bool
+    | RestMsg Rest.Msg.Msg
+    | WsMsg Ws.Msg.Msg

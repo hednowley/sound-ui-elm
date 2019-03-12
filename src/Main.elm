@@ -1,8 +1,5 @@
-port module Main exposing (emptyModel, init, main, setStorage, subscriptions, update, updateWithStorage, view, viewInput)
+module Main exposing (emptyModel, init, main, subscriptions, update, updateWithStorage, view, viewInput)
 
-import API.Authenticate
-import API.Scan
-import API.Ticket
 import Browser
 import Browser.Navigation as Nav exposing (Key)
 import Config
@@ -12,15 +9,21 @@ import Html exposing (Html, a, button, div, form, input, section, text)
 import Html.Attributes exposing (class, href, name, placeholder, type_, value)
 import Html.Events exposing (onClick, onInput)
 import Http
-import JSON.Authenticate
-import JSON.Request
-import Json.Decode exposing (Decoder, field, map2, string)
+import Json.Decode
 import Json.Encode as Encode
-import Model exposing (Model, PackedModel)
+import Model exposing (Listeners, Model, PackedModel)
 import Msg exposing (..)
+import Ports
+import Rest.Core as Rest
 import Time
-import Url
-import WebsocketListener exposing (..)
+import Url exposing (Url)
+import Ws.Core as Ws
+import Ws.Listener
+import Ws.Methods.Handshake
+import Ws.Methods.StartScan
+import Ws.Msg
+import Ws.Request
+import Ws.Response
 
 
 main : Program (Maybe PackedModel) Model Msg
@@ -33,21 +36,6 @@ main =
         , onUrlRequest = OnUrlRequest
         , onUrlChange = OnUrlChange
         }
-
-
-port setStorage : PackedModel -> Cmd msg
-
-
-port websocketOpen : String -> Cmd msg
-
-
-port websocketOpened : (Bool -> msg) -> Sub msg
-
-
-port websocketIn : (String -> msg) -> Sub msg
-
-
-port websocketOut : Encode.Value -> Cmd msg
 
 
 
@@ -64,11 +52,11 @@ updateWithStorage msg model =
             update msg model
     in
     ( newModel
-    , Cmd.batch [ setStorage <| Model.pack <| newModel, cmds ]
+    , Cmd.batch [ Ports.setStorage <| Model.pack <| newModel, cmds ]
     )
 
 
-init : Maybe PackedModel -> Url.Url -> Key -> ( Model, Cmd Msg )
+init : Maybe PackedModel -> Url -> Key -> ( Model, Cmd Msg )
 init maybeModel url navKey =
     ( case maybeModel of
         Just packed ->
@@ -90,20 +78,23 @@ emptyModel =
     , websocketTicket = Nothing
     , isScanning = False
     , scanCount = Nothing
-    , websocketListeners = Dict.empty
+    , websocketListeners = Model.Listeners Dict.empty
     , websocketId = 1
     }
 
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.batch [ websocketOpened WebsocketOpened, websocketIn WebsocketIn ]
+    Sub.batch
+        [ Ports.websocketOpened <| Msg.WsMsg << Ws.Msg.WebsocketOpened
+        , Ports.websocketIn <| Msg.WsMsg << Ws.Msg.WebsocketIn
+        ]
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        OnUrlRequest _ ->
+        Msg.OnUrlRequest _ ->
             ( model, Cmd.none )
 
         OnUrlChange _ ->
@@ -116,7 +107,7 @@ update msg model =
             ( { model | password = password }, Cmd.none )
 
         SubmitLogin ->
-            ( model, API.Authenticate.authenticate model )
+            ( model, Cmd.map Msg.RestMsg <| Rest.authenticate model )
 
         LogOut ->
             ( { model
@@ -128,105 +119,19 @@ update msg model =
             , Cmd.none
             )
 
-        GotAuthenticateResponse response ->
-            case response of
-                Ok r ->
-                    ( { model
-                        | message = ""
-                        , isLoggedIn = True
-                        , token = Just r.token
-                      }
-                    , API.Ticket.getTicket r.token
-                    )
-
-                Err _ ->
-                    ( { model | message = "Error!" }, Cmd.none )
-
-        GotScanStatusResponse response ->
-            case response of
-                Ok r ->
-                    ( { model | isScanning = r.isScanning, scanCount = Just r.count }, Cmd.none )
-
-                Err _ ->
-                    ( { model | message = "Scan failed!" }, Cmd.none )
-
-        GotTicketResponse response ->
-            case response of
-                Ok r ->
-                    ( { model | websocketTicket = Just r }, websocketOpen Config.ws )
-
-                Err _ ->
-                    ( model, websocketOpen "noo" )
-
-        WebsocketIn message ->
-            ( model, Cmd.none )
-
-        OpenWebsocket url ->
-            ( model, websocketOpen url )
-
-        StartScan ->
-            sendMessage model (Just <| startScan True) Nothing
-
-        WebsocketOpened _ ->
+        RestMsg restMsg ->
             let
-                ( request, listener ) =
-                    sendTicket model.websocketTicket
+                ( newModel, cmd ) =
+                    Rest.update restMsg model
             in
-            sendMessage model request listener
+            ( newModel, Cmd.map Msg.RestMsg cmd )
 
-
-sendMessage : Model -> Maybe ( String, Encode.Value ) -> Maybe WebsocketListener -> ( Model, Cmd Msg )
-sendMessage model data maybeListener =
-    case data of
-        Nothing ->
-            ( model, Cmd.none )
-
-        Just ( method, params ) ->
+        WsMsg wsMsg ->
             let
-                newModel =
-                    addListener model maybeListener
+                ( newModel, cmd ) =
+                    Ws.update wsMsg model
             in
-            ( { newModel
-                | websocketId = newModel.websocketId + 1
-              }
-            , websocketOut <|
-                JSON.Request.makeRequest newModel.websocketId method params
-            )
-
-
-addListener : Model -> Maybe WebsocketListener -> Model
-addListener model maybeListener =
-    case maybeListener of
-        Just listener ->
-            { model | websocketListeners = Dict.insert model.websocketId listener model.websocketListeners }
-
-        Nothing ->
-            model
-
-
-sendTicket : Maybe String -> ( Maybe ( String, Encode.Value ), Maybe WebsocketListener )
-sendTicket ticket =
-    case ticket of
-        Nothing ->
-            ( Nothing, Nothing )
-
-        Just t ->
-            ( Just ( "handshake", JSON.Request.makeHandshakeRequest t ), Just onTicketResponse )
-
-
-onTicketResponse : WebsocketListener
-onTicketResponse ticket =
-    Cmd.none
-
-
-getArtists : Model -> ( Model, Cmd Msg )
-getArtists model =
-    sendMessage model (Just ( "getArtists", Encode.null )) Nothing
-
-
-startScan : Bool -> ( String, Encode.Value )
-startScan shouldUpdate =
-    ( "startScan", JSON.Request.makeStartScanRequest shouldUpdate )
+            ( newModel, Cmd.map Msg.WsMsg cmd )
 
 
 
@@ -261,7 +166,7 @@ view model =
                     {- , text ("Your token is: " ++ Maybe.withDefault "?" model.token) -}
                     , text ("Scanned: " ++ (Maybe.withDefault 0 model.scanCount |> String.fromInt))
                     , button [ onClick LogOut ] [ text "Log out" ]
-                    , button [ onClick StartScan ] [ text "Start scan" ]
+                    , button [ onClick <| Msg.WsMsg Ws.Msg.StartScan ] [ text "Start scan" ]
                     ]
         ]
     }

@@ -1,13 +1,16 @@
-module Model exposing (Model, PackedModel, pack, unpack)
+module Model exposing (Model, PackedModel, Listeners(..), pack, unpack)
 
 import Browser
 import Dict exposing (Dict)
 import Http
 import Url
-import WebsocketListener exposing (..)
+import Ws.Listener
+import Time
+import Rest.Msg
+import Msg exposing (Msg)
 
 
-type alias Model =
+type alias Model = 
     { username : String
     , password : String
     , message : String
@@ -16,9 +19,11 @@ type alias Model =
     , websocketTicket : Maybe String
     , isScanning : Bool
     , scanCount : Maybe Int
-    , websocketListeners : Dict Int WebsocketListener
+    , websocketListeners : Listeners
     , websocketId : Int
     }
+
+type Listeners = Listeners (Dict Int (Ws.Listener.Listener Model))
 
 
 pack : Model -> PackedModel
@@ -42,7 +47,7 @@ unpack packed =
     , websocketTicket = Nothing
     , isScanning = packed.isScanning
     , scanCount = packed.scanCount
-    , websocketListeners = Dict.empty
+    , websocketListeners = Listeners Dict.empty
     , websocketId = 1
     }
 
