@@ -161,7 +161,7 @@ view model =
 
             True ->
                 div []
-                    [ text "Welcome"
+                    [ text model.message
 
                     {- , text ("Your token is: " ++ Maybe.withDefault "?" model.token) -}
                     , text ("Scanned: " ++ (Maybe.withDefault 0 model.scanCount |> String.fromInt))

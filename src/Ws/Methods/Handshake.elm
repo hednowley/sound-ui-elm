@@ -33,6 +33,16 @@ prepareRequest ticket =
 onResponse =
     Ws.Listener.makeListener
         responseDecoder
-        (\r -> \model -> { model | message = "Logged in" })
+        onSuccess
         Nothing
         Nothing
+
+onSuccess : Response -> Model -> Model 
+onSuccess response model =
+    if
+        response.accepted
+    then
+        { model | message = "Logged in" }
+    else
+        model
+    
