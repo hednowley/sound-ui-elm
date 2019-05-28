@@ -7,7 +7,7 @@ import Model exposing (Model)
 import Ports
 import Ws.Listener
 import Ws.Methods.Handshake as Handshake
-import Ws.Methods.StartScan
+import Ws.Methods.StartScan as StartScan
 import Ws.Msg as Msg exposing (Msg(..))
 import Ws.Request
 import Ws.Response
@@ -47,7 +47,8 @@ addListener model maybeListener =
 messageIn : String -> Model -> Model
 messageIn message model =
     let
-        result = Ws.Response.decode message
+        result =
+            Ws.Response.decode message
     in
     case result of
         Ok response ->
@@ -74,11 +75,6 @@ responseIn response model =
             model
 
 
-startScan : Bool -> ( String, Json.Encode.Value )
-startScan shouldUpdate =
-    ( "startScan", Ws.Methods.StartScan.makeRequest shouldUpdate )
-
-
 
 -- UPDATE
 
@@ -101,4 +97,4 @@ update msg model =
             ( model, Ports.websocketOpen url )
 
         StartScan ->
-            ( model, Cmd.none )
+            sendMessage model (StartScan.prepareRequest False)
