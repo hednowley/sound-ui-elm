@@ -19,6 +19,7 @@ import Time
 import Url exposing (Url)
 import Ws.Core as Ws
 import Ws.Listener
+import Ws.Listeners.ScanStatus
 import Ws.Methods.Handshake
 import Ws.Methods.StartScan
 import Ws.Msg
@@ -38,13 +39,9 @@ main =
         }
 
 
-
-{-
-   We want to `setStorage` on every update.
-   This function adds the setStorage command for every step of the update function.
+{-| We want to `setStorage` on every update.
+This function adds the setStorage command for every step of the update function.
 -}
-
-
 updateWithStorage : Msg -> Model -> ( Model, Cmd Msg )
 updateWithStorage msg model =
     let
@@ -56,11 +53,24 @@ updateWithStorage msg model =
     )
 
 
+unpack : PackedModel -> Model
+unpack packed =
+    { emptyModel
+        | username = packed.username
+        , password = packed.password
+        , message = packed.message
+        , isLoggedIn = packed.isLoggedIn
+        , token = packed.token
+        , isScanning = packed.isScanning
+        , scanCount = packed.scanCount
+    }
+
+
 init : Maybe PackedModel -> Url -> Key -> ( Model, Cmd Msg )
 init maybeModel url navKey =
     ( case maybeModel of
         Just packed ->
-            Model.unpack packed
+            unpack packed
 
         Nothing ->
             emptyModel
@@ -77,8 +87,13 @@ emptyModel =
     , token = Nothing
     , websocketTicket = Nothing
     , isScanning = False
-    , scanCount = Nothing
+    , scanCount = 0
     , websocketListeners = Model.Listeners Dict.empty
+    , notificationListeners =
+        Model.NotificationListeners <|
+            Dict.fromList
+                [ ( "scanStatus", Ws.Listeners.ScanStatus.listener )
+                ]
     , websocketId = 1
     }
 
@@ -164,7 +179,7 @@ view model =
                     [ text model.message
 
                     {- , text ("Your token is: " ++ Maybe.withDefault "?" model.token) -}
-                    , text ("Scanned: " ++ (Maybe.withDefault 0 model.scanCount |> String.fromInt))
+                    , text ("Scanned: " ++ String.fromInt model.scanCount)
                     , button [ onClick LogOut ] [ text "Log out" ]
                     , button [ onClick <| Msg.WsMsg Ws.Msg.StartScan ] [ text "Start scan" ]
                     ]

@@ -1,16 +1,17 @@
-module Model exposing (Model, PackedModel, Listeners(..), pack, unpack)
+module Model exposing (Listeners(..), Model, NotificationListeners(..), PackedModel, pack)
 
 import Browser
 import Dict exposing (Dict)
 import Http
-import Url
-import Ws.Listener
-import Time
-import Rest.Msg
 import Msg exposing (Msg)
+import Rest.Msg
+import Time
+import Url
+import Ws.Listener exposing (Listener)
+import Ws.NotificationListener exposing (NotificationListener)
 
 
-type alias Model = 
+type alias Model =
     { username : String
     , password : String
     , message : String
@@ -18,12 +19,23 @@ type alias Model =
     , token : Maybe String
     , websocketTicket : Maybe String
     , isScanning : Bool
-    , scanCount : Maybe Int
+    , scanCount : Int
     , websocketListeners : Listeners
+    , notificationListeners : NotificationListeners
     , websocketId : Int
     }
 
-type Listeners = Listeners (Dict Int (Ws.Listener.Listener Model))
+
+{-| Everything listening out for a server response, keyed by the id of the response they listen for.
+-}
+type Listeners
+    = Listeners (Dict Int (Listener Model))
+
+
+{-| Everything listening out for server notifications, keyed by the notification method they listen for.
+-}
+type NotificationListeners
+    = NotificationListeners (Dict String (NotificationListener Model))
 
 
 pack : Model -> PackedModel
@@ -37,20 +49,6 @@ pack model =
     , scanCount = model.scanCount
     }
 
-unpack : PackedModel -> Model
-unpack packed =
-    { username = packed.username
-    , password = packed.password
-    , message = packed.message
-    , isLoggedIn = packed.isLoggedIn
-    , token = packed.token
-    , websocketTicket = Nothing
-    , isScanning = packed.isScanning
-    , scanCount = packed.scanCount
-    , websocketListeners = Listeners Dict.empty
-    , websocketId = 1
-    }
-
 
 type alias PackedModel =
     { username : String
@@ -59,5 +57,5 @@ type alias PackedModel =
     , isLoggedIn : Bool
     , token : Maybe String
     , isScanning : Bool
-    , scanCount : Maybe Int
+    , scanCount : Int
     }

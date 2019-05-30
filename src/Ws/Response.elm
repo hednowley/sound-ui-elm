@@ -5,7 +5,7 @@ import Json.Decode exposing (Decoder, decodeString, field, int, map3, maybe, str
 
 type alias Response =
     { id : Int
-    , body : Result Json.Decode.Value Json.Decode.Value
+    , body : Result Json.Decode.Value Json.Decode.Value -- Either the error or success body of the response
     }
 
 
@@ -21,10 +21,10 @@ decoder =
     map3 RawResponse
         (field "id" int)
         (maybe (field "result" value))
-        (maybe (field "error" value)) 
+        (maybe (field "error" value))
 
 
-decode : String -> Result String Response
+decode : String -> Maybe Response
 decode raw =
     let
         result =
@@ -35,19 +35,19 @@ decode raw =
             convert decoded
 
         Err error ->
-            Result.Err "Decoding failed"
+            Nothing
 
 
-convert : RawResponse -> Result String Response
+convert : RawResponse -> Maybe Response
 convert raw =
     case raw.error of
         Just error ->
-            Result.Ok (Response raw.id (Result.Err error))
+            Just <| Response raw.id <| Result.Err error
 
         Nothing ->
             case raw.result of
                 Just result ->
-                    Result.Ok (Response raw.id (Result.Ok result))
+                    Just <| Response raw.id <| Result.Ok result
 
                 Nothing ->
-                    Result.Err "Response has no body"
+                    Nothing

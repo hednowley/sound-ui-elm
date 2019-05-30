@@ -3,6 +3,6 @@ module Ws.Msg exposing (Msg(..))
 
 type Msg
     = WebsocketOpened Bool
-    | WebsocketIn String
+    | WebsocketIn String -- Message has been received from server
     | OpenWebsocket String
-    | StartScan
+    | StartScan -- Ask for a scan to be started

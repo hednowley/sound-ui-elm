@@ -9,6 +9,7 @@ import Ws.Listener
 import Ws.Methods.Handshake as Handshake
 import Ws.Methods.StartScan as StartScan
 import Ws.Msg as Msg exposing (Msg(..))
+import Ws.Notification
 import Ws.Request
 import Ws.Response
 import Ws.Types exposing (RequestData)
@@ -46,16 +47,17 @@ addListener model maybeListener =
 
 messageIn : String -> Model -> Model
 messageIn message model =
-    let
-        result =
-            Ws.Response.decode message
-    in
-    case result of
-        Ok response ->
+    case Ws.Response.decode message of
+        Just response ->
             responseIn response model
 
-        Err error ->
-            model
+        Nothing ->
+            case Ws.Notification.decode message of
+                Just notification ->
+                    notificationIn notification model
+
+                Nothing ->
+                    model
 
 
 responseIn : Ws.Response.Response -> Model -> Model
@@ -70,6 +72,23 @@ responseIn response model =
     case maybeListener of
         Just listener ->
             listener response.body model
+
+        Nothing ->
+            model
+
+
+notificationIn : Ws.Notification.Notification -> Model -> Model
+notificationIn notification model =
+    let
+        (Model.NotificationListeners listeners) =
+            model.notificationListeners
+
+        maybeListener =
+            Dict.get notification.method listeners
+    in
+    case maybeListener of
+        Just listener ->
+            listener notification model
 
         Nothing ->
             model
