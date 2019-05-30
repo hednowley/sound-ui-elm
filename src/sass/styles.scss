@@ -2,7 +2,8 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto);
 @import url(https://fonts.googleapis.com/css?family=Shrikhand);
 
-@import "./_login.scss";
+@import "_login";
+@import "_home";
 
 html * {
     box-sizing: border-box !important;

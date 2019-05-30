@@ -35,3 +35,12 @@ app.ports.websocketOut.subscribe(message => {
         socket.send(JSON.stringify(message));
     }
 });
+
+app.ports.websocketClose.subscribe(() => {
+    if (socket == null) {
+        return;
+    }
+
+    socket.close();
+    socket = null;
+});

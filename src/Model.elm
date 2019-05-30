@@ -4,7 +4,6 @@ import Browser
 import Dict exposing (Dict)
 import Http
 import Msg exposing (Msg)
-import Rest.Msg
 import Time
 import Url
 import Ws.Listener exposing (Listener)
@@ -45,8 +44,6 @@ pack model =
     , message = model.message
     , isLoggedIn = model.isLoggedIn
     , token = model.token
-    , isScanning = model.isScanning
-    , scanCount = model.scanCount
     }
 
 
@@ -56,6 +53,4 @@ type alias PackedModel =
     , message : String
     , isLoggedIn : Bool
     , token : Maybe String
-    , isScanning : Bool
-    , scanCount : Int
     }

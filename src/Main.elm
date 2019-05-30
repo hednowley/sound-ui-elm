@@ -2,10 +2,9 @@ module Main exposing (emptyModel, init, main, subscriptions, update, updateWithS
 
 import Browser
 import Browser.Navigation as Nav exposing (Key)
-import Config
 import Debug
 import Dict
-import Html exposing (Html, a, button, div, form, input, section, text)
+import Html exposing (Html, a, button, div, form, input, section, span, text)
 import Html.Attributes exposing (class, href, name, placeholder, type_, value)
 import Html.Events exposing (onClick, onInput)
 import Http
@@ -61,21 +60,33 @@ unpack packed =
         , message = packed.message
         , isLoggedIn = packed.isLoggedIn
         , token = packed.token
-        , isScanning = packed.isScanning
-        , scanCount = packed.scanCount
     }
 
 
 init : Maybe PackedModel -> Url -> Key -> ( Model, Cmd Msg )
 init maybeModel url navKey =
-    ( case maybeModel of
-        Just packed ->
-            unpack packed
+    let
+        model =
+            case maybeModel of
+                Just packed ->
+                    unpack packed
+
+                Nothing ->
+                    emptyModel
+    in
+    ( model, reconnect model )
+
+
+{-| Tries to connect to the websocket if there is cached token.
+-}
+reconnect : Model -> Cmd Msg
+reconnect model =
+    case model.token of
+        Just token ->
+            Rest.getTicket token
 
         Nothing ->
-            emptyModel
-    , Cmd.none
-    )
+            Cmd.none
 
 
 emptyModel : Model
@@ -122,24 +133,17 @@ update msg model =
             ( { model | password = password }, Cmd.none )
 
         SubmitLogin ->
-            ( model, Cmd.map Msg.RestMsg <| Rest.authenticate model )
+            ( model, Rest.authenticate model )
 
         LogOut ->
-            ( { model
-                | isLoggedIn = False
-                , username = ""
-                , password = ""
-                , token = Nothing
-              }
-            , Cmd.none
-            )
-
-        RestMsg restMsg ->
-            let
-                ( newModel, cmd ) =
-                    Rest.update restMsg model
-            in
-            ( newModel, Cmd.map Msg.RestMsg cmd )
+            update
+                (Msg.WsMsg Ws.Msg.CloseWebsocket)
+                { model
+                    | isLoggedIn = False
+                    , username = ""
+                    , password = ""
+                    , token = Nothing
+                }
 
         WsMsg wsMsg ->
             let
@@ -147,6 +151,19 @@ update msg model =
                     Ws.update wsMsg model
             in
             ( newModel, Cmd.map Msg.WsMsg cmd )
+
+        GotAuthenticateResponse response ->
+            Rest.gotAuthenticateResponse response model
+
+        GotTicketResponse response ->
+            case response of
+                Ok r ->
+                    update
+                        (Msg.WsMsg Ws.Msg.OpenWebsocket)
+                        { model | websocketTicket = Just r }
+
+                Err _ ->
+                    ( model, Cmd.none )
 
 
 
@@ -175,11 +192,9 @@ view model =
                     ]
 
             True ->
-                div []
-                    [ text model.message
-
-                    {- , text ("Your token is: " ++ Maybe.withDefault "?" model.token) -}
-                    , text ("Scanned: " ++ String.fromInt model.scanCount)
+                div [ class "home__wrap" ]
+                    [ span [] [ text model.message ]
+                    , span [] [ text <| "Scanned: " ++ String.fromInt model.scanCount ]
                     , button [ onClick LogOut ] [ text "Log out" ]
                     , button [ onClick <| Msg.WsMsg Ws.Msg.StartScan ] [ text "Start scan" ]
                     ]

@@ -1,5 +1,6 @@
 module Ws.Core exposing (addListener, sendMessage, update)
 
+import Config
 import Dict
 import Http
 import Json.Encode
@@ -112,8 +113,11 @@ update msg model =
         WebsocketIn message ->
             ( messageIn message model, Cmd.none )
 
-        OpenWebsocket url ->
-            ( model, Ports.websocketOpen url )
+        OpenWebsocket ->
+            ( model, Ports.websocketOpen Config.ws )
+
+        CloseWebsocket ->
+            ( model, Ports.websocketClose () )
 
         StartScan ->
             sendMessage model (StartScan.prepareRequest False)

@@ -1,4 +1,4 @@
-module Rest.Core exposing (authenticate, getTicket, update)
+module Rest.Core exposing (authenticate, getTicket, gotAuthenticateResponse)
 
 import Config
 import DTO.Authenticate
@@ -8,20 +8,22 @@ import Http
 import Json.Decode exposing (Decoder, field, map2, string)
 import Json.Encode
 import Model exposing (Model)
+import Msg exposing (Msg(..))
 import Ports
-import Rest.Msg
 
 
-authenticate : Model -> Cmd Rest.Msg.Msg
+authenticate : Model -> Cmd Msg
 authenticate model =
     Http.post
         { body = Http.jsonBody <| DTO.Credentials.credentialsEncoder model.username model.password
         , url = Config.root ++ "/api/authenticate"
-        , expect = Http.expectJson Rest.Msg.GotAuthenticateResponse DTO.Authenticate.responseDecoder
+        , expect = Http.expectJson GotAuthenticateResponse DTO.Authenticate.responseDecoder
         }
 
 
-getTicket : String -> Cmd Rest.Msg.Msg
+{-| Tries to connect to the websocket.
+-}
+getTicket : String -> Cmd Msg
 getTicket token =
     Http.request
         { method = "GET"
@@ -30,31 +32,21 @@ getTicket token =
         , timeout = Nothing
         , tracker = Nothing
         , url = Config.root ++ "/api/ticket"
-        , expect = Http.expectJson Rest.Msg.GotTicketResponse DTO.Ticket.responseDecoder
+        , expect = Http.expectJson GotTicketResponse DTO.Ticket.responseDecoder
         }
 
 
-update : Rest.Msg.Msg -> Model -> ( Model, Cmd Rest.Msg.Msg )
-update msg model =
-    case msg of
-        Rest.Msg.GotAuthenticateResponse response ->
-            case response of
-                Ok r ->
-                    ( { model
-                        | message = ""
-                        , isLoggedIn = True
-                        , token = Just r.token
-                      }
-                    , getTicket r.token
-                    )
+gotAuthenticateResponse : Result Http.Error DTO.Authenticate.Response -> Model -> ( Model, Cmd Msg )
+gotAuthenticateResponse response model =
+    case response of
+        Ok r ->
+            ( { model
+                | message = ""
+                , isLoggedIn = True
+                , token = Just r.token
+              }
+            , getTicket r.token
+            )
 
-                Err _ ->
-                    ( { model | message = "Error!" }, Cmd.none )
-
-        Rest.Msg.GotTicketResponse response ->
-            case response of
-                Ok r ->
-                    ( { model | websocketTicket = Just r }, Ports.websocketOpen Config.ws )
-
-                Err _ ->
-                    ( model, Ports.websocketOpen "noo" )
+        Err _ ->
+            ( { model | message = "Error!" }, Cmd.none )

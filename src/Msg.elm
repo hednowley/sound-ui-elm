@@ -1,7 +1,8 @@
 module Msg exposing (Msg(..))
 
 import Browser
-import Rest.Msg
+import DTO.Authenticate
+import Http
 import Url
 import Ws.Msg
 
@@ -13,5 +14,6 @@ type Msg
     | PasswordChanged String
     | SubmitLogin
     | LogOut
-    | RestMsg Rest.Msg.Msg
     | WsMsg Ws.Msg.Msg
+    | GotAuthenticateResponse (Result Http.Error DTO.Authenticate.Response)
+    | GotTicketResponse (Result Http.Error String)
