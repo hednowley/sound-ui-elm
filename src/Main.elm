@@ -120,9 +120,6 @@ subscriptions model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        NoOp ->
-            ( model, Cmd.none )
-
         OnUrlRequest _ ->
             ( model, Cmd.none )
 
@@ -152,11 +149,7 @@ update msg model =
             Rest.gotAuthenticateResponse response model
 
         GotTicketResponse response ->
-            let
-                ( model_, msg_ ) =
-                    Rest.gotTicketResponse response model
-            in
-            update msg_ model_
+            Rest.gotTicketResponse update response model
 
         WebsocketOpened _ ->
             case model.websocketTicket of

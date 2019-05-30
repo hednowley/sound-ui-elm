@@ -7,8 +7,7 @@ import Url
 
 
 type Msg
-    = NoOp
-    | OnUrlChange Url.Url
+    = OnUrlChange Url.Url
     | OnUrlRequest Browser.UrlRequest
     | UsernameChanged String
     | PasswordChanged String

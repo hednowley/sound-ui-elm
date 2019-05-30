@@ -10,6 +10,7 @@ import Json.Encode
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Ports
+import Types exposing (Update)
 
 
 authenticate : Model -> Cmd Msg
@@ -52,11 +53,13 @@ gotAuthenticateResponse response model =
             ( { model | message = "Error!" }, Cmd.none )
 
 
-gotTicketResponse : Result Http.Error String -> Model -> ( Model, Msg )
-gotTicketResponse response model =
+gotTicketResponse : Update -> Result Http.Error String -> Model -> ( Model, Cmd Msg )
+gotTicketResponse update response model =
     case response of
         Ok r ->
-            ( { model | websocketTicket = Just r }, OpenWebsocket )
+            update
+                OpenWebsocket
+                { model | websocketTicket = Just r }
 
         Err _ ->
-            ( model, NoOp )
+            ( model, Cmd.none )
