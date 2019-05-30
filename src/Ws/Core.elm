@@ -1,15 +1,15 @@
-module Ws.Core exposing (addListener, sendMessage, update)
+module Ws.Core exposing (addListener, messageIn, sendMessage)
 
 import Config
 import Dict
 import Http
 import Json.Encode
 import Model exposing (Model)
+import Msg exposing (Msg(..))
 import Ports
 import Ws.Listener
 import Ws.Methods.Handshake as Handshake
 import Ws.Methods.StartScan as StartScan
-import Ws.Msg as Msg exposing (Msg(..))
 import Ws.Notification
 import Ws.Request
 import Ws.Response
@@ -93,31 +93,3 @@ notificationIn notification model =
 
         Nothing ->
             model
-
-
-
--- UPDATE
-
-
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
-    case msg of
-        WebsocketOpened _ ->
-            case model.websocketTicket of
-                Just ticket ->
-                    sendMessage model (Handshake.prepareRequest ticket)
-
-                Nothing ->
-                    ( model, Cmd.none )
-
-        WebsocketIn message ->
-            ( messageIn message model, Cmd.none )
-
-        OpenWebsocket ->
-            ( model, Ports.websocketOpen Config.ws )
-
-        CloseWebsocket ->
-            ( model, Ports.websocketClose () )
-
-        StartScan ->
-            sendMessage model (StartScan.prepareRequest False)

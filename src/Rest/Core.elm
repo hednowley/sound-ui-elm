@@ -1,4 +1,4 @@
-module Rest.Core exposing (authenticate, getTicket, gotAuthenticateResponse)
+module Rest.Core exposing (authenticate, getTicket, gotAuthenticateResponse, gotTicketResponse)
 
 import Config
 import DTO.Authenticate
@@ -50,3 +50,13 @@ gotAuthenticateResponse response model =
 
         Err _ ->
             ( { model | message = "Error!" }, Cmd.none )
+
+
+gotTicketResponse : Result Http.Error String -> Model -> ( Model, Msg )
+gotTicketResponse response model =
+    case response of
+        Ok r ->
+            ( { model | websocketTicket = Just r }, OpenWebsocket )
+
+        Err _ ->
+            ( model, NoOp )

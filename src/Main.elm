@@ -2,6 +2,7 @@ module Main exposing (emptyModel, init, main, subscriptions, update, updateWithS
 
 import Browser
 import Browser.Navigation as Nav exposing (Key)
+import Config
 import Debug
 import Dict
 import Html exposing (Html, a, button, div, form, input, section, span, text)
@@ -11,7 +12,7 @@ import Http
 import Json.Decode
 import Json.Encode as Encode
 import Model exposing (Listeners, Model, PackedModel)
-import Msg exposing (..)
+import Msg exposing (Msg(..))
 import Ports
 import Rest.Core as Rest
 import Time
@@ -21,7 +22,6 @@ import Ws.Listener
 import Ws.Listeners.ScanStatus
 import Ws.Methods.Handshake
 import Ws.Methods.StartScan
-import Ws.Msg
 import Ws.Request
 import Ws.Response
 
@@ -112,15 +112,18 @@ emptyModel =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ Ports.websocketOpened <| Msg.WsMsg << Ws.Msg.WebsocketOpened
-        , Ports.websocketIn <| Msg.WsMsg << Ws.Msg.WebsocketIn
+        [ Ports.websocketOpened <| Msg.WebsocketOpened
+        , Ports.websocketIn <| Msg.WebsocketIn
         ]
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Msg.OnUrlRequest _ ->
+        NoOp ->
+            ( model, Cmd.none )
+
+        OnUrlRequest _ ->
             ( model, Cmd.none )
 
         OnUrlChange _ ->
@@ -137,7 +140,7 @@ update msg model =
 
         LogOut ->
             update
-                (Msg.WsMsg Ws.Msg.CloseWebsocket)
+                CloseWebsocket
                 { model
                     | isLoggedIn = False
                     , username = ""
@@ -145,25 +148,35 @@ update msg model =
                     , token = Nothing
                 }
 
-        WsMsg wsMsg ->
-            let
-                ( newModel, cmd ) =
-                    Ws.update wsMsg model
-            in
-            ( newModel, Cmd.map Msg.WsMsg cmd )
-
         GotAuthenticateResponse response ->
             Rest.gotAuthenticateResponse response model
 
         GotTicketResponse response ->
-            case response of
-                Ok r ->
-                    update
-                        (Msg.WsMsg Ws.Msg.OpenWebsocket)
-                        { model | websocketTicket = Just r }
+            let
+                ( model_, msg_ ) =
+                    Rest.gotTicketResponse response model
+            in
+            update msg_ model_
 
-                Err _ ->
+        WebsocketOpened _ ->
+            case model.websocketTicket of
+                Just ticket ->
+                    Ws.sendMessage model (Ws.Methods.Handshake.prepareRequest ticket)
+
+                Nothing ->
                     ( model, Cmd.none )
+
+        WebsocketIn message ->
+            ( Ws.messageIn message model, Cmd.none )
+
+        OpenWebsocket ->
+            ( model, Ports.websocketOpen Config.ws )
+
+        CloseWebsocket ->
+            ( model, Ports.websocketClose () )
+
+        StartScan ->
+            Ws.sendMessage model (Ws.Methods.StartScan.prepareRequest False)
 
 
 
@@ -196,7 +209,7 @@ view model =
                     [ span [] [ text model.message ]
                     , span [] [ text <| "Scanned: " ++ String.fromInt model.scanCount ]
                     , button [ onClick LogOut ] [ text "Log out" ]
-                    , button [ onClick <| Msg.WsMsg Ws.Msg.StartScan ] [ text "Start scan" ]
+                    , button [ onClick StartScan ] [ text "Start scan" ]
                     ]
         ]
     }
