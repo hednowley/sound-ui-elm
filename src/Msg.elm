@@ -13,6 +13,7 @@ type Msg
     | PasswordChanged String
     | SubmitLogin
     | LogOut
+    | ToggleScanUpdate
     | WebsocketOpened Bool
     | WebsocketIn String -- Message has been received from server
     | OpenWebsocket

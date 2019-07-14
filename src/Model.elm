@@ -15,13 +15,14 @@ type alias Model =
     , password : String
     , message : String
     , isLoggedIn : Bool
-    , token : Maybe String
+    , token : Maybe String 
     , websocketTicket : Maybe String
     , isScanning : Bool
     , scanCount : Int
     , websocketListeners : Listeners
     , notificationListeners : NotificationListeners
     , websocketId : Int
+    , scanShouldUpdate : Bool
     }
 
 
@@ -44,6 +45,7 @@ pack model =
     , message = model.message
     , isLoggedIn = model.isLoggedIn
     , token = model.token
+    , scanShouldUpdate = model.scanShouldUpdate
     }
 
 
@@ -53,4 +55,5 @@ type alias PackedModel =
     , message : String
     , isLoggedIn : Bool
     , token : Maybe String
+    , scanShouldUpdate : Bool
     }

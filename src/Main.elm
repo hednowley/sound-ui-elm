@@ -5,8 +5,8 @@ import Browser.Navigation as Nav exposing (Key)
 import Config
 import Debug
 import Dict
-import Html exposing (Html, a, button, div, form, input, section, span, text)
-import Html.Attributes exposing (class, href, name, placeholder, type_, value)
+import Html exposing (Html, a, button, div, form, input, section, span, label, text)
+import Html.Attributes exposing (class, href, name, placeholder, type_, value, checked)
 import Html.Events exposing (onClick, onInput)
 import Http
 import Json.Decode
@@ -60,6 +60,7 @@ unpack packed =
         , message = packed.message
         , isLoggedIn = packed.isLoggedIn
         , token = packed.token
+        , scanShouldUpdate = packed.scanShouldUpdate
     }
 
 
@@ -106,6 +107,7 @@ emptyModel =
                 [ ( "scanStatus", Ws.Listeners.ScanStatus.listener )
                 ]
     , websocketId = 1
+    , scanShouldUpdate = False
     }
 
 
@@ -166,10 +168,14 @@ update msg model =
             ( model, Ports.websocketOpen Config.ws )
 
         CloseWebsocket ->
-            ( model, Ports.websocketClose () )
+            ( model, Ports.websocketClose () ) 
 
         StartScan ->
-            Ws.sendMessage model (Ws.Methods.StartScan.prepareRequest False)
+            Ws.sendMessage model (Ws.Methods.StartScan.prepareRequest model.scanShouldUpdate)
+
+        ToggleScanUpdate ->
+            ( { model | scanShouldUpdate = not model.scanShouldUpdate}, Cmd.none ) 
+
 
 
 
@@ -200,8 +206,9 @@ view model =
             True ->
                 div [ class "home__wrap" ]
                     [ span [] [ text model.message ]
-                    , span [] [ text <| "Scanned: " ++ String.fromInt model.scanCount ]
+                    , span [] [ text <| "Scanned: " ++ String.fromInt model.scanCount ] 
                     , button [ onClick LogOut ] [ text "Log out" ]
+                    , checkboxInput "Update?" model.scanShouldUpdate ToggleScanUpdate
                     , button [ onClick StartScan ] [ text "Start scan" ]
                     ]
         ]
@@ -211,3 +218,7 @@ view model =
 viewInput : String -> String -> String -> String -> (String -> msg) -> Html msg
 viewInput n t p v toMsg =
     input [ name n, type_ t, placeholder p, value v, onInput toMsg, class "login__input" ] []
+
+checkboxInput : String -> Bool -> msg -> Html msg
+checkboxInput name isChecked msg =
+    label [] [ input [ checked isChecked, type_ "checkbox", onClick msg ] [], text name ] 
