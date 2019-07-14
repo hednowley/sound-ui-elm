@@ -4,15 +4,16 @@ import Json.Encode
 import Ws.Types exposing (RequestData)
 
 
-prepareRequest : Bool -> RequestData
-prepareRequest shouldUpdate =
+prepareRequest : Bool -> Bool -> RequestData
+prepareRequest shouldUpdate shouldDelete =
     { method = "startScan"
-    , params = makeRequest shouldUpdate
+    , params = makeRequest shouldUpdate shouldDelete
     , listener = Nothing
     }
 
 
-makeRequest : Bool -> Json.Encode.Value
-makeRequest shouldUpdate =
+makeRequest : Bool -> Bool -> Json.Encode.Value
+makeRequest shouldUpdate shouldDelete =
     Json.Encode.object
-        [ ( "update", Json.Encode.bool shouldUpdate ) ]
+        [ ( "update", Json.Encode.bool shouldUpdate ),
+         ("delete", Json.Encode.bool shouldDelete ) ]

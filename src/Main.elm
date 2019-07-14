@@ -108,6 +108,7 @@ emptyModel =
                 ]
     , websocketId = 1
     , scanShouldUpdate = False
+    , scanShouldDelete = False
     }
 
 
@@ -171,10 +172,13 @@ update msg model =
             ( model, Ports.websocketClose () ) 
 
         StartScan ->
-            Ws.sendMessage model (Ws.Methods.StartScan.prepareRequest model.scanShouldUpdate)
+            Ws.sendMessage model (Ws.Methods.StartScan.prepareRequest model.scanShouldUpdate model.scanShouldDelete)
 
         ToggleScanUpdate ->
             ( { model | scanShouldUpdate = not model.scanShouldUpdate}, Cmd.none ) 
+
+        ToggleScanDelete ->
+            ( { model | scanShouldDelete = not model.scanShouldDelete}, Cmd.none ) 
 
 
 
@@ -209,6 +213,7 @@ view model =
                     , span [] [ text <| "Scanned: " ++ String.fromInt model.scanCount ] 
                     , button [ onClick LogOut ] [ text "Log out" ]
                     , checkboxInput "Update?" model.scanShouldUpdate ToggleScanUpdate
+                    , checkboxInput "Delete?" model.scanShouldDelete ToggleScanDelete
                     , button [ onClick StartScan ] [ text "Start scan" ]
                     ]
         ]

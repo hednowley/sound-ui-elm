@@ -14,6 +14,7 @@ type Msg
     | SubmitLogin
     | LogOut
     | ToggleScanUpdate
+    | ToggleScanDelete
     | WebsocketOpened Bool
     | WebsocketIn String -- Message has been received from server
     | OpenWebsocket

@@ -23,6 +23,7 @@ type alias Model =
     , notificationListeners : NotificationListeners
     , websocketId : Int
     , scanShouldUpdate : Bool
+    , scanShouldDelete : Bool
     }
 
 
