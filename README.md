@@ -11,7 +11,7 @@ You'll need
 
 ## Building
 
-Edit `root` in [Config.elm](Config.elm) to point to your _sound_ instance.
+Edit `root` in [Config.elm](src/Config.elm) to point to your _sound_ instance.
 
 ```shell
 $ npm install
