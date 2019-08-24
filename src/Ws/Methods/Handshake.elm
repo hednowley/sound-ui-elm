@@ -37,12 +37,11 @@ onResponse =
         Nothing
         Nothing
 
-onSuccess : Response -> Model -> Model 
+
+onSuccess : Response -> Model -> Model
 onSuccess response model =
-    if
-        response.accepted
-    then
+    if response.accepted then
         { model | message = "Logged in" }
+
     else
         model
-    

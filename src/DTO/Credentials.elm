@@ -2,6 +2,7 @@ module DTO.Credentials exposing (credentialsEncoder)
 
 import Json.Encode
 
+
 credentialsEncoder : String -> String -> Json.Encode.Value
 credentialsEncoder username password =
     Json.Encode.object

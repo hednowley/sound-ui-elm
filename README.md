@@ -1,5 +1,7 @@
 # sound ui
 
+[![Build Status](https://travis-ci.org/hednowley/sound-ui-elm.svg?branch=master)](https://travis-ci.org/hednowley/sound-ui-elm)
+
 A work-in-progress front-end for the [sound](https://github.com/hednowley/sound) music server written in [Elm](https://elm-lang.org).
 
 ## Prerequisites

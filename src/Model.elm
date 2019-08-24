@@ -15,7 +15,7 @@ type alias Model =
     , password : String
     , message : String
     , isLoggedIn : Bool
-    , token : Maybe String 
+    , token : Maybe String
     , websocketTicket : Maybe String
     , isScanning : Bool
     , scanCount : Int
