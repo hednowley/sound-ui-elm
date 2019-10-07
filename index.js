@@ -5,37 +5,42 @@ require("./src/css/reset.css");
 require("./src/sass/styles.scss");
 var Elm = require("./src/Main.elm");
 
-var storedState = localStorage.getItem("sound-ui-elm");
-var startingState = storedState ? JSON.parse(storedState) : null;
-var app = Elm.Elm.Main.init({ flags: startingState });
-app.ports.setStorage.subscribe(function(state) {
-  localStorage.setItem("sound-ui-elm", JSON.stringify(state));
-});
+// Start elm with the possible serialised model from local storage
+var stored = localStorage.getItem("sound-ui-elm");
+var model = stored ? JSON.parse(stored) : null;
+var app = Elm.Elm.Main.init({ flags: model });
+
+// Port for serialising and storing the elm model
+app.ports.setStorage.subscribe(model => 
+  localStorage.setItem("sound-ui-elm", JSON.stringify(model))
+);
 
 let socket;
-
 window.app = app;
 
+// Port for creating a websocket from elm
 app.ports.websocketOpen.subscribe(url => {
   socket = new WebSocket(url);
+
+  // Tell elm the socket is open
   socket.onopen = () => {
     app.ports.websocketOpened.send(true);
   };
+
+  // Forward incoming messages to elm
   socket.onmessage = message => {
-    //console.log("in")
-    //console.log(message.data)
     app.ports.websocketIn.send(message.data);
   };
 });
 
+// Port for sending messages through the socket from elm
 app.ports.websocketOut.subscribe(message => {
   if (socket && socket.readyState === 1) {
-    //console.log("out")
-    //console.log(message)
     socket.send(JSON.stringify(message));
   }
 });
 
+// Port for closing the socket from elm
 app.ports.websocketClose.subscribe(() => {
   if (socket == null) {
     return;
