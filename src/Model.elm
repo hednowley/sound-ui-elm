@@ -1,8 +1,9 @@
-module Model exposing (Listeners(..), Model, NotificationListeners(..), PackedModel, pack)
+module Model exposing (Listeners(..), Model, NotificationListeners(..), PackedModel, decodeMaybePackedModel, pack)
 
 import Browser
 import Dict exposing (Dict)
 import Http
+import Json.Decode as Decode
 import Msg exposing (Msg)
 import Time
 import Url
@@ -39,6 +40,8 @@ type NotificationListeners
     = NotificationListeners (Dict String (NotificationListener Model))
 
 
+{-| Create a storeable version of a model.
+-}
 pack : Model -> PackedModel
 pack model =
     { username = model.username
@@ -50,6 +53,8 @@ pack model =
     }
 
 
+{-| A version of the model which can be stored in the browser.
+-}
 type alias PackedModel =
     { username : String
     , password : String
@@ -58,3 +63,25 @@ type alias PackedModel =
     , token : Maybe String
     , scanShouldUpdate : Bool
     }
+
+
+{-| Decode a packed model from any JSON value.
+-}
+decodePackedModel : Decode.Value -> Result Decode.Error PackedModel
+decodePackedModel =
+    Decode.decodeValue
+        (Decode.map6 PackedModel
+            (Decode.field "username" Decode.string)
+            (Decode.field "password" Decode.string)
+            (Decode.field "message" Decode.string)
+            (Decode.field "isLoggedIn" Decode.bool)
+            (Decode.field "token" (Decode.maybe Decode.string))
+            (Decode.field "scanShouldUpdate" Decode.bool)
+        )
+
+
+{-| Try to decode a packed model from an optional JSON value.
+-}
+decodeMaybePackedModel : Maybe Decode.Value -> Maybe PackedModel
+decodeMaybePackedModel =
+    Maybe.andThen (Result.toMaybe << decodePackedModel)

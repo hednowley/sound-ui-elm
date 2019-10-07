@@ -11,7 +11,7 @@ import Html.Events exposing (onClick, onInput)
 import Http
 import Json.Decode
 import Json.Encode as Encode
-import Model exposing (Listeners, Model, PackedModel)
+import Model exposing (Listeners, Model, PackedModel, decodeMaybePackedModel)
 import Msg exposing (Msg(..))
 import Ports
 import Rest.Core as Rest
@@ -26,7 +26,7 @@ import Ws.Request
 import Ws.Response
 
 
-main : Program (Maybe PackedModel) Model Msg
+main : Program (Maybe Json.Decode.Value) Model Msg
 main =
     Browser.application
         { init = init
@@ -38,8 +38,7 @@ main =
         }
 
 
-{-| We want to `setStorage` on every update.
-This function adds the setStorage command for every step of the update function.
+{-| Normal update with a "middleware" for storing the model in local storage.
 -}
 updateWithStorage : Msg -> Model -> ( Model, Cmd Msg )
 updateWithStorage msg model =
@@ -64,11 +63,11 @@ unpack packed =
     }
 
 
-init : Maybe PackedModel -> Url -> Key -> ( Model, Cmd Msg )
+init : Maybe Json.Decode.Value -> Url -> Key -> ( Model, Cmd Msg )
 init maybeModel url navKey =
     let
         model =
-            case maybeModel of
+            case decodeMaybePackedModel maybeModel of
                 Just packed ->
                     unpack packed
 
