@@ -5,16 +5,17 @@
   "main": "main.js",
   "dependencies": {},
   "devDependencies": {
-    "css-loader": "^3.0.0",
+    "css-loader": "^3.2.0",
     "elm": "^0.19.0",
     "elm-format": "^0.8.2",
-    "elm-webpack-loader": "^5.0.0",
+    "elm-webpack-loader": "^6.0.0",
+    "file-loader": "^4.2.0",
     "node-sass": "^4.12.0",
-    "sass-loader": "^7.1.0",
-    "style-loader": "^0.23.1",
-    "webpack": "^4.35.3",
-    "webpack-cli": "^3.3.6",
-    "webpack-dev-server": "^3.7.2"
+    "sass-loader": "^8.0.0",
+    "style-loader": "^1.0.0",
+    "webpack": "^4.41.0",
+    "webpack-cli": "^3.3.9",
+    "webpack-dev-server": "^3.8.2"
   },
   "scripts": {
     "build": "webpack --config webpack.config.js",
