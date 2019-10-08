@@ -2,20 +2,20 @@ module Ws.Methods.Handshake exposing (makeRequest, prepareRequest)
 
 import Json.Decode
 import Json.Encode
-import Model exposing (Model)
+import Model exposing (Model, removeListener)
 import Msg exposing (Msg)
 import Types exposing (Update, noOp)
-import Ws.Listener exposing (Listener)
+import Ws.Listener exposing (Listener, makeIrresponsibleListener)
 import Ws.Types exposing (RequestData)
 
 
-type alias Response =
+type alias Body =
     { accepted : Bool }
 
 
-responseDecoder : Json.Decode.Decoder Response
+responseDecoder : Json.Decode.Decoder Body
 responseDecoder =
-    Json.Decode.map Response
+    Json.Decode.map Body
         (Json.Decode.field "accepted" Json.Decode.bool)
 
 
@@ -30,19 +30,20 @@ makeRequest ticket =
 prepareRequest : String -> Update Model Msg -> RequestData
 prepareRequest ticket onHandshakeSuccess =
     { method = "handshake"
-    , params = makeRequest ticket
-    , listener = Just (onResponse onHandshakeSuccess)
+    , params = makeRequest ticket |> Just
+    , listener = onResponse onHandshakeSuccess |> Just
     }
 
 
 onResponse : Update Model Msg -> Listener Model Msg
 onResponse onHandshakeSuccess =
-    Ws.Listener.makeListener
+    makeIrresponsibleListener
+        (\response -> removeListener response.id)
         responseDecoder
         (onSuccess onHandshakeSuccess)
 
 
-onSuccess : Update Model Msg -> Response -> Update Model Msg
+onSuccess : Update Model Msg -> Body -> Update Model Msg
 onSuccess onHandshakeSuccess response model =
     if response.accepted then
         onHandshakeSuccess { model | message = "Websocket handshake succeeded" }

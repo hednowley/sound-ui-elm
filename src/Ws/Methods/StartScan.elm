@@ -7,7 +7,7 @@ import Ws.Types exposing (RequestData)
 prepareRequest : Bool -> Bool -> RequestData
 prepareRequest shouldUpdate shouldDelete =
     { method = "startScan"
-    , params = makeRequest shouldUpdate shouldDelete
+    , params = makeRequest shouldUpdate shouldDelete |> Just
     , listener = Nothing
     }
 

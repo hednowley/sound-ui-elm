@@ -17,7 +17,7 @@ import Ws.Methods.Handshake as Handshake
 import Ws.Methods.StartScan as StartScan
 import Ws.Notification exposing (Notification)
 import Ws.Request
-import Ws.Response
+import Ws.Response exposing (Response)
 import Ws.Types exposing (RequestData)
 
 
@@ -71,11 +71,11 @@ messageIn message =
                     \m -> ( m, Cmd.none )
 
 
-responseIn : Ws.Response.Response -> Update Model Msg
+responseIn : Response -> Update Model Msg
 responseIn response model =
     case Model.getListener response.id model of
         Just listener ->
-            listener response.body model
+            listener response model
 
         Nothing ->
             ( model, Cmd.none )

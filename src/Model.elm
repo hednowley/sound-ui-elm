@@ -8,6 +8,7 @@ module Model exposing
     , getListener
     , getNotificationListener
     , pack
+    , removeListener
     )
 
 import Browser
@@ -68,6 +69,21 @@ addListener id listener model =
         | websocketListeners =
             Listeners <|
                 Dict.insert id listener listeners
+    }
+
+
+{-| Remove a stored Websocket listener from the model.
+-}
+removeListener : Int -> Model -> Model
+removeListener id model =
+    let
+        (Listeners listeners) =
+            model.websocketListeners
+    in
+    { model
+        | websocketListeners =
+            Listeners <|
+                Dict.remove id listeners
     }
 
 

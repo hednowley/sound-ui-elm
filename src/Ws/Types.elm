@@ -10,6 +10,6 @@ import Ws.Listener
 -}
 type alias RequestData =
     { method : String
-    , params : Json.Encode.Value -- This is effectively optional as it accepts a Nothing
+    , params : Maybe Json.Encode.Value
     , listener : Maybe (Ws.Listener.Listener Model Msg) -- How any replies to the message should be handled.
     }
