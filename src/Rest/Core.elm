@@ -10,7 +10,6 @@ import Json.Encode
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Ports
-import Types exposing (Update)
 
 
 {-| Post credentials to the server.
@@ -59,7 +58,7 @@ gotAuthenticateResponse response model =
 
 {-| The server replied to a request for a websocket ticket.
 -}
-gotTicketResponse : Update -> Result Http.Error String -> Model -> ( Model, Cmd Msg )
+gotTicketResponse : (Msg -> Model -> ( Model, Cmd Msg )) -> Result Http.Error String -> Model -> ( Model, Cmd Msg )
 gotTicketResponse update response model =
     case response of
         Ok r ->

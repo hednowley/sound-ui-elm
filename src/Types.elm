@@ -1,8 +1,10 @@
-module Types exposing (Update)
-
-import Model exposing (Model)
-import Msg exposing (Msg)
+module Types exposing (Update,  noOp)
 
 
-type alias Update =
-    Msg -> Model -> ( Model, Cmd Msg )
+type alias Update model msg =
+    model -> ( model, Cmd msg )
+
+
+noOp : Update model msg
+noOp model =
+    ( model, Cmd.none )

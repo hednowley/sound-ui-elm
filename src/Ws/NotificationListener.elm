@@ -1,11 +1,12 @@
 module Ws.NotificationListener exposing (NotificationListener, makeListener, makeListenerWithParams)
 
 import Json.Decode exposing (Decoder, Value)
+import Types exposing (Update)
 import Ws.Notification exposing (Notification)
 
 
-type alias NotificationListener model =
-    Notification -> model -> model
+type alias NotificationListener model msg =
+    Notification -> Update model msg
 
 
 noOp : model -> model
@@ -13,8 +14,8 @@ noOp model =
     model
 
 
-makeListenerWithParams : Decoder a -> (a -> model -> model) -> NotificationListener model
-makeListenerWithParams paramsDecoder updater notification =
+makeListenerWithParams : Decoder a -> (a -> Update model msg) -> NotificationListener model msg
+makeListenerWithParams paramsDecoder updater notification model =
     case notification.params of
         Just params ->
             let
@@ -23,15 +24,15 @@ makeListenerWithParams paramsDecoder updater notification =
             in
             case bodyResult of
                 Ok body ->
-                    updater body
+                    updater body model
 
                 Err error ->
-                    noOp
+                    ( model, Cmd.none )
 
         Nothing ->
-            noOp
+            ( model, Cmd.none )
 
 
-makeListener : (model -> model) -> NotificationListener model
+makeListener : Update model msg -> NotificationListener model msg
 makeListener updater notification =
     updater

@@ -1,19 +1,40 @@
 module Ws.Listener exposing (Listener, makeListener)
 
 import Json.Decode exposing (Decoder, Value, decodeValue)
+import Types exposing (Update, noOp)
 import Ws.Response exposing (ResponseBody)
 
 
 {-| Describes how to transform the model with an incoming websocket message.
 -}
-type alias Listener model =
-    ResponseBody -> model -> model
+type alias Listener model msg =
+    ResponseBody -> Update model msg
 
 
-{-| Make a new listener. Error handling is optional, hence the Maybes.
+{-| Make a new listener without error handling.
 -}
-makeListener : Decoder a -> (a -> model -> model) -> Maybe (Decoder b) -> Maybe (b -> model -> model) -> Listener model
-makeListener successDecoder onSuccess errorDecoder onError response =
+makeListener :
+    Decoder a
+    -> (a -> Update model msg)
+    -> Listener model msg
+makeListener successDecoder onSuccess response =
+    case response of
+        Ok success ->
+            processSuccess success successDecoder onSuccess
+
+        Err error ->
+            noOp
+
+
+{-| Make a new listener which has eror handling.
+-}
+makeResponsibleListener :
+    Decoder a
+    -> (a -> Update model msg)
+    -> Decoder b
+    -> (b -> Update model msg)
+    -> Listener model msg
+makeResponsibleListener successDecoder onSuccess errorDecoder onError response =
     case response of
         Ok success ->
             processSuccess success successDecoder onSuccess
@@ -22,26 +43,21 @@ makeListener successDecoder onSuccess errorDecoder onError response =
             processError error errorDecoder onError
 
 
-processSuccess : Value -> Decoder a -> (a -> model -> model) -> model -> model
+processSuccess : Value -> Decoder a -> (a -> Update model msg) -> Update model msg
 processSuccess json decoder update =
     case decodeValue decoder json of
         Ok body ->
             update body
 
         Err error ->
-            \m -> m
+            noOp
 
 
-processError : Value -> Maybe (Decoder a) -> Maybe (a -> model -> model) -> model -> model
-processError json maybeDecoder maybeRun =
-    case maybeDecoder of
-        Just decoder ->
-            case decodeValue decoder json of
-                Ok body ->
-                    \m -> m
+processError : Value -> Decoder a -> (a -> Update model msg) -> Update model msg
+processError json decoder update =
+    case decodeValue decoder json of
+        Ok body ->
+            noOp
 
-                Err error ->
-                    \m -> m
-
-        Nothing ->
-            \m -> m
+        Err error ->
+            noOp

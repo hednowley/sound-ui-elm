@@ -171,7 +171,7 @@ update msg model =
                     ( model, Cmd.none )
 
         WebsocketIn message ->
-            ( Ws.messageIn message model, Cmd.none )
+            Ws.messageIn message model
 
         OpenWebsocket ->
             ( model, Ports.websocketOpen Config.ws )

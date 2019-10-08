@@ -42,12 +42,12 @@ type alias Model =
 N.B. This is a type not a type alias to avoid recursion issues.
 -}
 type Listeners
-    = Listeners (Dict Int (Listener Model))
+    = Listeners (Dict Int (Listener Model Msg))
 
 
 {-| Try and retrieve the listener with the given ID.
 -}
-getListener : Int -> Model -> Maybe (Listener Model)
+getListener : Int -> Model -> Maybe (Listener Model Msg)
 getListener id model =
     let
         (Listeners listeners) =
@@ -58,7 +58,7 @@ getListener id model =
 
 {-| Store a new Websocket listener in the model.
 -}
-addListener : Int -> Listener Model -> Model -> Model
+addListener : Int -> Listener Model Msg -> Model -> Model
 addListener id listener model =
     let
         (Listeners listeners) =
@@ -74,12 +74,12 @@ addListener id listener model =
 {-| Everything listening out for server notifications, keyed by the notification method they listen for.
 -}
 type NotificationListeners
-    = NotificationListeners (Dict String (NotificationListener Model))
+    = NotificationListeners (Dict String (NotificationListener Model Msg))
 
 
 {-| Try and retrieve the notification listener for the given method.
 -}
-getNotificationListener : String -> Model -> Maybe (NotificationListener Model)
+getNotificationListener : String -> Model -> Maybe (NotificationListener Model Msg)
 getNotificationListener method model =
     let
         (NotificationListeners listeners) =

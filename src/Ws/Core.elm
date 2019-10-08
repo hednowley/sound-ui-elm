@@ -11,10 +11,11 @@ import Json.Encode
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Ports
-import Ws.Listener
+import Types exposing (Update)
+import Ws.Listener exposing (Listener)
 import Ws.Methods.Handshake as Handshake
 import Ws.Methods.StartScan as StartScan
-import Ws.Notification
+import Ws.Notification exposing (Notification)
 import Ws.Request
 import Ws.Response
 import Ws.Types exposing (RequestData)
@@ -41,7 +42,7 @@ sendMessage model request =
 
 {-| Store a websocket listener in the given model.
 -}
-addListener : Int -> Maybe (Ws.Listener.Listener Model) -> Model -> Model
+addListener : Int -> Maybe (Listener Model Msg) -> Model -> Model
 addListener id maybeListener model =
     case maybeListener of
         Just listener ->
@@ -53,7 +54,7 @@ addListener id maybeListener model =
 
 {-| Handles a message arriving through the websocket.
 -}
-messageIn : String -> Model -> Model
+messageIn : String -> Update Model Msg
 messageIn message =
     case Ws.Response.decode message of
         -- Message is a response
@@ -67,24 +68,24 @@ messageIn message =
                     notificationIn notification
 
                 Nothing ->
-                    \m -> m
+                    \m -> ( m, Cmd.none )
 
 
-responseIn : Ws.Response.Response -> Model -> Model
+responseIn : Ws.Response.Response -> Update Model Msg
 responseIn response model =
     case Model.getListener response.id model of
         Just listener ->
             listener response.body model
 
         Nothing ->
-            model
+            ( model, Cmd.none )
 
 
-notificationIn : Ws.Notification.Notification -> Model -> Model
+notificationIn : Notification -> Update Model Msg
 notificationIn notification model =
     case Model.getNotificationListener notification.method model of
         Just listener ->
             listener notification model
 
         Nothing ->
-            model
+            ( model, Cmd.none )
