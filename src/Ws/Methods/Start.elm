@@ -18,7 +18,7 @@ start model =
 
 sayHello : RequestData
 sayHello =
-    { method = "hello"
+    { method = "getArtists"
     , params = Nothing
     , listener = Nothing
     }
