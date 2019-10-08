@@ -1,4 +1,8 @@
-module Ws.Core exposing (addListener, messageIn, sendMessage)
+module Ws.Core exposing
+    ( addListener
+    , messageIn
+    , sendMessage
+    )
 
 import Config
 import Dict
@@ -19,58 +23,56 @@ import Ws.Types exposing (RequestData)
 {-| Sends a message.
 -}
 sendMessage : Model -> RequestData -> ( Model, Cmd Msg )
-sendMessage model data =
+sendMessage model request =
     let
+        id =
+            model.websocketId
+
         newModel =
-            addListener model data.listener
+            addListener id request.listener model
     in
     ( { newModel
-        | websocketId = newModel.websocketId + 1
+        | websocketId = id + 1
       }
     , Ports.websocketOut <|
-        Ws.Request.makeRequest newModel.websocketId data.method data.params
+        Ws.Request.makeRequest id request.method request.params
     )
 
 
-addListener : Model -> Maybe (Ws.Listener.Listener Model) -> Model
-addListener model maybeListener =
+{-| Store a websocket listener in the given model.
+-}
+addListener : Int -> Maybe (Ws.Listener.Listener Model) -> Model -> Model
+addListener id maybeListener model =
     case maybeListener of
         Just listener ->
-            let
-                (Model.Listeners listeners) =
-                    model.websocketListeners
-            in
-            { model | websocketListeners = Model.Listeners <| Dict.insert model.websocketId listener listeners }
+            Model.addListener id listener model
 
         Nothing ->
             model
 
 
+{-| Handles a message arriving through the websocket.
+-}
 messageIn : String -> Model -> Model
-messageIn message model =
+messageIn message =
     case Ws.Response.decode message of
+        -- Message is a response
         Just response ->
-            responseIn response model
+            responseIn response
 
+        -- Message might be a notification
         Nothing ->
             case Ws.Notification.decode message of
                 Just notification ->
-                    notificationIn notification model
+                    notificationIn notification
 
                 Nothing ->
-                    model
+                    \m -> m
 
 
 responseIn : Ws.Response.Response -> Model -> Model
 responseIn response model =
-    let
-        (Model.Listeners listeners) =
-            model.websocketListeners
-
-        maybeListener =
-            Dict.get response.id listeners
-    in
-    case maybeListener of
+    case Model.getListener response.id model of
         Just listener ->
             listener response.body model
 
@@ -80,14 +82,7 @@ responseIn response model =
 
 notificationIn : Ws.Notification.Notification -> Model -> Model
 notificationIn notification model =
-    let
-        (Model.NotificationListeners listeners) =
-            model.notificationListeners
-
-        maybeListener =
-            Dict.get notification.method listeners
-    in
-    case maybeListener of
+    case Model.getNotificationListener notification.method model of
         Just listener ->
             listener notification model
 

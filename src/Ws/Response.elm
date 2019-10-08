@@ -1,21 +1,38 @@
-module Ws.Response exposing (Response, decode)
+module Ws.Response exposing (Response, ResponseBody, decode)
 
-import Json.Decode exposing (Decoder, decodeString, field, int, map3, maybe, string, value)
+import Json.Decode exposing (Decoder, Value, decodeString, field, int, map3, maybe, string, value)
 
 
+{-| A reply received through a websocket.
+-}
 type alias Response =
     { id : Int
-    , body : Result Json.Decode.Value Json.Decode.Value -- Either the error or success body of the response
+    , body : ResponseBody
     }
+
+
+{-| A result which represents either the success JSON or error JSON of a response.
+-}
+type alias ResponseBody =
+    Result Value Value
 
 
 type alias RawResponse =
     { id : Int
-    , result : Maybe Json.Decode.Value
-    , error : Maybe Json.Decode.Value
+    , result : Maybe Value
+    , error : Maybe Value
     }
 
 
+{-| Try to convert a message into a response.
+-}
+decode : String -> Maybe Response
+decode =
+    decodeString decoder >> Result.toMaybe >> Maybe.andThen convert
+
+
+{-| Decodes JSON into a RawResponse.
+-}
 decoder : Decoder RawResponse
 decoder =
     map3 RawResponse
@@ -24,30 +41,15 @@ decoder =
         (maybe (field "error" value))
 
 
-decode : String -> Maybe Response
-decode raw =
-    let
-        result =
-            Json.Decode.decodeString decoder raw
-    in
-    case result of
-        Ok decoded ->
-            convert decoded
-
-        Err error ->
-            Nothing
-
-
+{-| Parses a raw response.
+-}
 convert : RawResponse -> Maybe Response
 convert raw =
     case raw.error of
         Just error ->
-            Just <| Response raw.id <| Result.Err error
+            Response raw.id (Result.Err error) |> Just
 
+        -- If no error then look for a response
         Nothing ->
-            case raw.result of
-                Just result ->
-                    Just <| Response raw.id <| Result.Ok result
-
-                Nothing ->
-                    Nothing
+            raw.result
+                |> Maybe.map (Response raw.id << Result.Ok)

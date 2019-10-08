@@ -1,4 +1,4 @@
-module Ws.Methods.Handshake exposing (makeRequest, prepareRequest, responseDecoder)
+module Ws.Methods.Handshake exposing (makeRequest, prepareRequest)
 
 import Json.Decode
 import Json.Encode
@@ -13,7 +13,8 @@ type alias Response =
 
 responseDecoder : Json.Decode.Decoder Response
 responseDecoder =
-    Json.Decode.map Response (Json.Decode.field "accepted" Json.Decode.bool)
+    Json.Decode.map Response
+        (Json.Decode.field "accepted" Json.Decode.bool)
 
 
 makeRequest : String -> Json.Encode.Value
@@ -22,6 +23,8 @@ makeRequest ticket =
         [ ( "ticket", Json.Encode.string ticket ) ]
 
 
+{-| Make a message which starts the websocket handshake.
+-}
 prepareRequest : String -> RequestData
 prepareRequest ticket =
     { method = "handshake"
