@@ -13,6 +13,7 @@ module Model exposing
 
 import Browser
 import Dict exposing (Dict)
+import Entities.Artist exposing (Artists)
 import Http
 import Json.Decode as Decode
 import Msg exposing (Msg)
@@ -36,6 +37,7 @@ type alias Model =
     , websocketId : Int -- The next unused ID for a websocket message
     , scanShouldUpdate : Bool
     , scanShouldDelete : Bool
+    , artists : Artists
     }
 
 

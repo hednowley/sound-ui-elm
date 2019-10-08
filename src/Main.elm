@@ -115,6 +115,7 @@ emptyModel =
     , websocketId = 1
     , scanShouldUpdate = False
     , scanShouldDelete = False
+    , artists = Dict.empty
     }
 
 
