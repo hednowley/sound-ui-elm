@@ -13,6 +13,8 @@ import Ports
 import Types exposing (Update)
 
 
+{-| Post credentials to the server.
+-}
 authenticate : Model -> Cmd Msg
 authenticate model =
     Http.post
@@ -22,7 +24,7 @@ authenticate model =
         }
 
 
-{-| Tries to connect to the websocket.
+{-| Ask the server for a websocket ticket, using our JWT.
 -}
 getTicket : String -> Cmd Msg
 getTicket token =
@@ -37,6 +39,8 @@ getTicket token =
         }
 
 
+{-| Parse a response from the server to credentials. If it's worked then the response will be a JWT.
+-}
 gotAuthenticateResponse : Result Http.Error DTO.Authenticate.Response -> Model -> ( Model, Cmd Msg )
 gotAuthenticateResponse response model =
     case response of
@@ -53,6 +57,8 @@ gotAuthenticateResponse response model =
             ( { model | message = "Error!" }, Cmd.none )
 
 
+{-| The server replied to a request for a websocket ticket.
+-}
 gotTicketResponse : Update -> Result Http.Error String -> Model -> ( Model, Cmd Msg )
 gotTicketResponse update response model =
     case response of

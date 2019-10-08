@@ -26,6 +26,8 @@ import Ws.Request
 import Ws.Response
 
 
+{-| Application entry point.
+-}
 main : Program (Maybe Json.Decode.Value) Model Msg
 main =
     Browser.application
@@ -51,6 +53,8 @@ updateWithStorage msg model =
     )
 
 
+{-| Create a model from a packed one.
+-}
 unpack : PackedModel -> Model
 unpack packed =
     { emptyModel
@@ -63,6 +67,8 @@ unpack packed =
     }
 
 
+{-| Start the application, passing in the optional serialised model.
+-}
 init : Maybe Json.Decode.Value -> Url -> Key -> ( Model, Cmd Msg )
 init maybeModel url navKey =
     let
@@ -114,7 +120,7 @@ emptyModel =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ Ports.websocketOpened <| Msg.WebsocketOpened
+        [ Ports.websocketOpened <| always Msg.WebsocketOpened
         , Ports.websocketIn <| Msg.WebsocketIn
         ]
 
@@ -153,7 +159,8 @@ update msg model =
         GotTicketResponse response ->
             Rest.gotTicketResponse update response model
 
-        WebsocketOpened _ ->
+        -- Start the ticket handshake now that websocket is open
+        WebsocketOpened ->
             case model.websocketTicket of
                 Just ticket ->
                     Ws.sendMessage model (Ws.Methods.Handshake.prepareRequest ticket)

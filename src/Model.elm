@@ -69,19 +69,18 @@ type alias PackedModel =
 -}
 decodePackedModel : Decode.Value -> Result Decode.Error PackedModel
 decodePackedModel =
-    Decode.decodeValue
-        (Decode.map6 PackedModel
+    Decode.decodeValue <|
+        Decode.map6 PackedModel
             (Decode.field "username" Decode.string)
             (Decode.field "password" Decode.string)
             (Decode.field "message" Decode.string)
             (Decode.field "isLoggedIn" Decode.bool)
             (Decode.field "token" (Decode.maybe Decode.string))
             (Decode.field "scanShouldUpdate" Decode.bool)
-        )
 
 
 {-| Try to decode a packed model from an optional JSON value.
 -}
 decodeMaybePackedModel : Maybe Decode.Value -> Maybe PackedModel
 decodeMaybePackedModel =
-    Maybe.andThen (Result.toMaybe << decodePackedModel)
+    Maybe.andThen <| Result.toMaybe << decodePackedModel

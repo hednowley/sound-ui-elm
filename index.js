@@ -24,7 +24,7 @@ app.ports.websocketOpen.subscribe(url => {
 
   // Tell elm the socket is open
   socket.onopen = () => {
-    app.ports.websocketOpened.send(true);
+    app.ports.websocketOpened.send(null);
   };
 
   // Forward incoming messages to elm

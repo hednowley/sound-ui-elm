@@ -13,7 +13,7 @@ port websocketOpen : String -> Cmd msg
 port websocketClose : () -> Cmd msg
 
 
-port websocketOpened : (Bool -> msg) -> Sub msg
+port websocketOpened : (() -> msg) -> Sub msg
 
 
 port websocketIn : (String -> msg) -> Sub msg

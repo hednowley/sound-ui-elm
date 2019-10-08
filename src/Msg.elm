@@ -15,10 +15,10 @@ type Msg
     | LogOut
     | ToggleScanUpdate
     | ToggleScanDelete
-    | WebsocketOpened Bool
-    | WebsocketIn String -- Message has been received from server
-    | OpenWebsocket
-    | CloseWebsocket
+    | WebsocketOpened -- The websocket has been successfully opened
+    | WebsocketIn String -- A message has been received over the websocket
+    | OpenWebsocket -- Open a new websocket
+    | CloseWebsocket -- Close the websocket
     | StartScan -- Ask for a scan to be started
-    | GotAuthenticateResponse (Result Http.Error DTO.Authenticate.Response)
-    | GotTicketResponse (Result Http.Error String)
+    | GotAuthenticateResponse (Result Http.Error DTO.Authenticate.Response) -- Server has replied to posting of credentials
+    | GotTicketResponse (Result Http.Error String) -- Server has replied to a request for a websocket ticket
