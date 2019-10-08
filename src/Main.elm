@@ -21,6 +21,7 @@ import Ws.Core as Ws
 import Ws.Listener
 import Ws.Listeners.ScanStatus
 import Ws.Methods.Handshake
+import Ws.Methods.Start
 import Ws.Methods.StartScan
 import Ws.Request
 import Ws.Response
@@ -163,7 +164,8 @@ update msg model =
         WebsocketOpened ->
             case model.websocketTicket of
                 Just ticket ->
-                    Ws.sendMessage model (Ws.Methods.Handshake.prepareRequest ticket)
+                    Ws.sendMessage model <|
+                        Ws.Methods.Handshake.prepareRequest ticket Ws.Methods.Start.start
 
                 Nothing ->
                     ( model, Cmd.none )
@@ -178,7 +180,8 @@ update msg model =
             ( model, Ports.websocketClose () )
 
         StartScan ->
-            Ws.sendMessage model (Ws.Methods.StartScan.prepareRequest model.scanShouldUpdate model.scanShouldDelete)
+            Ws.sendMessage model <|
+                Ws.Methods.StartScan.prepareRequest model.scanShouldUpdate model.scanShouldDelete
 
         ToggleScanUpdate ->
             ( { model | scanShouldUpdate = not model.scanShouldUpdate }, Cmd.none )

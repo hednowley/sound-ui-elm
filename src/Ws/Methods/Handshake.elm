@@ -3,7 +3,7 @@ module Ws.Methods.Handshake exposing (makeRequest, prepareRequest)
 import Json.Decode
 import Json.Encode
 import Model exposing (Model)
-import Ws.Listener
+import Ws.Listener exposing (Listener)
 import Ws.Types exposing (RequestData)
 
 
@@ -25,26 +25,27 @@ makeRequest ticket =
 
 {-| Make a message which starts the websocket handshake.
 -}
-prepareRequest : String -> RequestData
-prepareRequest ticket =
+prepareRequest : String -> (Model -> Model) -> RequestData
+prepareRequest ticket onHandshakeSuccess =
     { method = "handshake"
     , params = makeRequest ticket
-    , listener = Just onResponse
+    , listener = Just (onResponse onHandshakeSuccess)
     }
 
 
-onResponse =
+onResponse : (Model -> Model) -> Listener Model
+onResponse onHandshakeSuccess =
     Ws.Listener.makeListener
         responseDecoder
-        onSuccess
+        (onSuccess onHandshakeSuccess)
         Nothing
         Nothing
 
 
-onSuccess : Response -> Model -> Model
-onSuccess response model =
+onSuccess : (Model -> Model) -> Response -> Model -> Model
+onSuccess onHandshakeSuccess response model =
     if response.accepted then
-        { model | message = "Logged in" }
+        onHandshakeSuccess { model | message = "Websocket handshake succeeded" }
 
     else
-        model
+        { model | message = "Websocket handshake failed" }
