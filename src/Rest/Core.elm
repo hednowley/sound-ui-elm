@@ -4,7 +4,7 @@ import Config
 import DTO.Authenticate
 import DTO.Credentials
 import DTO.Ticket
-import Http
+import Http exposing (Error(..))
 import Json.Decode exposing (Decoder, field, map2, string)
 import Json.Encode
 import Model exposing (Model)
@@ -18,7 +18,7 @@ authenticate : Model -> Cmd Msg
 authenticate model =
     Http.post
         { body = Http.jsonBody <| DTO.Credentials.credentialsEncoder model.username model.password
-        , url = Config.root ++ "/api/authenticate"
+        , url = Debug.log "root" <| Config.root ++ "/api/authenticate"
         , expect = Http.expectJson GotAuthenticateResponse DTO.Authenticate.responseDecoder
         }
 
@@ -52,8 +52,26 @@ gotAuthenticateResponse response model =
             , getTicket r.token
             )
 
-        Err _ ->
-            ( { model | message = "Error!" }, Cmd.none )
+        Err e ->
+            let
+                message =
+                    case e of
+                        BadStatus _ ->
+                            "BadStatus"
+
+                        Timeout ->
+                            "Timeout"
+
+                        NetworkError ->
+                            "NetworkError"
+
+                        BadUrl _ ->
+                            "BadUrl"
+
+                        BadBody _ ->
+                            "BadBody"
+            in
+            ( { model | message = message }, Cmd.none )
 
 
 {-| The server replied to a request for a websocket ticket.
