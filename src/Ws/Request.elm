@@ -20,4 +20,4 @@ maybeEncode maybe =
             value
 
         Nothing ->
-            Json.Encode.null
+            Json.Encode.object []
