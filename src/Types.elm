@@ -1,4 +1,4 @@
-module Types exposing (Update,  noOp)
+module Types exposing (Update, noOp)
 
 
 type alias Update model msg =

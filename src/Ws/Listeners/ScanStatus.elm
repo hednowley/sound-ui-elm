@@ -28,7 +28,9 @@ listener =
 
 updater : Params -> Update Model Msg
 updater params model =
-    ({ model
+    ( { model
         | isScanning = params.scanning
         , scanCount = params.count
-    }, Cmd.none)
+      }
+    , Cmd.none
+    )
