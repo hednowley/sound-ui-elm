@@ -59,14 +59,7 @@ updateWithStorage msg model =
 -}
 unpack : PackedModel -> Model
 unpack packed =
-    { emptyModel
-        | username = packed.username
-        , password = packed.password
-        , message = packed.message
-        , isLoggedIn = packed.isLoggedIn
-        , token = packed.token
-        , scanShouldUpdate = packed.scanShouldUpdate
-    }
+    { emptyModel | token = packed.token }
 
 
 {-| Start the application, passing in the optional serialised model.
@@ -144,17 +137,16 @@ update msg model =
             ( { model | password = password }, Cmd.none )
 
         SubmitLogin ->
-            ( model, Rest.authenticate model )
+            ( { model | password = "" }, Rest.authenticate model )
 
         LogOut ->
-            update
-                CloseWebsocket
-                { model
-                    | isLoggedIn = False
-                    , username = ""
-                    , password = ""
-                    , token = Nothing
-                }
+            ( { model
+                | isLoggedIn = False
+                , username = ""
+                , token = Nothing
+              }
+            , Ports.websocketClose ()
+            )
 
         GotAuthenticateResponse response ->
             Rest.gotAuthenticateResponse response model
@@ -171,16 +163,13 @@ update msg model =
                         model
 
                 Nothing ->
-                    ( model, Cmd.none )
+                    ( { model | message = "Can't negotiate websocket as there is no ticket" }, Cmd.none )
 
         WebsocketIn message ->
             Ws.messageIn message model
 
-        OpenWebsocket ->
-            ( model, Ports.websocketOpen Config.ws )
-
-        CloseWebsocket ->
-            ( model, Ports.websocketClose () )
+        OpenWebsocket ticket ->
+            ( { model | websocketTicket = Just ticket }, Ports.websocketOpen Config.ws )
 
         StartScan ->
             Ws.sendMessage

@@ -110,25 +110,13 @@ getNotificationListener method model =
 -}
 pack : Model -> PackedModel
 pack model =
-    { username = model.username
-    , password = model.password
-    , message = model.message
-    , isLoggedIn = model.isLoggedIn
-    , token = model.token
-    , scanShouldUpdate = model.scanShouldUpdate
-    }
+    { token = model.token }
 
 
 {-| A version of the model which can be stored in the browser.
 -}
 type alias PackedModel =
-    { username : String
-    , password : String
-    , message : String
-    , isLoggedIn : Bool
-    , token : Maybe String
-    , scanShouldUpdate : Bool
-    }
+    { token : Maybe String }
 
 
 {-| Decode a packed model from any JSON value.
@@ -136,13 +124,8 @@ type alias PackedModel =
 decodePackedModel : Decode.Value -> Result Decode.Error PackedModel
 decodePackedModel =
     Decode.decodeValue <|
-        Decode.map6 PackedModel
-            (Decode.field "username" Decode.string)
-            (Decode.field "password" Decode.string)
-            (Decode.field "message" Decode.string)
-            (Decode.field "isLoggedIn" Decode.bool)
+        Decode.map PackedModel
             (Decode.field "token" (Decode.maybe Decode.string))
-            (Decode.field "scanShouldUpdate" Decode.bool)
 
 
 {-| Try to decode a packed model from an optional JSON value.

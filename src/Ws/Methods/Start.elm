@@ -14,5 +14,5 @@ import Ws.Types exposing (RequestData)
 start : Update Model Msg
 start =
     combine
-        (Ws.sendMessage getArtists)
+        (\model -> ( { model | isLoggedIn = True }, Cmd.none ))
         (Ws.sendMessage getArtists)
