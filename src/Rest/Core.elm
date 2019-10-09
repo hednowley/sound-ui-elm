@@ -10,6 +10,7 @@ import Json.Encode
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Ports
+import String exposing (fromInt)
 import Types exposing (Update)
 
 
@@ -44,21 +45,30 @@ getTicket token =
 gotAuthenticateResponse : Result Http.Error DTO.Authenticate.Response -> Model -> ( Model, Cmd Msg )
 gotAuthenticateResponse response model =
     case response of
-        Ok r ->
-            ( { model
-                | message = ""
-                , isLoggedIn = True
-                , token = Just r.token
-              }
-            , getTicket r.token
-            )
+        Ok result ->
+            case result of
+                Ok token ->
+                    ( { model
+                        | message = ""
+                        , isLoggedIn = True
+                        , token = Just token
+                      }
+                    , getTicket token
+                    )
+
+                Err e ->
+                    ( { model
+                        | message = e
+                      }
+                    , Cmd.none
+                    )
 
         Err e ->
             let
                 message =
                     case e of
-                        BadStatus _ ->
-                            "BadStatus"
+                        BadStatus s ->
+                            "BadStatus: " ++ fromInt s
 
                         Timeout ->
                             "Timeout"
@@ -69,8 +79,8 @@ gotAuthenticateResponse response model =
                         BadUrl _ ->
                             "BadUrl"
 
-                        BadBody _ ->
-                            "BadBody"
+                        BadBody bb ->
+                            "BadBody: " ++ bb
             in
             ( { model | message = message }, Cmd.none )
 

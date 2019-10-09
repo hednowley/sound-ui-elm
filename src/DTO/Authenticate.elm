@@ -1,14 +1,31 @@
 module DTO.Authenticate exposing (Response, responseDecoder)
 
-import Json.Decode exposing (Decoder, field, map2, string)
+import Json.Decode exposing (Decoder, andThen, fail, field, map, oneOf, string)
 
 
+{-| Either an error message or a token.
+-}
 type alias Response =
-    { status : String, token : String }
+    Result String String
 
-
+{-| Decode the message.
+-}
 responseDecoder : Decoder Response
 responseDecoder =
-    map2 Response
-        (field "status" string)
-        (field "data" (field "token" string))
+    field "status" string
+        |> andThen dataDecoder
+
+
+{-| Decode the data portion of the message.
+-}
+dataDecoder : String -> Decoder Response
+dataDecoder status =
+    case status of
+        "success" ->
+            map Ok (field "data" (field "token" string))
+
+        "error" ->
+            map Err (field "data" string)
+
+        _ ->
+            fail "Unknown status"
