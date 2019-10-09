@@ -224,9 +224,9 @@ view model =
 
 viewArtists : Artists -> Html msg
 viewArtists artists =
-    div []
+    div [ class "home__artists" ]
         (List.map
-            (\a -> span [] [ text a.name ])
+            (\a -> div [ class "home__artist" ] [ text a.name ])
             (Dict.values artists)
         )
 
