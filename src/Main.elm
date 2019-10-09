@@ -166,8 +166,9 @@ update msg model =
         WebsocketOpened ->
             case model.websocketTicket of
                 Just ticket ->
-                    Ws.sendMessage model <|
-                        Ws.Methods.Handshake.prepareRequest ticket Ws.Methods.Start.start
+                    Ws.sendMessage
+                        (Ws.Methods.Handshake.prepareRequest ticket Ws.Methods.Start.start)
+                        model
 
                 Nothing ->
                     ( model, Cmd.none )
@@ -182,8 +183,9 @@ update msg model =
             ( model, Ports.websocketClose () )
 
         StartScan ->
-            Ws.sendMessage model <|
-                Ws.Methods.StartScan.prepareRequest model.scanShouldUpdate model.scanShouldDelete
+            Ws.sendMessage
+                (Ws.Methods.StartScan.prepareRequest model.scanShouldUpdate model.scanShouldDelete)
+                model
 
         ToggleScanUpdate ->
             ( { model | scanShouldUpdate = not model.scanShouldUpdate }, Cmd.none )

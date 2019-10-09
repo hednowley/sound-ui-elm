@@ -23,8 +23,8 @@ import Ws.Types exposing (RequestData)
 
 {-| Sends a message.
 -}
-sendMessage : Model -> RequestData -> ( Model, Cmd Msg )
-sendMessage model request =
+sendMessage : RequestData -> Update Model Msg
+sendMessage request model =
     let
         id =
             model.websocketId
@@ -32,11 +32,8 @@ sendMessage model request =
         newModel =
             addListener id request.listener model
     in
-    ( { newModel
-        | websocketId = id + 1
-      }
-    , Ports.websocketOut <|
-        Ws.Request.makeRequest id request.method request.params
+    ( { newModel | websocketId = id + 1 }
+    , Ports.websocketOut <| Ws.Request.makeRequest id request.method request.params
     )
 
 
