@@ -8,6 +8,7 @@ import Json.Decode exposing (Decoder, andThen, fail, field, map, oneOf, string)
 type alias Response =
     Result String String
 
+
 {-| Decode the message.
 -}
 responseDecoder : Decoder Response
