@@ -38,7 +38,7 @@ prepareRequest ticket onHandshakeSuccess =
 onResponse : Update Model Msg -> Listener Model Msg
 onResponse onHandshakeSuccess =
     makeIrresponsibleListener
-        (\response -> removeListener response.id)
+        (.id >> removeListener)
         responseDecoder
         (onSuccess onHandshakeSuccess)
 

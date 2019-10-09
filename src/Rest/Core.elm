@@ -18,7 +18,7 @@ authenticate : Model -> Cmd Msg
 authenticate model =
     Http.post
         { body = Http.jsonBody <| DTO.Credentials.credentialsEncoder model.username model.password
-        , url = Debug.log "root" <| Config.root ++ "/api/authenticate"
+        , url = Config.root ++ "/api/authenticate"
         , expect = Http.expectJson GotAuthenticateResponse DTO.Authenticate.responseDecoder
         }
 

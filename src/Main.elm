@@ -3,14 +3,15 @@ module Main exposing (emptyModel, init, main, subscriptions, update, updateWithS
 import Browser
 import Browser.Navigation as Nav exposing (Key)
 import Config
-import Debug
-import Dict
+import Dict exposing (Dict)
+import Entities.Artist exposing (Artists)
 import Html exposing (Html, a, button, div, form, input, label, section, span, text)
 import Html.Attributes exposing (checked, class, href, name, placeholder, type_, value)
 import Html.Events exposing (onClick, onInput)
 import Http
 import Json.Decode
 import Json.Encode as Encode
+import List
 import Model exposing (Listeners, Model, PackedModel, decodeMaybePackedModel)
 import Msg exposing (Msg(..))
 import Ports
@@ -224,9 +225,19 @@ view model =
                     , checkboxInput "Update?" model.scanShouldUpdate ToggleScanUpdate
                     , checkboxInput "Delete?" model.scanShouldDelete ToggleScanDelete
                     , button [ onClick StartScan ] [ text "Start scan" ]
+                    , viewArtists model.artists
                     ]
         ]
     }
+
+
+viewArtists : Artists -> Html msg
+viewArtists artists =
+    div []
+        (List.map
+            (\a -> span [] [ text a.name ])
+            (Dict.values artists)
+        )
 
 
 viewInput : String -> String -> String -> String -> (String -> msg) -> Html msg
