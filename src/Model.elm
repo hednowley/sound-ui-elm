@@ -33,6 +33,7 @@ type alias Model =
     , scanShouldDelete : Bool
     , artists : Artists
     , config : Config
+    , websocketIsOpen : Bool
     }
 
 

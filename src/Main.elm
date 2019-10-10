@@ -105,6 +105,7 @@ emptyModel config =
     , scanShouldDelete = False
     , artists = Dict.empty
     , config = config
+    , websocketIsOpen = False
     }
 
 
@@ -137,13 +138,7 @@ update msg model =
             ( { model | password = "" }, Rest.authenticate model )
 
         LogOut ->
-            ( { model
-                | isLoggedIn = False
-                , username = ""
-                , token = Nothing
-              }
-            , Ports.websocketClose ()
-            )
+            ( { model | isLoggedIn = False, username = "", token = Nothing }, Ports.websocketClose () )
 
         GotAuthenticateResponse response ->
             Rest.gotAuthenticateResponse response model
