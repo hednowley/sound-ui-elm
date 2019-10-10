@@ -1,6 +1,6 @@
 module Ws.NotificationListener exposing (NotificationListener, makeListener, makeListenerWithParams)
 
-import Json.Decode exposing (Decoder, Value)
+import Json.Decode exposing (Decoder, Value, errorToString)
 import Types exposing (Update)
 import Ws.Notification exposing (Notification)
 
@@ -9,30 +9,29 @@ type alias NotificationListener model msg =
     Notification -> Update model msg
 
 
-noOp : model -> model
-noOp model =
-    model
-
-
-makeListenerWithParams : Decoder a -> (a -> Update model msg) -> NotificationListener model msg
-makeListenerWithParams paramsDecoder updater notification model =
+{-| Make a listener which cares about the notification parameters.
+-}
+makeListenerWithParams : Decoder a -> (a -> Update model msg) -> (String -> Update model msg) -> NotificationListener model msg
+makeListenerWithParams decode update onError notification model =
     case notification.params of
         Just params ->
-            let
-                bodyResult =
-                    Json.Decode.decodeValue paramsDecoder params
-            in
-            case bodyResult of
+            case Json.Decode.decodeValue decode params of
                 Ok body ->
-                    updater body model
+                    update body model
 
+                -- We got the wrong type of parameters
                 Err error ->
-                    ( model, Cmd.none )
+                    onError (errorToString error) model
 
+        -- We expected parameters but didn't get any
         Nothing ->
-            ( model, Cmd.none )
+            onError "No parameters received" model
 
 
+{-| Make a listener which doesn't care about parameters.
+Since the the notification is pre-routed based on its method
+this means it doesn't depend on the notification at all.
+-}
 makeListener : Update model msg -> NotificationListener model msg
-makeListener updater notification =
-    updater
+makeListener =
+    always

@@ -3,7 +3,7 @@ module Ws.Listeners.ScanStatus exposing (listener)
 import Json.Decode exposing (Decoder, Value, bool, int)
 import Model exposing (Model)
 import Msg exposing (Msg)
-import Types exposing (Update)
+import Types exposing (Update, noOp)
 import Ws.NotificationListener exposing (NotificationListener, makeListenerWithParams)
 
 
@@ -23,7 +23,12 @@ paramsDecoder =
 
 listener : NotificationListener Model Msg
 listener =
-    makeListenerWithParams paramsDecoder updater
+    makeListenerWithParams paramsDecoder updater onError
+
+
+onError : String -> Update Model Msg
+onError err model =
+    ( { model | message = "Couldn't understand scan status: " ++ err }, Cmd.none )
 
 
 updater : Params -> Update Model Msg
