@@ -2,12 +2,9 @@ module Model exposing
     ( Listeners(..)
     , Model
     , NotificationListeners(..)
-    , PackedModel
     , addListener
-    , decodeMaybePackedModel
     , getListener
     , getNotificationListener
-    , pack
     , removeListener
     )
 
@@ -16,7 +13,6 @@ import Config exposing (Config)
 import Dict exposing (Dict)
 import Entities.Artist exposing (Artists)
 import Http
-import Json.Decode as Decode
 import Msg exposing (Msg)
 import Time
 import Url
@@ -106,32 +102,3 @@ getNotificationListener method model =
             model.notificationListeners
     in
     Dict.get method listeners
-
-
-{-| Create a storeable version of a model.
--}
-pack : Model -> PackedModel
-pack model =
-    { token = model.token }
-
-
-{-| A version of the model which can be stored in the browser.
--}
-type alias PackedModel =
-    { token : Maybe String }
-
-
-{-| Decode a packed model from any JSON value.
--}
-decodePackedModel : Decode.Value -> Result Decode.Error PackedModel
-decodePackedModel =
-    Decode.decodeValue <|
-        Decode.map PackedModel
-            (Decode.field "token" (Decode.maybe Decode.string))
-
-
-{-| Try to decode a packed model from an optional JSON value.
--}
-decodeMaybePackedModel : Maybe Decode.Value -> Maybe PackedModel
-decodeMaybePackedModel =
-    Maybe.andThen <| Result.toMaybe << decodePackedModel

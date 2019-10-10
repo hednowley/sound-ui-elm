@@ -1,10 +1,10 @@
-port module Ports exposing (setStorage, websocketClose, websocketIn, websocketOpen, websocketOpened, websocketOut)
+port module Ports exposing (setCache, websocketClose, websocketIn, websocketOpen, websocketOpened, websocketOut)
 
+import Cache exposing (Cache)
 import Json.Encode
-import Model exposing (PackedModel)
 
 
-port setStorage : PackedModel -> Cmd msg
+port setCache : Cache -> Cmd msg
 
 
 port websocketOpen : String -> Cmd msg

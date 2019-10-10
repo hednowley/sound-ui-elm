@@ -2,6 +2,7 @@ module Main exposing (init, main, subscriptions, update, updateWithStorage, view
 
 import Browser
 import Browser.Navigation as Nav exposing (Key)
+import Cache exposing (Cache, makeCache, makeModel, tryDecode)
 import Config exposing (Config, getWebsocketUrl)
 import Dict exposing (Dict)
 import Entities.Artist exposing (Artists)
@@ -12,7 +13,7 @@ import Http
 import Json.Decode
 import Json.Encode as Encode
 import List
-import Model exposing (Listeners, Model, PackedModel, decodeMaybePackedModel)
+import Model exposing (Listeners, Model)
 import Msg exposing (Msg(..))
 import Ports
 import Rest.Core as Rest
@@ -58,19 +59,8 @@ updateWithStorage msg model =
             update msg model
     in
     ( newModel
-    , Cmd.batch [ Ports.setStorage <| Model.pack <| newModel, cmds ]
+    , Cmd.batch [ Ports.setCache (makeCache newModel), cmds ]
     )
-
-
-{-| Create a model from a packed one.
--}
-unpack : PackedModel -> Config -> Model
-unpack packed config =
-    let
-        model =
-            emptyModel config
-    in
-    { model | token = packed.token }
 
 
 {-| Start the application, passing in the optional serialised model.
@@ -78,16 +68,10 @@ unpack packed config =
 init : Flags -> Url -> Key -> ( Model, Cmd Msg )
 init flags url navKey =
     let
-        make =
-            case decodeMaybePackedModel flags.model of
-                Just packed ->
-                    unpack packed
-
-                Nothing ->
-                    emptyModel
-
         model =
-            make flags.config
+            makeModel
+                (emptyModel flags.config)
+                (tryDecode flags.model)
     in
     ( model, reconnect model )
 
@@ -128,8 +112,10 @@ emptyModel config =
     }
 
 
+{-| Dispatches messages when events are received from ports.
+-}
 subscriptions : Model -> Sub Msg
-subscriptions model =
+subscriptions _ =
     Sub.batch
         [ Ports.websocketOpened <| always Msg.WebsocketOpened
         , Ports.websocketIn <| Msg.WebsocketIn

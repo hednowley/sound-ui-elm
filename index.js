@@ -11,7 +11,7 @@ var model = stored ? JSON.parse(stored) : null;
 var app = Elm.Elm.Main.init({ flags: {  config: SOUND_CONFIG, model} });
 
 // Port for serialising and storing the elm model
-app.ports.setStorage.subscribe(model => 
+app.ports.setCache.subscribe(model => 
   localStorage.setItem("sound-ui-elm", JSON.stringify(model))
 );
 
