@@ -13,6 +13,7 @@ import Msg exposing (Msg(..))
 import Ports
 import Types exposing (Update)
 import Ws.Listener exposing (Listener)
+import Ws.Message as Message exposing (Message(..), parse)
 import Ws.Methods.Handshake as Handshake
 import Ws.Methods.StartScan as StartScan
 import Ws.Notification exposing (Notification)
@@ -52,20 +53,18 @@ addListener id maybeListener model =
 {-| Handles a message arriving through the websocket.
 -}
 messageIn : String -> Update Model Msg
-messageIn message =
-    case Ws.Response.decode message of
-        -- Message is a response
-        Just response ->
-            responseIn response
+messageIn json =
+    case parse json of
+        Ok msg ->
+            case msg of
+                Message.Response r ->
+                    responseIn r
 
-        -- Message might be a notification
-        Nothing ->
-            case Ws.Notification.decode message of
-                Just notification ->
-                    notificationIn notification
+                Message.Notification n ->
+                    notificationIn n
 
-                Nothing ->
-                    \m -> ( m, Cmd.none )
+        Err e ->
+            \m -> ( { m | message = e }, Cmd.none )
 
 
 responseIn : Response -> Update Model Msg
