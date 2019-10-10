@@ -12,10 +12,7 @@ import Browser
 import Config exposing (Config)
 import Dict exposing (Dict)
 import Entities.Artist exposing (Artists)
-import Http
 import Msg exposing (Msg)
-import Time
-import Url
 import Ws.Listener exposing (Listener)
 import Ws.NotificationListener exposing (NotificationListener)
 

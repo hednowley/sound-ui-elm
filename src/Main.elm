@@ -11,13 +11,11 @@ import Html.Attributes exposing (checked, class, href, name, placeholder, type_,
 import Html.Events exposing (onClick, onInput)
 import Http
 import Json.Decode
-import Json.Encode as Encode
 import List
 import Model exposing (Listeners, Model)
 import Msg exposing (Msg(..))
 import Ports
 import Rest.Core as Rest
-import Time
 import Types exposing (Update)
 import Url exposing (Url)
 import Ws.Core as Ws
@@ -26,8 +24,6 @@ import Ws.Listeners.ScanStatus
 import Ws.Methods.Handshake
 import Ws.Methods.Start
 import Ws.Methods.StartScan
-import Ws.Request
-import Ws.Response
 
 
 {-| This is the object passed in by the JS bootloader.
