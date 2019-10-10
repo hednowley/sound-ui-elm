@@ -20,22 +20,22 @@ authenticate : Model -> Cmd Msg
 authenticate model =
     Http.post
         { body = Http.jsonBody <| DTO.Credentials.credentialsEncoder model.username model.password
-        , url = Config.root ++ "/api/authenticate"
+        , url = model.config.root ++ "/api/authenticate"
         , expect = Http.expectJson GotAuthenticateResponse DTO.Authenticate.responseDecoder
         }
 
 
 {-| Ask the server for a websocket ticket, using our JWT.
 -}
-getTicket : String -> Cmd Msg
-getTicket token =
+getTicket : Model -> String -> Cmd Msg
+getTicket model token =
     Http.request
         { method = "GET"
         , headers = [ Http.header "Authorization" ("Bearer " ++ token) ]
         , body = Http.emptyBody
         , timeout = Nothing
         , tracker = Nothing
-        , url = Config.root ++ "/api/ticket"
+        , url = model.config.root ++ "/api/ticket"
         , expect = Http.expectJson GotTicketResponse DTO.Ticket.responseDecoder
         }
 
@@ -53,13 +53,11 @@ gotAuthenticateResponse response model =
                         , isLoggedIn = True
                         , token = Just token
                       }
-                    , getTicket token
+                    , getTicket model token
                     )
 
                 Err e ->
-                    ( { model
-                        | message = e
-                      }
+                    ( { model | message = e }
                     , Cmd.none
                     )
 

@@ -1,11 +1,12 @@
-module Config exposing (root, ws)
+module Config exposing (Config, getWebsocketUrl)
 
 import String exposing (replace)
 
 
-root =
-    "http://www.mywebsite.com/sound"
+getWebsocketUrl : Config -> String
+getWebsocketUrl config =
+    replace "http://" "ws://" config.root ++ "/ws"
 
 
-ws =
-    replace "http://" "ws://" root ++ "/ws"
+type alias Config =
+    { root : String }

@@ -12,6 +12,7 @@ module Model exposing
     )
 
 import Browser
+import Config exposing (Config)
 import Dict exposing (Dict)
 import Entities.Artist exposing (Artists)
 import Http
@@ -38,6 +39,7 @@ type alias Model =
     , scanShouldUpdate : Bool
     , scanShouldDelete : Bool
     , artists : Artists
+    , config : Config
     }
 
 

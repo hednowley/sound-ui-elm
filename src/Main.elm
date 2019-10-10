@@ -1,8 +1,8 @@
-module Main exposing (emptyModel, init, main, subscriptions, update, updateWithStorage, view, viewInput)
+module Main exposing (init, main, subscriptions, update, updateWithStorage, view, viewInput)
 
 import Browser
 import Browser.Navigation as Nav exposing (Key)
-import Config
+import Config exposing (Config, getWebsocketUrl)
 import Dict exposing (Dict)
 import Entities.Artist exposing (Artists)
 import Html exposing (Html, a, button, div, form, input, label, section, span, text)
@@ -17,6 +17,7 @@ import Msg exposing (Msg(..))
 import Ports
 import Rest.Core as Rest
 import Time
+import Types exposing (Update)
 import Url exposing (Url)
 import Ws.Core as Ws
 import Ws.Listener
@@ -28,9 +29,15 @@ import Ws.Request
 import Ws.Response
 
 
+{-| This is the object passed in by the JS bootloader.
+-}
+type alias Flags =
+    { config : Config, model : Maybe Json.Decode.Value }
+
+
 {-| Application entry point.
 -}
-main : Program (Maybe Json.Decode.Value) Model Msg
+main : Program Flags Model Msg
 main =
     Browser.application
         { init = init
@@ -42,9 +49,9 @@ main =
         }
 
 
-{-| Normal update with a "middleware" for storing the model in local storage.
+{-| A regular update with a "middleware" for storing the model in local storage.
 -}
-updateWithStorage : Msg -> Model -> ( Model, Cmd Msg )
+updateWithStorage : Msg -> Update Model Msg
 updateWithStorage msg model =
     let
         ( newModel, cmds ) =
@@ -57,23 +64,30 @@ updateWithStorage msg model =
 
 {-| Create a model from a packed one.
 -}
-unpack : PackedModel -> Model
-unpack packed =
-    { emptyModel | token = packed.token }
+unpack : PackedModel -> Config -> Model
+unpack packed config =
+    let
+        model =
+            emptyModel config
+    in
+    { model | token = packed.token }
 
 
 {-| Start the application, passing in the optional serialised model.
 -}
-init : Maybe Json.Decode.Value -> Url -> Key -> ( Model, Cmd Msg )
-init maybeModel url navKey =
+init : Flags -> Url -> Key -> ( Model, Cmd Msg )
+init flags url navKey =
     let
-        model =
-            case decodeMaybePackedModel maybeModel of
+        make =
+            case decodeMaybePackedModel flags.model of
                 Just packed ->
                     unpack packed
 
                 Nothing ->
                     emptyModel
+
+        model =
+            make flags.config
     in
     ( model, reconnect model )
 
@@ -84,14 +98,14 @@ reconnect : Model -> Cmd Msg
 reconnect model =
     case model.token of
         Just token ->
-            Rest.getTicket token
+            Rest.getTicket model token
 
         Nothing ->
             Cmd.none
 
 
-emptyModel : Model
-emptyModel =
+emptyModel : Config -> Model
+emptyModel config =
     { username = ""
     , password = ""
     , message = ""
@@ -110,6 +124,7 @@ emptyModel =
     , scanShouldUpdate = False
     , scanShouldDelete = False
     , artists = Dict.empty
+    , config = config
     }
 
 
@@ -121,7 +136,7 @@ subscriptions model =
         ]
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : Msg -> Update Model Msg
 update msg model =
     case msg of
         OnUrlRequest _ ->
@@ -169,7 +184,7 @@ update msg model =
             Ws.messageIn message model
 
         OpenWebsocket ticket ->
-            ( { model | websocketTicket = Just ticket }, Ports.websocketOpen Config.ws )
+            ( { model | websocketTicket = Just ticket }, Ports.websocketOpen <| getWebsocketUrl model.config )
 
         StartScan ->
             Ws.sendMessage

@@ -8,7 +8,7 @@ var Elm = require("./src/Main.elm");
 // Start elm with the possible serialised model from local storage
 var stored = localStorage.getItem("sound-ui-elm");
 var model = stored ? JSON.parse(stored) : null;
-var app = Elm.Elm.Main.init({ flags: model });
+var app = Elm.Elm.Main.init({ flags: {  config: SOUND_CONFIG, model} });
 
 // Port for serialising and storing the elm model
 app.ports.setStorage.subscribe(model => 
