@@ -1,8 +1,8 @@
-module DTO.Ticket exposing (responseDecoder)
+module DTO.Ticket exposing (decode)
 
 import Json.Decode exposing (Decoder, field, string)
 
 
-responseDecoder : Decoder String
-responseDecoder =
+decode : Decoder String
+decode =
     field "data" (field "ticket" string)

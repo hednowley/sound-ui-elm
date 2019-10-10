@@ -1,4 +1,4 @@
-module DTO.Authenticate exposing (Response, responseDecoder)
+module DTO.Authenticate exposing (Response, decode)
 
 import Json.Decode exposing (Decoder, andThen, fail, field, map, oneOf, string)
 
@@ -11,16 +11,16 @@ type alias Response =
 
 {-| Decode the message.
 -}
-responseDecoder : Decoder Response
-responseDecoder =
+decode : Decoder Response
+decode =
     field "status" string
-        |> andThen dataDecoder
+        |> andThen decodeData
 
 
 {-| Decode the data portion of the message.
 -}
-dataDecoder : String -> Decoder Response
-dataDecoder status =
+decodeData : String -> Decoder Response
+decodeData status =
     case status of
         "success" ->
             map Ok (field "data" (field "token" string))

@@ -8,9 +8,7 @@ import Ws.NotificationListener exposing (NotificationListener, makeListenerWithP
 
 
 type alias Params =
-    { count : Int
-    , scanning : Bool
-    }
+    { count : Int, scanning : Bool }
 
 
 paramsDecoder : Json.Decode.Decoder Params
@@ -33,9 +31,4 @@ onError err model =
 
 updater : Params -> Update Model Msg
 updater params model =
-    ( { model
-        | isScanning = params.scanning
-        , scanCount = params.count
-      }
-    , Cmd.none
-    )
+    ( { model | isScanning = params.scanning, scanCount = params.count }, Cmd.none )

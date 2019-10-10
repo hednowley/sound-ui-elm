@@ -18,10 +18,14 @@ import Types exposing (Update)
 -}
 authenticate : Model -> Cmd Msg
 authenticate model =
+    let
+        credentials =
+            DTO.Credentials.credentialsEncoder model.username model.password
+    in
     Http.post
-        { body = Http.jsonBody <| DTO.Credentials.credentialsEncoder model.username model.password
+        { body = Http.jsonBody credentials
         , url = model.config.root ++ "/api/authenticate"
-        , expect = Http.expectJson GotAuthenticateResponse DTO.Authenticate.responseDecoder
+        , expect = Http.expectJson GotAuthenticateResponse DTO.Authenticate.decode
         }
 
 
@@ -36,7 +40,7 @@ getTicket model token =
         , timeout = Nothing
         , tracker = Nothing
         , url = model.config.root ++ "/api/ticket"
-        , expect = Http.expectJson GotTicketResponse DTO.Ticket.responseDecoder
+        , expect = Http.expectJson GotTicketResponse DTO.Ticket.decode
         }
 
 
@@ -47,20 +51,15 @@ gotAuthenticateResponse response model =
     case response of
         Ok result ->
             case result of
+                -- We got a token
                 Ok token ->
-                    ( { model
-                        | message = ""
-                        , isLoggedIn = True
-                        , token = Just token
-                      }
-                    , getTicket model token
-                    )
+                    ( { model | isLoggedIn = True, token = Just token }, getTicket model token )
 
+                -- Server has told us why we can't have a token
                 Err e ->
-                    ( { model | message = e }
-                    , Cmd.none
-                    )
+                    ( { model | message = e }, Cmd.none )
 
+        -- We don't understand what the server said
         Err e ->
             let
                 message =
