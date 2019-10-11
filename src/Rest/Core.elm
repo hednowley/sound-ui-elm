@@ -17,32 +17,19 @@ import Types exposing (Update)
 
 {-| Post credentials to the server.
 -}
-authenticate : Model -> Cmd Msg
-authenticate model =
+authenticate : String -> Update Model Msg
+authenticate password model =
     let
         credentials =
-            DTO.Credentials.credentialsEncoder model.username model.password
+            DTO.Credentials.credentialsEncoder model.username password
     in
-    Http.post
+    ( { model | token = Loading }
+    , Http.post
         { body = Http.jsonBody credentials
         , url = model.config.root ++ "/api/authenticate"
         , expect = Http.expectJson GotAuthenticateResponse DTO.Authenticate.decode
         }
-
-
-{-| Ask the server for a websocket ticket, using our JWT.
--}
-getTicket : Model -> String -> Cmd Msg
-getTicket model token =
-    Http.request
-        { method = "GET"
-        , headers = [ Http.header "Authorization" ("Bearer " ++ token) ]
-        , body = Http.emptyBody
-        , timeout = Nothing
-        , tracker = Nothing
-        , url = model.config.root ++ "/api/ticket"
-        , expect = Http.expectJson GotTicketResponse DTO.Ticket.decode
-        }
+    )
 
 
 {-| Parse a response from the server to credentials. If it's worked then the response will be a JWT.
@@ -58,7 +45,7 @@ gotAuthenticateResponse response model =
 
                 -- Server has told us why we can't have a token
                 Err e ->
-                    ( { model | message = e }, Cmd.none )
+                    ( { model | message = e, token = Absent }, Cmd.none )
 
         -- We don't understand what the server said
         Err e ->
@@ -80,7 +67,22 @@ gotAuthenticateResponse response model =
                         BadBody bb ->
                             "BadBody: " ++ bb
             in
-            ( { model | message = message }, Cmd.none )
+            ( { model | message = message, token = Absent }, Cmd.none )
+
+
+{-| Ask the server for a websocket ticket, using our JWT.
+-}
+getTicket : Model -> String -> Cmd Msg
+getTicket model token =
+    Http.request
+        { method = "GET"
+        , headers = [ Http.header "Authorization" ("Bearer " ++ token) ]
+        , body = Http.emptyBody
+        , timeout = Nothing
+        , tracker = Nothing
+        , url = model.config.root ++ "/api/ticket"
+        , expect = Http.expectJson GotTicketResponse DTO.Ticket.decode
+        }
 
 
 {-| The server replied to a request for a websocket ticket.

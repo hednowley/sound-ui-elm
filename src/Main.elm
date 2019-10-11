@@ -135,7 +135,7 @@ update msg model =
             ( { model | password = password }, Cmd.none )
 
         SubmitLogin ->
-            ( { model | password = "" }, Rest.authenticate model )
+            Rest.authenticate model.password { model | password = "" }
 
         LogOut ->
             ( { model | username = "", token = Absent }, Ports.websocketClose () )
