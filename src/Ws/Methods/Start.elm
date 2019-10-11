@@ -13,6 +13,9 @@ import Ws.Types exposing (RequestData)
 -}
 start : Update Model Msg
 start =
-    combine
-        (\model -> ( { model | isLoggedIn = True }, Cmd.none ))
-        (Ws.sendMessage getArtists)
+    combine open (Ws.sendMessage getArtists)
+
+
+open : Update Model Msg
+open model =
+    ( { model | websocketIsOpen = True }, Cmd.none )

@@ -7,6 +7,7 @@ import DTO.Ticket
 import Http exposing (Error(..))
 import Json.Decode exposing (Decoder, field, map2, string)
 import Json.Encode
+import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Ports
@@ -53,7 +54,7 @@ gotAuthenticateResponse response model =
             case result of
                 -- We got a token
                 Ok token ->
-                    ( { model | isLoggedIn = True, token = Just token }, getTicket model token )
+                    ( { model | token = Loaded token }, getTicket model token )
 
                 -- Server has told us why we can't have a token
                 Err e ->

@@ -1,6 +1,7 @@
 module Cache exposing (Cache, makeCache, makeModel, tryDecode)
 
 import Json.Decode as Decode exposing (Decoder)
+import Loadable exposing (fromMaybe, toMaybe)
 import Model exposing (Model)
 
 
@@ -14,7 +15,7 @@ type alias Cache =
 -}
 makeCache : Model -> Cache
 makeCache model =
-    { token = model.token }
+    { token = toMaybe model.token }
 
 
 {-| Create a model from a cache.
@@ -23,7 +24,7 @@ makeModel : Model -> Maybe Cache -> Model
 makeModel default cache =
     case cache of
         Just c ->
-            { default | token = c.token }
+            { default | token = fromMaybe c.token }
 
         Nothing ->
             default

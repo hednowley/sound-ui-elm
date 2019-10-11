@@ -12,6 +12,7 @@ import Browser
 import Config exposing (Config)
 import Dict exposing (Dict)
 import Entities.Artist exposing (Artists)
+import Loadable exposing (Loadable(..))
 import Msg exposing (Msg)
 import Ws.Listener exposing (Listener)
 import Ws.NotificationListener exposing (NotificationListener)
@@ -21,8 +22,7 @@ type alias Model =
     { username : String
     , password : String
     , message : String
-    , isLoggedIn : Bool
-    , token : Maybe String
+    , token : Loadable String
     , websocketTicket : Maybe String
     , isScanning : Bool
     , scanCount : Int

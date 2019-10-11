@@ -12,6 +12,7 @@ import Html.Events exposing (onClick, onInput)
 import Http
 import Json.Decode
 import List
+import Loadable exposing (Loadable(..))
 import Model exposing (Listeners, Model)
 import Msg exposing (Msg(..))
 import Ports
@@ -77,10 +78,10 @@ init flags url navKey =
 reconnect : Model -> Cmd Msg
 reconnect model =
     case model.token of
-        Just token ->
+        Loaded token ->
             Rest.getTicket model token
 
-        Nothing ->
+        _ ->
             Cmd.none
 
 
@@ -89,8 +90,7 @@ emptyModel config =
     { username = ""
     , password = ""
     , message = ""
-    , isLoggedIn = False
-    , token = Nothing
+    , token = Absent
     , websocketTicket = Nothing
     , isScanning = False
     , scanCount = 0
@@ -138,7 +138,7 @@ update msg model =
             ( { model | password = "" }, Rest.authenticate model )
 
         LogOut ->
-            ( { model | isLoggedIn = False, username = "", token = Nothing }, Ports.websocketClose () )
+            ( { model | username = "", token = Absent }, Ports.websocketClose () )
 
         GotAuthenticateResponse response ->
             Rest.gotAuthenticateResponse response model
@@ -188,8 +188,8 @@ view : Model -> Browser.Document Msg
 view model =
     { title = "Sound"
     , body =
-        [ case model.isLoggedIn of
-            False ->
+        [ case model.token of
+            Absent ->
                 div [ class "login__wrap" ]
                     [ text model.message
                     , form [ class "login__container" ]
@@ -200,16 +200,24 @@ view model =
                         ]
                     ]
 
-            True ->
-                div [ class "home__wrap" ]
-                    [ span [] [ text model.message ]
-                    , span [] [ text <| "Scanned: " ++ String.fromInt model.scanCount ]
-                    , button [ onClick LogOut ] [ text "Log out" ]
-                    , checkboxInput "Update?" model.scanShouldUpdate ToggleScanUpdate
-                    , checkboxInput "Delete?" model.scanShouldDelete ToggleScanDelete
-                    , button [ onClick StartScan ] [ text "Start scan" ]
-                    , viewArtists model.artists
-                    ]
+            Loading ->
+                div [] [ text "Getting token..." ]
+
+            _ ->
+                case model.websocketIsOpen of
+                    True ->
+                        div [ class "home__wrap" ]
+                            [ span [] [ text model.message ]
+                            , span [] [ text <| "Scanned: " ++ String.fromInt model.scanCount ]
+                            , button [ onClick LogOut ] [ text "Log out" ]
+                            , checkboxInput "Update?" model.scanShouldUpdate ToggleScanUpdate
+                            , checkboxInput "Delete?" model.scanShouldDelete ToggleScanDelete
+                            , button [ onClick StartScan ] [ text "Start scan" ]
+                            , viewArtists model.artists
+                            ]
+
+                    False ->
+                        div [] [ text "Opening websocket..." ]
         ]
     }
 
