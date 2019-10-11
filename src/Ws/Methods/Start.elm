@@ -13,9 +13,9 @@ import Ws.Types exposing (RequestData)
 -}
 start : Update Model Msg
 start =
-    combine open (Ws.sendMessage getArtists)
+    combine setWebsocketOpen (Ws.sendMessage getArtists)
 
 
-open : Update Model Msg
-open model =
+setWebsocketOpen : Update Model Msg
+setWebsocketOpen model =
     ( { model | websocketIsOpen = True }, Cmd.none )
