@@ -1,6 +1,5 @@
-module.exports = {
+module.exports = optimize => ({
   entry: "./index.js",
-  mode: "development",
 
   output: {
     path: __dirname + "/dist",
@@ -27,7 +26,8 @@ module.exports = {
           loader: "elm-webpack-loader",
           options: {
             cwd: __dirname,
-            cache: false
+            cache: false,
+            optimize
           }
         }
       },
@@ -48,10 +48,5 @@ module.exports = {
       }
     ],
     noParse: /\.elm$/
-  },
-
-  devServer: {
-    inline: true,
-    stats: "errors-only"
   }
-};
+});

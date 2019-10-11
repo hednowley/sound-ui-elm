@@ -1,5 +1,8 @@
 module Loadable exposing (Loadable(..), fromMaybe, toMaybe)
 
+{-| Something which takes time to load.
+-}
+
 
 type Loadable value
     = Absent
@@ -7,6 +10,8 @@ type Loadable value
     | Loaded value
 
 
+{-| Convert a Loadable to a Maybe.
+-}
 toMaybe : Loadable value -> Maybe value
 toMaybe loadable =
     case loadable of
@@ -17,6 +22,8 @@ toMaybe loadable =
             Nothing
 
 
+{-| Convert a Maybe into a Loadable.
+-}
 fromMaybe : Maybe value -> Loadable value
 fromMaybe maybe =
     case maybe of
