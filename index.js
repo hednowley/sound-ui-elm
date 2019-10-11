@@ -8,10 +8,10 @@ var Elm = require("./src/Main.elm");
 // Start elm with the possible serialised model from local storage
 var stored = localStorage.getItem("sound-ui-elm");
 var model = stored ? JSON.parse(stored) : null;
-var app = Elm.Elm.Main.init({ flags: {  config: SOUND_CONFIG, model} });
+var app = Elm.Elm.Main.init({ flags: { config: SOUND_CONFIG, model } });
 
 // Port for serialising and storing the elm model
-app.ports.setCache.subscribe(model => 
+app.ports.setCache.subscribe(model =>
   localStorage.setItem("sound-ui-elm", JSON.stringify(model))
 );
 
@@ -24,6 +24,11 @@ app.ports.websocketOpen.subscribe(url => {
 
   // Tell elm the socket is open
   socket.onopen = () => {
+    // Let elm know when port closes
+    socket.onclose = () => {
+      app.ports.websocketClosed.send(null);
+    };
+
     app.ports.websocketOpened.send(null);
   };
 
@@ -45,6 +50,9 @@ app.ports.websocketClose.subscribe(() => {
   if (socket == null) {
     return;
   }
+
+  // Don't tell elm about a close which it instigated
+  socket.onclose = null;
 
   socket.close();
   socket = null;

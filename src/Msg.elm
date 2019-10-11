@@ -16,6 +16,7 @@ type Msg
     | ToggleScanUpdate
     | ToggleScanDelete
     | WebsocketOpened -- The websocket has been successfully opened
+    | WebsocketClosed -- The websocket has been closed
     | WebsocketIn String -- A message has been received over the websocket
     | StartScan -- Ask for a scan to be started
     | GotAuthenticateResponse (Result Http.Error DTO.Authenticate.Response) -- Server has replied to posting of credentials

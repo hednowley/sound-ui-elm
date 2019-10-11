@@ -114,7 +114,8 @@ emptyModel config =
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
-        [ Ports.websocketOpened <| always Msg.WebsocketOpened
+        [ Ports.websocketOpened <| always WebsocketOpened
+        , Ports.websocketClosed <| always WebsocketClosed
         , Ports.websocketIn <| Msg.WebsocketIn
         ]
 
@@ -156,6 +157,10 @@ update msg model =
 
                 Nothing ->
                     ( { model | message = "Can't negotiate websocket as there is no ticket" }, Cmd.none )
+
+        WebsocketClosed ->
+            -- Try to reopen the websocket
+            ( { model | websocketIsOpen = False }, reconnect model )
 
         WebsocketIn message ->
             Ws.messageIn message model
@@ -214,7 +219,7 @@ view model =
                             ]
 
                     False ->
-                        div [] [ text "Opening websocket..." ]
+                        div [] [ text "Websocket not open" ]
         ]
     }
 
