@@ -144,7 +144,7 @@ update msg model =
             Rest.gotAuthenticateResponse response model
 
         GotTicketResponse response ->
-            Rest.gotTicketResponse update response model
+            Rest.gotTicketResponse response model
 
         -- Start the ticket handshake now that websocket is open
         WebsocketOpened ->
@@ -159,9 +159,6 @@ update msg model =
 
         WebsocketIn message ->
             Ws.messageIn message model
-
-        OpenWebsocket ticket ->
-            ( { model | websocketTicket = Just ticket }, Ports.websocketOpen <| getWebsocketUrl model.config )
 
         StartScan ->
             Ws.sendMessage

@@ -13,6 +13,7 @@ import Msg exposing (Msg(..))
 import Ports
 import String exposing (fromInt)
 import Types exposing (Update)
+import Ws.Core
 
 
 {-| Post credentials to the server.
@@ -34,7 +35,7 @@ authenticate password model =
 
 {-| Parse a response from the server to credentials. If it's worked then the response will be a JWT.
 -}
-gotAuthenticateResponse : Result Http.Error DTO.Authenticate.Response -> Model -> ( Model, Cmd Msg )
+gotAuthenticateResponse : Result Http.Error DTO.Authenticate.Response -> Update Model Msg
 gotAuthenticateResponse response model =
     case response of
         Ok result ->
@@ -87,11 +88,11 @@ getTicket model token =
 
 {-| The server replied to a request for a websocket ticket.
 -}
-gotTicketResponse : (Msg -> Update Model Msg) -> Result Http.Error String -> Update Model Msg
-gotTicketResponse update response model =
+gotTicketResponse : Result Http.Error String -> Update Model Msg
+gotTicketResponse response model =
     case response of
-        Ok r ->
-            update (OpenWebsocket r) model
+        Ok ticket ->
+            Ws.Core.open ticket model
 
         Err _ ->
             ( { model | message = "Could not retrieve websocket ticket" }, Cmd.none )
