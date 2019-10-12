@@ -6,7 +6,6 @@ import Url.Parser exposing ((</>), Parser, int, map, oneOf, parse, s)
 
 type Route
     = Artist Int
-    | Login
 
 
 parseUrl : Url -> Maybe Route
@@ -18,5 +17,4 @@ routeParser : Parser (Route -> a) a
 routeParser =
     oneOf
         [ map Artist (s "artist" </> int)
-        , map Login (s "login")
         ]

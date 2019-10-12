@@ -19,8 +19,8 @@ import Rest.Core as Rest
 import Routing
 import Types exposing (Update)
 import Url exposing (Url)
-import Views.Home
 import Views.Login
+import Views.Root
 import Ws.Core as Ws
 import Ws.Listeners.ScanStatus
 import Ws.Methods.Handshake
@@ -205,7 +205,7 @@ view model =
 
             _ ->
                 if model.websocketIsOpen then
-                    Views.Home.view model
+                    Views.Root.view model
 
                 else
                     div [] [ text "Websocket not open" ]
