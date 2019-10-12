@@ -7,7 +7,7 @@ import Config exposing (Config, getWebsocketUrl)
 import Dict exposing (Dict)
 import Entities.Artist exposing (Artists)
 import Html exposing (Html, a, button, div, form, input, label, section, span, text)
-import Html.Attributes exposing (checked, class, href, name, placeholder, type_, value, disabled)
+import Html.Attributes exposing (checked, class, disabled, href, name, placeholder, type_, value)
 import Html.Events exposing (onClick, onInput)
 import Http
 import Json.Decode
@@ -17,6 +17,7 @@ import Model exposing (Listeners, Model)
 import Msg exposing (Msg(..))
 import Ports
 import Rest.Core as Rest
+import String exposing (fromInt)
 import Types exposing (Update)
 import Url exposing (Url)
 import Ws.Core as Ws
@@ -25,7 +26,6 @@ import Ws.Listeners.ScanStatus
 import Ws.Methods.Handshake
 import Ws.Methods.Start
 import Ws.Methods.StartScan
-import String exposing (fromInt)
 
 
 {-| This is the object passed in by the JS bootloader.
@@ -229,7 +229,7 @@ viewArtists : Artists -> Html msg
 viewArtists artists =
     div [ class "home__artists" ]
         (List.map
-            (\artist -> div [ class "home__artist" ] [ a [ href <| "/artist/" ++ fromInt artist.id ] [text artist.name ]])
+            (\artist -> div [ class "home__artist" ] [ a [ href <| "/artist/" ++ fromInt artist.id ] [ text artist.name ] ])
             (Dict.values artists)
         )
 
