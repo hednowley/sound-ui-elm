@@ -11,6 +11,7 @@ module Model exposing
 import Browser.Navigation exposing (Key)
 import Config exposing (Config)
 import Dict exposing (Dict)
+import Entities.Artist exposing (Artist)
 import Entities.ArtistSummary exposing (ArtistSummaries)
 import Loadable exposing (Loadable(..))
 import Msg exposing (Msg)
@@ -34,6 +35,7 @@ type alias Model =
     , scanShouldUpdate : Bool
     , scanShouldDelete : Bool
     , artists : ArtistSummaries
+    , artist : Loadable Artist
     , config : Config
     , websocketIsOpen : Bool
     , route : Maybe Route

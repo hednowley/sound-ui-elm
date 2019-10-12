@@ -109,6 +109,7 @@ emptyModel url key config =
     , scanShouldUpdate = False
     , scanShouldDelete = False
     , artists = Dict.empty
+    , artist = Absent
     , config = config
     , websocketIsOpen = False
     , route = Nothing
@@ -146,8 +147,8 @@ update msg model =
                 Nothing ->
                     ( m, Cmd.none )
 
-                Just (Artist id) ->
-                    Ws.sendMessage getArtist m
+                Just (Artist _) ->
+                    Ws.sendMessage getArtist { m | artist = Loading }
 
         UsernameChanged name ->
             ( { model | username = name }, Cmd.none )

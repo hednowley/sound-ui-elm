@@ -1,7 +1,7 @@
 module Ws.Methods.GetArtist exposing (getArtist)
 
-import Dict
-import Json.Decode exposing (field, int, list, string)
+import Json.Decode exposing (field, int, map2, string)
+import Loadable exposing (Loadable(..))
 import Model exposing (Model, removeListener)
 import Msg exposing (Msg)
 import Types exposing (Update)
@@ -10,7 +10,7 @@ import Ws.Types exposing (RequestData)
 
 
 type alias Body =
-    { artists : List Artist }
+    { artist : Artist }
 
 
 type alias Artist =
@@ -30,12 +30,10 @@ getArtist =
 responseDecoder : Json.Decode.Decoder Body
 responseDecoder =
     Json.Decode.map Body
-        (field "artists"
-            (list <|
-                Json.Decode.map2 Artist
-                    (field "id" int)
-                    (field "name" string)
-            )
+        (field "artist" <|
+            map2 Artist
+                (field "id" int)
+                (field "name" string)
         )
 
 
@@ -44,13 +42,9 @@ onResponse =
     makeIrresponsibleListener
         (.id >> removeListener)
         responseDecoder
-        setArtists
+        setArtist
 
 
-setArtists : Body -> Update Model Msg
-setArtists body model =
-    let
-        tuples =
-            List.map (\a -> ( a.id, a )) body.artists
-    in
-    ( { model | artists = Dict.fromList tuples }, Cmd.none )
+setArtist : Body -> Update Model Msg
+setArtist body model =
+    ( { model | artist = Loaded body.artist }, Cmd.none )
