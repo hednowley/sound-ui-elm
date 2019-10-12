@@ -25,6 +25,7 @@ import Ws.Listeners.ScanStatus
 import Ws.Methods.Handshake
 import Ws.Methods.Start
 import Ws.Methods.StartScan
+import String exposing (fromInt)
 
 
 {-| This is the object passed in by the JS bootloader.
@@ -228,7 +229,7 @@ viewArtists : Artists -> Html msg
 viewArtists artists =
     div [ class "home__artists" ]
         (List.map
-            (\a -> div [ class "home__artist" ] [ text a.name ])
+            (\artist -> div [ class "home__artist" ] [ a [ href <| "/artist/" ++ fromInt artist.id ] [text artist.name ]])
             (Dict.values artists)
         )
 
