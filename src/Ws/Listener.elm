@@ -50,7 +50,7 @@ makeIrresponsibleListener cleanup successDecoder onSuccess response model =
         Ok success ->
             processSuccess success successDecoder onSuccess cleaned
 
-        Err error ->
+        Err _ ->
             ( cleaned, Cmd.none )
 
 
@@ -60,15 +60,15 @@ processSuccess json decoder update =
         Ok body ->
             update body
 
-        Err error ->
+        Err _ ->
             noOp
 
 
 processError : Value -> Decoder a -> (a -> Update model msg) -> Update model msg
-processError json decoder update =
+processError json decoder _ =
     case decodeValue decoder json of
         Ok body ->
             noOp
 
-        Err error ->
+        Err _ ->
             noOp

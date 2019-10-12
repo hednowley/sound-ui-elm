@@ -1,12 +1,10 @@
 module Ws.Methods.GetArtists exposing (getArtists)
 
-import Dict exposing (Dict)
+import Dict
 import Json.Decode exposing (field, int, list, string)
-import Json.Encode
 import Model exposing (Model, removeListener)
 import Msg exposing (Msg)
 import Types exposing (Update)
-import Ws.Core as Ws
 import Ws.Listener exposing (Listener, makeIrresponsibleListener)
 import Ws.Types exposing (RequestData)
 

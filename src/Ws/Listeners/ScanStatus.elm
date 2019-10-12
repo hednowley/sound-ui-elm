@@ -1,9 +1,9 @@
 module Ws.Listeners.ScanStatus exposing (listener)
 
-import Json.Decode exposing (Decoder, Value, bool, int)
+import Json.Decode exposing (bool, int)
 import Model exposing (Model)
 import Msg exposing (Msg)
-import Types exposing (Update, noOp)
+import Types exposing (Update)
 import Ws.NotificationListener exposing (NotificationListener, makeListenerWithParams)
 
 

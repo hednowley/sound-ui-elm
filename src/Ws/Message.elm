@@ -1,6 +1,17 @@
 module Ws.Message exposing (Message(..), parse)
 
-import Json.Decode exposing (Decoder, Value, andThen, decodeString, errorToString, fail, field, map, oneOf, string)
+import Json.Decode
+    exposing
+        ( Decoder
+        , andThen
+        , decodeString
+        , errorToString
+        , fail
+        , field
+        , map
+        , oneOf
+        , string
+        )
 import Ws.Notification as N exposing (Notification, decode)
 import Ws.Response as R exposing (Response, decode)
 

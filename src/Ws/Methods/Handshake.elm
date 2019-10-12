@@ -4,7 +4,7 @@ import Json.Decode
 import Json.Encode
 import Model exposing (Model, removeListener)
 import Msg exposing (Msg)
-import Types exposing (Update, noOp)
+import Types exposing (Update)
 import Ws.Listener exposing (Listener, makeIrresponsibleListener)
 import Ws.Types exposing (RequestData)
 

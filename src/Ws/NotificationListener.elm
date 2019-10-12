@@ -1,6 +1,6 @@
 module Ws.NotificationListener exposing (NotificationListener, makeListener, makeListenerWithParams)
 
-import Json.Decode exposing (Decoder, Value, errorToString)
+import Json.Decode exposing (Decoder, errorToString)
 import Types exposing (Update)
 import Ws.Notification exposing (Notification)
 

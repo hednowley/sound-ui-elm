@@ -6,17 +6,14 @@ module Ws.Core exposing
     )
 
 import Config exposing (getWebsocketUrl)
-import Dict
-import Http
-import Json.Encode
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Ports
 import Types exposing (Update)
 import Ws.Listener exposing (Listener)
 import Ws.Message as Message exposing (Message(..), parse)
-import Ws.Methods.Handshake as Handshake
-import Ws.Methods.StartScan as StartScan
+import Ws.Methods.Handshake
+import Ws.Methods.StartScan
 import Ws.Notification exposing (Notification)
 import Ws.Request
 import Ws.Response exposing (Response)
