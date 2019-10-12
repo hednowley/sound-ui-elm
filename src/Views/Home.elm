@@ -1,7 +1,7 @@
 module Views.Home exposing (view)
 
 import Dict
-import Entities.Artist exposing (Artists)
+import Entities.ArtistSummary exposing (ArtistSummaries)
 import Html exposing (Html, a, button, div, input, label, span, text)
 import Html.Attributes exposing (checked, class, href, type_)
 import Html.Events exposing (onClick)
@@ -28,7 +28,7 @@ checkboxInput name isChecked msg =
     label [] [ input [ checked isChecked, type_ "checkbox", onClick msg ] [], text name ]
 
 
-viewArtists : Artists -> Html msg
+viewArtists : ArtistSummaries -> Html msg
 viewArtists artists =
     div [ class "home__artists" ]
         (List.map

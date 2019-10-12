@@ -7,5 +7,5 @@ import String exposing (fromInt)
 
 
 view : Int -> Model -> Html.Html Msg
-view id model =
+view id _ =
     div [] [ text <| fromInt id ]

@@ -16,13 +16,14 @@ import Model exposing (Listeners, Model)
 import Msg exposing (Msg(..))
 import Ports
 import Rest.Core as Rest
-import Routing
+import Routing exposing (Route(..))
 import Types exposing (Update)
 import Url exposing (Url)
 import Views.Login
 import Views.Root
 import Ws.Core as Ws
 import Ws.Listeners.ScanStatus
+import Ws.Methods.GetArtist exposing (getArtist)
 import Ws.Methods.Handshake
 import Ws.Methods.Start
 import Ws.Methods.StartScan
@@ -91,7 +92,6 @@ reconnect model =
 emptyModel : Url -> Key -> Config -> Model
 emptyModel url key config =
     { key = key
-    , url = url
     , username = ""
     , password = ""
     , message = ""
@@ -138,7 +138,16 @@ update msg model =
                     ( model, Nav.load href )
 
         OnUrlChange url ->
-            ( { model | url = url, route = Routing.parseUrl url }, Cmd.none )
+            let
+                m =
+                    { model | route = Routing.parseUrl url }
+            in
+            case m.route of
+                Nothing ->
+                    ( m, Cmd.none )
+
+                Just (Artist id) ->
+                    Ws.sendMessage getArtist m
 
         UsernameChanged name ->
             ( { model | username = name }, Cmd.none )

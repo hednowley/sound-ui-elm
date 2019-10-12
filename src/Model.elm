@@ -11,18 +11,16 @@ module Model exposing
 import Browser.Navigation exposing (Key)
 import Config exposing (Config)
 import Dict exposing (Dict)
-import Entities.Artist exposing (Artists)
+import Entities.ArtistSummary exposing (ArtistSummaries)
 import Loadable exposing (Loadable(..))
 import Msg exposing (Msg)
 import Routing exposing (Route)
-import Url
 import Ws.Listener exposing (Listener)
 import Ws.NotificationListener exposing (NotificationListener)
 
 
 type alias Model =
     { key : Key
-    , url : Url.Url
     , username : String
     , password : String
     , message : String
@@ -35,7 +33,7 @@ type alias Model =
     , websocketId : Int -- The next unused ID for a websocket message
     , scanShouldUpdate : Bool
     , scanShouldDelete : Bool
-    , artists : Artists
+    , artists : ArtistSummaries
     , config : Config
     , websocketIsOpen : Bool
     , route : Maybe Route
