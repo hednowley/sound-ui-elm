@@ -9,17 +9,22 @@ module Model exposing
     )
 
 import Browser
+import Browser.Navigation as Nav exposing (Key)
 import Config exposing (Config)
 import Dict exposing (Dict)
 import Entities.Artist exposing (Artists)
 import Loadable exposing (Loadable(..))
 import Msg exposing (Msg)
+import Routing exposing (Route)
+import Url exposing (Url)
 import Ws.Listener exposing (Listener)
 import Ws.NotificationListener exposing (NotificationListener)
 
 
 type alias Model =
-    { username : String
+    { key : Key
+    , url : Url.Url
+    , username : String
     , password : String
     , message : String
     , token : Loadable String
@@ -34,6 +39,7 @@ type alias Model =
     , artists : Artists
     , config : Config
     , websocketIsOpen : Bool
+    , route : Maybe Route
     }
 
 

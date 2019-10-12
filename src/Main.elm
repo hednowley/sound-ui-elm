@@ -17,6 +17,7 @@ import Model exposing (Listeners, Model)
 import Msg exposing (Msg(..))
 import Ports
 import Rest.Core as Rest
+import Routing
 import String exposing (fromInt)
 import Types exposing (Update)
 import Url exposing (Url)
@@ -68,7 +69,7 @@ init flags url navKey =
     let
         model =
             makeModel
-                (emptyModel flags.config)
+                (emptyModel url navKey flags.config)
                 (tryDecode flags.model)
     in
     ( model, reconnect model )
@@ -86,9 +87,11 @@ reconnect model =
             Cmd.none
 
 
-emptyModel : Config -> Model
-emptyModel config =
-    { username = ""
+emptyModel : Url -> Key -> Config -> Model
+emptyModel url key config =
+    { key = key
+    , url = url
+    , username = ""
     , password = ""
     , message = ""
     , token = Absent
@@ -107,6 +110,7 @@ emptyModel config =
     , artists = Dict.empty
     , config = config
     , websocketIsOpen = False
+    , route = Nothing
     }
 
 
@@ -124,11 +128,16 @@ subscriptions _ =
 update : Msg -> Update Model Msg
 update msg model =
     case msg of
-        OnUrlRequest _ ->
-            ( model, Cmd.none )
+        OnUrlRequest request ->
+            case request of
+                Browser.Internal url ->
+                    ( model, Nav.pushUrl model.key (Url.toString url) )
 
-        OnUrlChange _ ->
-            ( model, Cmd.none )
+                Browser.External href ->
+                    ( model, Nav.load href )
+
+        OnUrlChange url ->
+            ( { model | url = url, route = Routing.parseUrl url }, Cmd.none )
 
         UsernameChanged name ->
             ( { model | username = name }, Cmd.none )
