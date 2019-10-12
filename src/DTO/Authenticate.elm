@@ -1,6 +1,6 @@
 module DTO.Authenticate exposing (Response, decode)
 
-import Json.Decode exposing (Decoder, andThen, fail, field, map, oneOf, string)
+import Json.Decode exposing (Decoder, andThen, fail, field, map, string)
 
 
 {-| Either an error message or a token.

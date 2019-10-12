@@ -14,7 +14,9 @@ type alias Body =
 
 
 type alias Artist =
-    { id : Int, name : String }
+    { id : Int
+    , name : String
+    }
 
 
 getArtists : RequestData

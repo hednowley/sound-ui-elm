@@ -1,16 +1,12 @@
 module Rest.Core exposing (authenticate, getTicket, gotAuthenticateResponse, gotTicketResponse)
 
-import Config
 import DTO.Authenticate
 import DTO.Credentials
 import DTO.Ticket
 import Http exposing (Error(..))
-import Json.Decode exposing (Decoder, field, map2, string)
-import Json.Encode
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (Msg(..))
-import Ports
 import String exposing (fromInt)
 import Types exposing (Update)
 import Ws.Core

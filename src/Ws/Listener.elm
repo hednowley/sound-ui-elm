@@ -67,7 +67,7 @@ processSuccess json decoder update =
 processError : Value -> Decoder a -> (a -> Update model msg) -> Update model msg
 processError json decoder _ =
     case decodeValue decoder json of
-        Ok body ->
+        Ok _ ->
             noOp
 
         Err _ ->

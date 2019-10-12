@@ -8,15 +8,14 @@ module Model exposing
     , removeListener
     )
 
-import Browser
-import Browser.Navigation as Nav exposing (Key)
+import Browser.Navigation exposing (Key)
 import Config exposing (Config)
 import Dict exposing (Dict)
 import Entities.Artist exposing (Artists)
 import Loadable exposing (Loadable(..))
 import Msg exposing (Msg)
 import Routing exposing (Route)
-import Url exposing (Url)
+import Url
 import Ws.Listener exposing (Listener)
 import Ws.NotificationListener exposing (NotificationListener)
 

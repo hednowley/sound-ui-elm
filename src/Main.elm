@@ -2,51 +2,26 @@ module Main exposing (main)
 
 import Browser
 import Browser.Navigation as Nav exposing (Key)
-import Cache exposing (Cache, makeCache, makeModel, tryDecode)
-import Config exposing (Config, getWebsocketUrl)
-import Dict exposing (Dict)
-import Entities.Artist exposing (Artists)
+import Cache exposing (makeCache, makeModel, tryDecode)
+import Config exposing (Config)
+import Dict
 import Html
     exposing
-        ( Html
-        , a
-        , button
-        , div
-        , form
-        , input
-        , label
-        , section
-        , span
+        ( div
         , text
         )
-import Html.Attributes
-    exposing
-        ( checked
-        , class
-        , disabled
-        , href
-        , name
-        , placeholder
-        , type_
-        , value
-        )
-import Html.Events exposing (onClick, onInput)
-import Http
 import Json.Decode
-import List
 import Loadable exposing (Loadable(..))
 import Model exposing (Listeners, Model)
 import Msg exposing (Msg(..))
 import Ports
 import Rest.Core as Rest
 import Routing
-import String exposing (fromInt)
 import Types exposing (Update)
 import Url exposing (Url)
 import Views.Home
 import Views.Login
 import Ws.Core as Ws
-import Ws.Listener
 import Ws.Listeners.ScanStatus
 import Ws.Methods.Handshake
 import Ws.Methods.Start
@@ -56,7 +31,9 @@ import Ws.Methods.StartScan
 {-| This is the object passed in by the JS bootloader.
 -}
 type alias Flags =
-    { config : Config, model : Maybe Json.Decode.Value }
+    { config : Config
+    , model : Maybe Json.Decode.Value
+    }
 
 
 {-| Application entry point.
@@ -215,11 +192,6 @@ update msg model =
 -- VIEWS
 
 
-onClickNoBubble : msg -> Html.Attribute msg
-onClickNoBubble message =
-    Html.Events.custom "click" (Json.Decode.succeed { message = message, stopPropagation = True, preventDefault = True })
-
-
 view : Model -> Browser.Document Msg
 view model =
     { title = "Sound"
@@ -232,11 +204,10 @@ view model =
                 div [] [ text "Getting token..." ]
 
             _ ->
-                case model.websocketIsOpen of
-                    True ->
-                        Views.Home.view model
+                if model.websocketIsOpen then
+                    Views.Home.view model
 
-                    False ->
-                        div [] [ text "Websocket not open" ]
+                else
+                    div [] [ text "Websocket not open" ]
         ]
     }

@@ -8,7 +8,9 @@ import Ws.NotificationListener exposing (NotificationListener, makeListenerWithP
 
 
 type alias Params =
-    { count : Int, scanning : Bool }
+    { count : Int
+    , scanning : Bool
+    }
 
 
 paramsDecoder : Json.Decode.Decoder Params

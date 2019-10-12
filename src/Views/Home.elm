@@ -1,12 +1,10 @@
 module Views.Home exposing (view)
 
-import Browser
-import Dict exposing (Dict)
+import Dict
 import Entities.Artist exposing (Artists)
-import Html exposing (Html, a, button, div, form, input, label, section, span, text)
-import Html.Attributes exposing (checked, class, disabled, href, name, placeholder, type_, value)
-import Html.Events exposing (onClick, onInput)
-import Json.Decode
+import Html exposing (Html, a, button, div, input, label, span, text)
+import Html.Attributes exposing (checked, class, href, type_)
+import Html.Events exposing (onClick)
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import String exposing (fromInt)
