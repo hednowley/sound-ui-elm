@@ -7,7 +7,7 @@ import Config exposing (Config, getWebsocketUrl)
 import Dict exposing (Dict)
 import Entities.Artist exposing (Artists)
 import Html exposing (Html, a, button, div, form, input, label, section, span, text)
-import Html.Attributes exposing (checked, class, href, name, placeholder, type_, value)
+import Html.Attributes exposing (checked, class, href, name, placeholder, type_, value, disabled)
 import Html.Events exposing (onClick, onInput)
 import Http
 import Json.Decode
@@ -198,7 +198,7 @@ view model =
                         [ div [ class "login__logo " ] [ text "Sound." ]
                         , viewInput "username" "text" "Username" model.username UsernameChanged
                         , viewInput "password" "password" "Password" model.password PasswordChanged
-                        , button [ onClickNoBubble SubmitLogin, class "login__submit" ] [ text "Login" ]
+                        , button [ onClickNoBubble SubmitLogin, class "login__submit", disabled (model.username == "") ] [ text "Login" ]
                         ]
                     ]
 
