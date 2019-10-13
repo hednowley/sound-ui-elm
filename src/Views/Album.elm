@@ -1,12 +1,11 @@
 module Views.Album exposing (view)
 
 import Html exposing (button, div, text)
-import Html.Attributes exposing (class, href)
+import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (Msg(..))
-import String exposing (fromInt)
 
 
 view : Int -> Model -> Html.Html Msg

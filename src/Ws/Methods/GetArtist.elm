@@ -1,6 +1,6 @@
 module Ws.Methods.GetArtist exposing (getArtist)
 
-import Json.Decode exposing (field, int)
+import Json.Decode exposing (int)
 import Json.Encode
 import Loadable exposing (Loadable(..))
 import Model exposing (Model, removeListener)

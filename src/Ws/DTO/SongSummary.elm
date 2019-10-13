@@ -1,7 +1,7 @@
 module Ws.DTO.SongSummary exposing (SongSummary, convert, decode)
 
 import Entities.SongSummary
-import Json.Decode exposing (Decoder, field, int, map2, maybe, string)
+import Json.Decode exposing (Decoder, field, int, map2, string)
 
 
 type alias SongSummary =

@@ -28,6 +28,7 @@ import Ws.Listeners.ScanStatus
 import Ws.Methods.Handshake
 import Ws.Methods.Start
 import Ws.Methods.StartScan
+import Ws.Methods.StreamSong
 
 
 {-| This is the object passed in by the JS bootloader.
@@ -185,7 +186,9 @@ update msg model =
                 model
 
         PlaySong id ->
-            ( { model | message = "Playing song " ++ fromInt id }, Cmd.none )
+            Ws.sendMessage
+                (Ws.Methods.StreamSong.streamSong id)
+                { model | message = "Playing song " ++ fromInt id }
 
         ToggleScanUpdate ->
             ( { model | scanShouldUpdate = not model.scanShouldUpdate }, Cmd.none )

@@ -1,6 +1,6 @@
 module Ws.Listener exposing (Listener, makeIrresponsibleListener, makeResponsibleListener)
 
-import Json.Decode exposing (Decoder, Value, decodeValue, errorToString)
+import Json.Decode exposing (Decoder, Value, decodeValue)
 import Types exposing (Update, noOp)
 import Ws.Response exposing (Response)
 
