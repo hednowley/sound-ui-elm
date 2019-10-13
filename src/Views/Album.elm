@@ -10,22 +10,22 @@ import String exposing (fromInt)
 
 view : Int -> Model -> Html.Html Msg
 view id model =
-    case model.artist of
+    case model.album of
         Absent ->
-            div [] [ text "No artist" ]
+            div [] [ text "No album" ]
 
         Loading ->
-            div [] [ text "Loading artist" ]
+            div [] [ text "Loading album" ]
 
-        Loaded artist ->
+        Loaded album ->
             div []
-                [ div [] [ text artist.name ]
+                [ div [] [ text album.name ]
                 , div [] <|
                     List.map
-                        (\album ->
+                        (\song ->
                             div [ class "home__artist" ]
-                                [ a [ href <| "/album/" ++ fromInt album.id ] [ text album.name ]
+                                [ a [ href <| "/song/" ++ fromInt song.id ] [ text song.name ]
                                 ]
                         )
-                        artist.albums
+                        album.songs
                 ]
