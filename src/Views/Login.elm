@@ -11,8 +11,7 @@ import Msg exposing (Msg(..))
 view : Model -> Html.Html Msg
 view model =
     div [ class "login__wrap" ]
-        [ text model.message
-        , form [ class "login__container" ]
+        [ form [ class "login__container" ]
             [ div [ class "login__logo " ] [ text "Sound." ]
             , viewInput "username" "text" "Username" model.username UsernameChanged
             , viewInput "password" "password" "Password" model.password PasswordChanged

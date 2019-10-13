@@ -1,7 +1,7 @@
 module Ws.DTO.Artist exposing (Artist, convert, decode)
 
 import Entities.Artist
-import Json.Decode exposing (Decoder, field, int, list, map3, map4, maybe, string)
+import Json.Decode exposing (Decoder, field, int, list, map3, string)
 import Ws.DTO.Album exposing (Album)
 
 

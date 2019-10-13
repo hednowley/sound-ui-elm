@@ -13,8 +13,7 @@ import String exposing (fromInt)
 view : Model -> Html.Html Msg
 view model =
     div [ class "home__wrap" ]
-        [ span [] [ text model.message ]
-        , span [] [ text <| "Scanned: " ++ String.fromInt model.scanCount ]
+        [ span [] [ text <| "Scanned: " ++ String.fromInt model.scanCount ]
         , button [ onClick LogOut ] [ text "Log out" ]
         , checkboxInput "Update?" model.scanShouldUpdate ToggleScanUpdate
         , checkboxInput "Delete?" model.scanShouldDelete ToggleScanDelete

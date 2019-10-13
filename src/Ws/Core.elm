@@ -56,18 +56,18 @@ addListener id maybeListener model =
 {-| Handles a message arriving through the websocket.
 -}
 messageIn : String -> Update Model Msg
-messageIn json =
+messageIn json model =
     case parse json of
         Ok msg ->
             case msg of
                 Message.Response r ->
-                    responseIn r
+                    responseIn r model
 
                 Message.Notification n ->
-                    notificationIn n
+                    notificationIn n model
 
         Err e ->
-            \m -> ( { m | message = e }, Cmd.none )
+            ( { model | message = e }, Cmd.none )
 
 
 responseIn : Response -> Update Model Msg

@@ -24,7 +24,6 @@ import Views.Login
 import Views.Root
 import Ws.Core as Ws
 import Ws.Listeners.ScanStatus
-import Ws.Methods.GetArtist exposing (getArtist)
 import Ws.Methods.Handshake
 import Ws.Methods.Start
 import Ws.Methods.StartScan
@@ -198,18 +197,21 @@ view : Model -> Browser.Document Msg
 view model =
     { title = "Sound"
     , body =
-        [ case model.token of
-            Absent ->
-                Views.Login.view model
+        [ div []
+            [ div [] [ text model.message ]
+            , case model.token of
+                Absent ->
+                    Views.Login.view model
 
-            Loading ->
-                div [] [ text "Getting token..." ]
+                Loading ->
+                    div [] [ text "Getting token..." ]
 
-            _ ->
-                if model.websocketIsOpen then
-                    Views.Root.view model
+                _ ->
+                    if model.websocketIsOpen then
+                        Views.Root.view model
 
-                else
-                    div [] [ text "Websocket not open" ]
+                    else
+                        div [] [ text "Websocket not open" ]
+            ]
         ]
     }

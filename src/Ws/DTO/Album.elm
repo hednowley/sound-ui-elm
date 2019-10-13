@@ -1,7 +1,7 @@
 module Ws.DTO.Album exposing (Album, convert, decode)
 
 import Entities.Album
-import Json.Decode exposing (Decoder, field, int, list, map3, map4, maybe, string)
+import Json.Decode exposing (Decoder, field, int, map4, maybe, string)
 
 
 type alias Album =

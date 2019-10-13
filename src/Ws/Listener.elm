@@ -1,6 +1,6 @@
 module Ws.Listener exposing (Listener, makeIrresponsibleListener, makeResponsibleListener)
 
-import Json.Decode exposing (Decoder, Value, decodeValue)
+import Json.Decode exposing (Decoder, Value, decodeValue, errorToString)
 import Types exposing (Update, noOp)
 import Ws.Response exposing (Response)
 
@@ -55,13 +55,17 @@ makeIrresponsibleListener cleanup successDecoder onSuccess response model =
 
 
 processSuccess : Value -> Decoder a -> (a -> Update model msg) -> Update model msg
-processSuccess json decoder update =
+processSuccess json decoder makeUpdate model =
     case decodeValue decoder json of
         Ok body ->
-            update body
+            makeUpdate body model
 
-        Err _ ->
-            noOp
+        Err e ->
+            let
+                y =
+                    Debug.log "e" e
+            in
+            ( model, Cmd.none )
 
 
 processError : Value -> Decoder a -> (a -> Update model msg) -> Update model msg
