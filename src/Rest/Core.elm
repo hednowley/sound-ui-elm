@@ -9,6 +9,7 @@ import Model exposing (Model)
 import Msg exposing (Msg(..))
 import String exposing (fromInt)
 import Types exposing (Update)
+import Updaters exposing (logOut)
 import Ws.Core
 
 
@@ -91,4 +92,5 @@ gotTicketResponse response model =
             Ws.Core.open ticket model
 
         Err _ ->
-            ( { model | message = "Could not retrieve websocket ticket" }, Cmd.none )
+            -- Log out as something must be wrong with our session
+            logOut { model | message = "Could not retrieve websocket ticket" }

@@ -18,6 +18,7 @@ import Ports
 import Rest.Core as Rest
 import Routing exposing (Route(..))
 import Types exposing (Update)
+import Updaters exposing (logOut)
 import Url exposing (Url)
 import Views.Login
 import Views.Root
@@ -160,7 +161,7 @@ update msg model =
             Rest.authenticate model.password { model | password = "" }
 
         LogOut ->
-            ( { model | username = "", token = Absent }, Ports.websocketClose () )
+            logOut model
 
         GotAuthenticateResponse response ->
             Rest.gotAuthenticateResponse response model
