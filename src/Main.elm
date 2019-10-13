@@ -18,7 +18,7 @@ import Ports
 import Rest.Core as Rest
 import Routing exposing (Route(..))
 import Types exposing (Update)
-import Updaters exposing (logOut)
+import Updaters exposing (logOut, onUrlChange)
 import Url exposing (Url)
 import Views.Login
 import Views.Root
@@ -140,16 +140,7 @@ update msg model =
                     ( model, Nav.load href )
 
         OnUrlChange url ->
-            let
-                m =
-                    { model | route = Routing.parseUrl url }
-            in
-            case m.route of
-                Nothing ->
-                    ( m, Cmd.none )
-
-                Just (Artist _) ->
-                    Ws.sendMessage getArtist { m | artist = Loading }
+            onUrlChange url model
 
         UsernameChanged name ->
             ( { model | username = name }, Cmd.none )
