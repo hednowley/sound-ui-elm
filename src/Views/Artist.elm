@@ -1,6 +1,7 @@
 module Views.Artist exposing (view)
 
-import Html exposing (div, text)
+import Html exposing (a, div, text)
+import Html.Attributes exposing (class, href)
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (Msg(..))
@@ -17,4 +18,14 @@ view id model =
             div [] [ text "Loading artist" ]
 
         Loaded artist ->
-            div [] [ text artist.name ]
+            div []
+                [ div [] [ text artist.name ]
+                , div [] <|
+                    List.map
+                        (\album ->
+                            div [ class "home__artist" ]
+                                [ a [ href <| "/album/" ++ fromInt album.id ] [ text album.name ]
+                                ]
+                        )
+                        artist.albums
+                ]
