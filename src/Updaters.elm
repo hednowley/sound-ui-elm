@@ -1,4 +1,4 @@
-module Updaters exposing (logOut, onUrlChange)
+module Updaters exposing (logOut, onUrlChange, playSong)
 
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
@@ -15,6 +15,11 @@ import Ws.Methods.GetArtist exposing (getArtist)
 logOut : Update Model Msg
 logOut model =
     ( { model | username = "", token = Absent }, Ports.websocketClose () )
+
+
+playSong : Int -> Update Model Msg
+playSong id model =
+    ( model, Cmd.none )
 
 
 onUrlChange : Url -> Update Model Msg

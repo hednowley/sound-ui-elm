@@ -17,6 +17,7 @@ import Msg exposing (Msg(..))
 import Ports
 import Rest.Core as Rest
 import Routing exposing (Route(..))
+import String exposing (fromInt)
 import Types exposing (Update)
 import Updaters exposing (logOut, onUrlChange)
 import Url exposing (Url)
@@ -182,6 +183,9 @@ update msg model =
             Ws.sendMessage
                 (Ws.Methods.StartScan.prepareRequest model.scanShouldUpdate model.scanShouldDelete)
                 model
+
+        PlaySong id ->
+            ( { model | message = "Playing song " ++ fromInt id }, Cmd.none )
 
         ToggleScanUpdate ->
             ( { model | scanShouldUpdate = not model.scanShouldUpdate }, Cmd.none )
