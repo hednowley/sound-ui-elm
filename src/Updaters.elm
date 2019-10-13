@@ -8,6 +8,7 @@ import Routing exposing (Route(..))
 import Types exposing (Update)
 import Url exposing (Url)
 import Ws.Core as Ws
+import Ws.Methods.GetAlbum exposing (getAlbum)
 import Ws.Methods.GetArtist exposing (getArtist)
 
 
@@ -30,3 +31,8 @@ onUrlChange url model =
             Ws.sendMessage
                 (getArtist id)
                 { m | artist = Loading }
+
+        Just (Album id) ->
+            Ws.sendMessage
+                (getAlbum id)
+                { m | album = Loading }

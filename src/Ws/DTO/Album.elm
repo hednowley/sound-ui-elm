@@ -1,7 +1,8 @@
 module Ws.DTO.Album exposing (Album, convert, decode)
 
 import Entities.Album
-import Json.Decode exposing (Decoder, field, int, map4, maybe, string)
+import Json.Decode exposing (Decoder, field, int, list, map5, maybe, string)
+import Ws.DTO.SongSummary exposing (SongSummary)
 
 
 type alias Album =
@@ -9,22 +10,23 @@ type alias Album =
     , name : String
     , duration : Int
     , year : Maybe Int
+    , songs : List SongSummary
     }
 
 
 decode : Decoder Album
 decode =
-    map4 Album
+    map5 Album
         (field "id" int)
         (field "name" string)
         (field "duration" int)
         (maybe <| field "year" int)
+        (field "songs" <| list Ws.DTO.SongSummary.decode)
 
 
 convert : Album -> Entities.Album.Album
 convert album =
     { id = album.id
     , name = album.name
-    , duration = album.duration
-    , year = album.year
+    , songs = List.map Ws.DTO.SongSummary.convert album.songs
     }

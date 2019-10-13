@@ -2,13 +2,13 @@ module Ws.DTO.Artist exposing (Artist, convert, decode)
 
 import Entities.Artist
 import Json.Decode exposing (Decoder, field, int, list, map3, string)
-import Ws.DTO.Album exposing (Album)
+import Ws.DTO.AlbumSummary exposing (AlbumSummary)
 
 
 type alias Artist =
     { id : Int
     , name : String
-    , albums : List Album
+    , albums : List AlbumSummary
     }
 
 
@@ -18,7 +18,7 @@ decode =
         (field "id" int)
         (field "name" string)
         (field "albums"
-            (list Ws.DTO.Album.decode)
+            (list Ws.DTO.AlbumSummary.decode)
         )
 
 
@@ -26,5 +26,5 @@ convert : Artist -> Entities.Artist.Artist
 convert artist =
     { id = artist.id
     , name = artist.name
-    , albums = List.map Ws.DTO.Album.convert artist.albums
+    , albums = List.map Ws.DTO.AlbumSummary.convert artist.albums
     }

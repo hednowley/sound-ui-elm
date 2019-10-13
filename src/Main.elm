@@ -110,6 +110,7 @@ emptyModel url key config =
     , scanShouldDelete = False
     , artists = Dict.empty
     , artist = Absent
+    , album = Absent
     , config = config
     , websocketIsOpen = False
     , route = Nothing
