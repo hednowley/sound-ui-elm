@@ -22,7 +22,7 @@ authenticate password model =
             DTO.Credentials.credentialsEncoder model.username password
     in
     ( { model | token = Loading }
-    , Http.riskyRequest
+    , Http.request
         { method = "POST"
         , headers = []
         , timeout = Nothing
@@ -76,6 +76,7 @@ gotAuthenticateResponse response model =
 -}
 getTicket : Model -> Cmd Msg
 getTicket model =
+    -- "Risky" request as we need to send JWT cookie
     Http.riskyRequest
         { method = "GET"
         , headers = []

@@ -22,33 +22,8 @@ let socket;
 window.app = app;
 
 app.ports.stream.subscribe(({ url, token }) => {
-  if (source) {
-    source.stop();
-  }
-
-  let s = audioCtx.createBufferSource();
-  s.connect(audioCtx.destination);
-
-  // prepare request
-  let request = new XMLHttpRequest();
-  request.open("GET", url, true);
-  request.responseType = "arraybuffer";
-
-  request.onload = async () => {
-    let audioData = request.response;
-
-    try {
-      const buffer = await audioCtx.decodeAudioData(audioData);
-      s.buffer = buffer;
-      s.start(0);
-      source = s;
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  request.setRequestHeader("Authorization", `Bearer ${token}`);
-  request.send();
+  var audio = new Audio(url);
+  audio.play();
 });
 
 // Port for creating a websocket from elm
@@ -90,3 +65,19 @@ app.ports.websocketClose.subscribe(() => {
   socket.close();
   socket = null;
 });
+
+/*
+fetch(SOUND_CONFIG.root + "/api/authenticate", {
+  method: "POST", // *GET, POST, PUT, DELETE, etc.
+  mode: "cors", // no-cors, *cors, same-origin
+  cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+  credentials: "include", // include, *same-origin, omit
+  headers: {
+    "Content-Type": "application/json"
+    // 'Content-Type': 'application/x-www-form-urlencoded',
+  },
+  redirect: "follow", // manual, *follow, error
+  referrer: "no-referrer", // no-referrer, *client
+  body: JSON.stringify({ username: "gertrude", password: "changeme" }) // body data type must match "Content-Type" header
+});
+*/
