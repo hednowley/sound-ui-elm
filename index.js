@@ -15,15 +15,18 @@ app.ports.setCache.subscribe(model =>
   localStorage.setItem("sound-ui-elm", JSON.stringify(model))
 );
 
-let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-let source;
+let audio;
 
 let socket;
 window.app = app;
 
 app.ports.stream.subscribe(({ url, token }) => {
-  var audio = new Audio(url);
-  audio.play();
+  if (audio) {
+    audio.pause();
+  }
+  var a = new Audio(url);
+  a.play();
+  audio = a;
 });
 
 // Port for creating a websocket from elm
