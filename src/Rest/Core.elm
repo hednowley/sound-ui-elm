@@ -22,8 +22,12 @@ authenticate password model =
             DTO.Credentials.credentialsEncoder model.username password
     in
     ( { model | token = Loading }
-    , Http.post
-        { body = Http.jsonBody credentials
+    , Http.riskyRequest
+        { method = "POST"
+        , headers = []
+        , timeout = Nothing
+        , tracker = Nothing
+        , body = Http.jsonBody credentials
         , url = model.config.root ++ "/api/authenticate"
         , expect = Http.expectJson GotAuthenticateResponse DTO.Authenticate.decode
         }
@@ -72,7 +76,7 @@ gotAuthenticateResponse response model =
 -}
 getTicket : Model -> Cmd Msg
 getTicket model =
-    Http.request
+    Http.riskyRequest
         { method = "GET"
         , headers = []
         , body = Http.emptyBody
