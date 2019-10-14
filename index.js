@@ -16,43 +16,35 @@ app.ports.setCache.subscribe(model =>
 );
 
 let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-let source = audioCtx.createBufferSource();
-source.connect(audioCtx.destination);
+let source;
 
 let socket;
 window.app = app;
 
-// Port for creating a websocket from elm
 app.ports.stream.subscribe(({ url, token }) => {
+  if (source) {
+    source.stop();
+  }
+
+  let s = audioCtx.createBufferSource();
+  s.connect(audioCtx.destination);
+
   // prepare request
   let request = new XMLHttpRequest();
   request.open("GET", url, true);
   request.responseType = "arraybuffer";
 
-  request.onload = () => {
-    // on load callback
-
-    // get audio data
+  request.onload = async () => {
     let audioData = request.response;
 
-    // try to decode audio data
-    audioCtx.decodeAudioData(
-      audioData,
-      buffer => {
-        // on success callback
-        console.log("Successfully decoded");
-
-        // set source
-        source.buffer = buffer;
-
-        source.start(0);
-      },
-      e => {
-        // on error callback
-        console.log("An error occurred");
-        console.log(e);
-      }
-    );
+    try {
+      const buffer = await audioCtx.decodeAudioData(audioData);
+      s.buffer = buffer;
+      s.start(0);
+      source = s;
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   request.setRequestHeader("Authorization", `Bearer ${token}`);
