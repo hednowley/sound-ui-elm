@@ -3,6 +3,7 @@ module Updaters exposing (cacheSong, logOut, onUrlChange, playSong, queueSong)
 import Audio exposing (makeLoadRequest)
 import AudioState exposing (State(..))
 import Dict
+import Entities.SongSummary exposing (SongSummary)
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (Msg)
@@ -54,6 +55,11 @@ loadSong songId model =
 cacheSong : Int -> AudioState.State -> Model -> Model
 cacheSong songId state model =
     { model | songCache = Dict.insert songId state model.songCache }
+
+
+saveSong : SongSummary -> Model -> Model
+saveSong song model =
+    { model | songs = Dict.insert song.id song model.songs }
 
 
 onUrlChange : Url -> Update Model Msg
