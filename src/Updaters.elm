@@ -22,20 +22,33 @@ logOut model =
 
 playSong : Int -> Update Model Msg
 playSong songId model =
-    case Dict.get songId model.songCache of
+    let
+        m =
+            { model | playing = Just songId }
+    in
+    case Dict.get songId m.songCache of
         Just AudioState.Loading ->
-            ( { model | playing = Just songId }, Cmd.none )
+            ( m, Cmd.none )
 
         Just AudioState.Loaded ->
-            ( { model | playing = Just songId }, Ports.playAudio songId )
+            ( m, Ports.playAudio songId )
 
         Nothing ->
-            ( { model | playing = Just songId }, Ports.loadAudio <| makeLoadRequest model songId )
+            loadSong songId m
 
 
-cacheSong : Int -> Model -> Model
-cacheSong songId model =
-    { model | songCache = Dict.insert songId AudioState.Loaded model.songCache }
+loadSong : Int -> Update Model Msg
+loadSong songId model =
+    let
+        m =
+            cacheSong songId AudioState.Loading model
+    in
+    ( m, Ports.loadAudio <| makeLoadRequest m songId )
+
+
+cacheSong : Int -> AudioState.State -> Model -> Model
+cacheSong songId state model =
+    { model | songCache = Dict.insert songId state model.songCache }
 
 
 onUrlChange : Url -> Update Model Msg

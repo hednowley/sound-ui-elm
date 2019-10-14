@@ -1,5 +1,6 @@
 module Main exposing (main)
 
+import AudioState exposing (State(..))
 import Browser
 import Browser.Navigation as Nav exposing (Key)
 import Cache exposing (makeCache, makeModel, tryDecode)
@@ -79,7 +80,7 @@ init flags url navKey =
 reconnect : Model -> Cmd Msg
 reconnect model =
     case model.token of
-        Loaded _ ->
+        Loadable.Loaded _ ->
             Rest.getTicket model
 
         _ ->
@@ -198,7 +199,7 @@ update msg model =
                 CanPlay songId ->
                     let
                         m =
-                            cacheSong songId model
+                            cacheSong songId AudioState.Loaded model
                     in
                     if m.playing == Just songId then
                         playSong songId m
@@ -227,7 +228,7 @@ view model =
                 Absent ->
                     Views.Login.view model
 
-                Loading ->
+                Loadable.Loading ->
                     div [] [ text "Getting token..." ]
 
                 _ ->
