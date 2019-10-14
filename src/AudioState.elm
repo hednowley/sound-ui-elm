@@ -1,4 +1,4 @@
-module AudioState exposing (State)
+module AudioState exposing (State(..))
 
 
 type State

@@ -21,28 +21,31 @@ let currentAudio;
 let socket;
 window.app = app;
 
-app.ports.playAudio.subscribe(id => {
-  const audio = audios.get(id);
+app.ports.playAudio.subscribe(songId => {
+  pause();
+  const audio = audios.get(songId);
   if (audio) {
     audio.play();
     currentAudio = audio;
   }
 });
 
-app.ports.pauseAudio.subscribe(() => {
+const pause = () => {
   if (currentAudio) {
     currentAudio.pause();
   }
-});
+};
 
-app.ports.loadAudio.subscribe(({ url, id }) => {
+app.ports.pauseAudio.subscribe(pause);
+
+app.ports.loadAudio.subscribe(({ url, songId }) => {
   var a = new Audio(url);
 
-  a.oncanplay = () => app.ports.canPlayAudio.send(id);
+  a.oncanplay = () => app.ports.canPlayAudio.send(songId);
   a.ondurationchange = () => console.log("ondurationchange");
   a.onended = () => console.log("onended");
 
-  audios.set(id, a);
+  audios.set(songId, a);
 });
 
 // Port for creating a websocket from elm

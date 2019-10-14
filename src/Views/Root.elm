@@ -28,11 +28,6 @@ view model =
                     button [ onClick (AudioMsg Pause) ] [ text "Pause" ]
 
                 Nothing ->
-                    case model.playing of
-                        Just songId ->
-                            button [ onClick (AudioMsg (Play songId)) ] [ text "Play" ]
-
-                        Nothing ->
-                            text ""
+                    text ""
             ]
         ]

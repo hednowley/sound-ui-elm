@@ -1,6 +1,8 @@
-module Updaters exposing (loadSong, logOut, onUrlChange, playSong)
+module Updaters exposing (cacheSong, logOut, onUrlChange, playSong)
 
 import Audio exposing (makeLoadRequest)
+import AudioState exposing (State(..))
+import Dict
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (Msg)
@@ -18,14 +20,22 @@ logOut model =
     ( { model | username = "", token = Absent }, Ports.websocketClose () )
 
 
-loadSong : Int -> Update Model Msg
-loadSong id model =
-    ( { model | shouldPlay = True }, Ports.loadAudio <| makeLoadRequest model id )
-
-
 playSong : Int -> Update Model Msg
 playSong songId model =
-    ( { model | playing = Just songId }, Ports.playAudio songId )
+    case Dict.get songId model.songCache of
+        Just AudioState.Loading ->
+            ( { model | playing = Just songId }, Cmd.none )
+
+        Just AudioState.Loaded ->
+            ( { model | playing = Just songId }, Ports.playAudio songId )
+
+        Nothing ->
+            ( { model | playing = Just songId }, Ports.loadAudio <| makeLoadRequest model songId )
+
+
+cacheSong : Int -> Model -> Model
+cacheSong songId model =
+    { model | songCache = Dict.insert songId AudioState.Loaded model.songCache }
 
 
 onUrlChange : Url -> Update Model Msg
@@ -41,9 +51,9 @@ onUrlChange url model =
         Just (Artist id) ->
             Ws.sendMessage
                 (getArtist id)
-                { m | artist = Loading }
+                { m | artist = Loadable.Loading }
 
         Just (Album id) ->
             Ws.sendMessage
                 (getAlbum id)
-                { m | album = Loading }
+                { m | album = Loadable.Loading }

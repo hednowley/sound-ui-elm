@@ -42,7 +42,6 @@ type alias Model =
     , config : Config
     , websocketIsOpen : Bool
     , route : Maybe Route
-    , shouldPlay : Bool
     , songCache : Dict Int AudioState.State
     , playing : Maybe Int
     , playlist : List Int
