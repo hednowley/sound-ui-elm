@@ -8,6 +8,7 @@ module Model exposing
     , removeListener
     )
 
+import AudioState
 import Browser.Navigation exposing (Key)
 import Config exposing (Config)
 import Dict exposing (Dict)
@@ -42,7 +43,9 @@ type alias Model =
     , websocketIsOpen : Bool
     , route : Maybe Route
     , shouldPlay : Bool
-    , playing : Bool
+    , songCache : Dict Int AudioState.State
+    , playing : Maybe Int
+    , playlist : List Int
     }
 
 

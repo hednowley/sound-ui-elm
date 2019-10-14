@@ -15,7 +15,7 @@ import Rest.Core as Rest
 import Routing exposing (Route(..))
 import String exposing (fromInt)
 import Types exposing (Update)
-import Updaters exposing (logOut, onUrlChange, playAudio, playSong)
+import Updaters exposing (loadSong, logOut, onUrlChange, playSong)
 import Url exposing (Url)
 import Views.Login
 import Views.Root
@@ -112,7 +112,9 @@ emptyModel url key config =
     , websocketIsOpen = False
     , route = Nothing
     , shouldPlay = False
-    , playing = False
+    , songCache = Dict.empty
+    , playing = Nothing
+    , playlist = []
     }
 
 
@@ -124,7 +126,7 @@ subscriptions _ =
         [ Ports.websocketOpened <| always WebsocketOpened
         , Ports.websocketClosed <| always WebsocketClosed
         , Ports.websocketIn <| Msg.WebsocketIn
-        , Ports.canPlayAudio <| always (Msg.AudioMsg CanPlay)
+        , Ports.canPlayAudio <| (CanPlay >> Msg.AudioMsg)
         ]
 
 
@@ -194,18 +196,18 @@ update msg model =
 
         AudioMsg audio ->
             case audio of
-                CanPlay ->
+                CanPlay songId ->
                     if model.shouldPlay then
-                        playAudio model
+                        playSong songId model
 
                     else
                         ( model, Cmd.none )
 
-                Play ->
-                    playAudio model
+                Play songId ->
+                    playSong songId model
 
                 Pause ->
-                    ( { model | playing = False }, Ports.pauseAudio () )
+                    ( { model | playing = Nothing }, Ports.pauseAudio () )
 
 
 

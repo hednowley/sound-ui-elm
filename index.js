@@ -15,35 +15,34 @@ app.ports.setCache.subscribe(model =>
   localStorage.setItem("sound-ui-elm", JSON.stringify(model))
 );
 
-let audio;
+const audios = new Map();
+let currentAudio;
 
 let socket;
 window.app = app;
 
-app.ports.playAudio.subscribe(() => {
+app.ports.playAudio.subscribe(id => {
+  const audio = audios.get(id);
   if (audio) {
     audio.play();
+    currentAudio = audio;
   }
 });
 
 app.ports.pauseAudio.subscribe(() => {
-  if (audio) {
-    audio.pause();
+  if (currentAudio) {
+    currentAudio.pause();
   }
 });
 
-app.ports.loadAudio.subscribe(url => {
-  if (audio) {
-    audio.pause();
-    audio.oncanplay = null;
-    audio.ondurationchange = null;
-    audio.onended = null;
-  }
+app.ports.loadAudio.subscribe(({ url, id }) => {
   var a = new Audio(url);
-  a.oncanplay = () => app.ports.canPlayAudio.send(null);
+
+  a.oncanplay = () => app.ports.canPlayAudio.send(id);
   a.ondurationchange = () => console.log("ondurationchange");
   a.onended = () => console.log("onended");
-  audio = a;
+
+  audios.set(id, a);
 });
 
 // Port for creating a websocket from elm

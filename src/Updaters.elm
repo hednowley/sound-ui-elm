@@ -1,6 +1,6 @@
-module Updaters exposing (logOut, onUrlChange, playAudio, playSong)
+module Updaters exposing (loadSong, logOut, onUrlChange, playSong)
 
-import Audio exposing (getAudioUrl)
+import Audio exposing (makeLoadRequest)
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (Msg)
@@ -18,14 +18,14 @@ logOut model =
     ( { model | username = "", token = Absent }, Ports.websocketClose () )
 
 
+loadSong : Int -> Update Model Msg
+loadSong id model =
+    ( { model | shouldPlay = True }, Ports.loadAudio <| makeLoadRequest model id )
+
+
 playSong : Int -> Update Model Msg
-playSong id model =
-    ( { model | shouldPlay = True }, Ports.loadAudio <| getAudioUrl model id )
-
-
-playAudio : Update Model Msg
-playAudio model =
-    ( { model | playing = True }, Ports.playAudio () )
+playSong songId model =
+    ( { model | playing = Just songId }, Ports.playAudio songId )
 
 
 onUrlChange : Url -> Update Model Msg

@@ -24,10 +24,10 @@ import Json.Encode
 port setCache : Cache -> Cmd msg
 
 
-port loadAudio : String -> Cmd msg
+port loadAudio : Audio.LoadRequest -> Cmd msg
 
 
-port playAudio : () -> Cmd msg
+port playAudio : Int -> Cmd msg
 
 
 port pauseAudio : () -> Cmd msg
@@ -46,7 +46,7 @@ port websocketClose : () -> Cmd msg
 -- Incoming ports
 
 
-port canPlayAudio : (() -> msg) -> Sub msg
+port canPlayAudio : (Int -> msg) -> Sub msg
 
 
 port websocketOpened : (() -> msg) -> Sub msg

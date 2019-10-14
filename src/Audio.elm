@@ -1,9 +1,20 @@
-module Audio exposing (getAudioUrl)
+module Audio exposing (LoadRequest, State, makeLoadRequest)
 
 import Model exposing (Model)
 import String exposing (fromInt)
 
 
-getAudioUrl : Model -> Int -> String
-getAudioUrl model songId =
-    model.config.root ++ "/api/stream?id=" ++ fromInt songId
+type alias LoadRequest =
+    { url : String, songId : Int }
+
+
+type State
+    = Loading
+    | Loaded
+
+
+makeLoadRequest : Model -> Int -> LoadRequest
+makeLoadRequest model songId =
+    { url = model.config.root ++ "/api/stream?id=" ++ fromInt songId
+    , songId = songId
+    }
