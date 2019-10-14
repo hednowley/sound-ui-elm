@@ -16,7 +16,7 @@ import Rest.Core as Rest
 import Routing exposing (Route(..))
 import String exposing (fromInt)
 import Types exposing (Update)
-import Updaters exposing (cacheSong, logOut, onUrlChange, playSong)
+import Updaters exposing (cacheSong, logOut, onUrlChange, playSong, queueSong)
 import Url exposing (Url)
 import Views.Login
 import Views.Root
@@ -185,9 +185,6 @@ update msg model =
                 (Ws.Methods.StartScan.prepareRequest model.scanShouldUpdate model.scanShouldDelete)
                 model
 
-        PlaySong id ->
-            playSong id { model | message = "Playing song " ++ fromInt id }
-
         ToggleScanUpdate ->
             ( { model | scanShouldUpdate = not model.scanShouldUpdate }, Cmd.none )
 
@@ -212,6 +209,9 @@ update msg model =
 
                 Pause ->
                     ( { model | playing = Nothing }, Ports.pauseAudio () )
+
+                Queue songId ->
+                    ( queueSong songId model, Ports.pauseAudio () )
 
 
 

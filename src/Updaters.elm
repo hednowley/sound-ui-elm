@@ -1,4 +1,4 @@
-module Updaters exposing (cacheSong, logOut, onUrlChange, playSong)
+module Updaters exposing (cacheSong, logOut, onUrlChange, playSong, queueSong)
 
 import Audio exposing (makeLoadRequest)
 import AudioState exposing (State(..))
@@ -24,7 +24,7 @@ playSong : Int -> Update Model Msg
 playSong songId model =
     let
         m =
-            { model | playing = Just songId }
+            queueSong songId { model | playing = Just songId }
     in
     case Dict.get songId m.songCache of
         Just AudioState.Loading ->
@@ -35,6 +35,11 @@ playSong songId model =
 
         Nothing ->
             loadSong songId m
+
+
+queueSong : Int -> Model -> Model
+queueSong songId model =
+    { model | playlist = songId :: model.playlist }
 
 
 loadSong : Int -> Update Model Msg

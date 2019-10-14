@@ -6,6 +6,7 @@ import Html.Events exposing (onClick)
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (Msg(..))
+import Views.Song
 
 
 view : Int -> Model -> Html.Html Msg
@@ -21,11 +22,5 @@ view id model =
             div []
                 [ div [] [ text album.name ]
                 , div [] <|
-                    List.map
-                        (\song ->
-                            div [ class "home__artist" ]
-                                [ button [ onClick <| PlaySong song.id ] [ text song.name ]
-                                ]
-                        )
-                        album.songs
+                    List.map Views.Song.view album.songs
                 ]

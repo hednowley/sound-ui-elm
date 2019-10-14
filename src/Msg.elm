@@ -20,7 +20,6 @@ type Msg
     | WebsocketIn String -- A message has been received over the websocket
     | AudioMsg AudioMsg
     | StartScan -- Ask for a scan to be started
-    | PlaySong Int
     | GotAuthenticateResponse (Result Http.Error DTO.Authenticate.Response) -- Server has replied to posting of credentials
     | GotTicketResponse (Result Http.Error String) -- Server has replied to a request for a websocket ticket
 
@@ -29,3 +28,4 @@ type AudioMsg
     = CanPlay Int
     | Play Int
     | Pause
+    | Queue Int
