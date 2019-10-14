@@ -1,6 +1,6 @@
 module Updaters exposing (logOut, onUrlChange, playSong)
 
-import Audio exposing (makeStreamRequest)
+import Audio exposing (getAudioUrl)
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (Msg)
@@ -20,12 +20,7 @@ logOut model =
 
 playSong : Int -> Update Model Msg
 playSong id model =
-    case model.token of
-        Loaded token ->
-            ( model, Ports.stream <| makeStreamRequest model id token )
-
-        _ ->
-            ( model, Cmd.none )
+    ( model, Ports.stream <| getAudioUrl model id )
 
 
 onUrlChange : Url -> Update Model Msg

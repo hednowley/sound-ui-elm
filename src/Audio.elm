@@ -1,13 +1,9 @@
-module Audio exposing (StreamRequest, makeStreamRequest)
+module Audio exposing (getAudioUrl)
 
 import Model exposing (Model)
 import String exposing (fromInt)
 
 
-type alias StreamRequest =
-    { url : String, token : String }
-
-
-makeStreamRequest : Model -> Int -> String -> StreamRequest
-makeStreamRequest model songId token =
-    { url = model.config.root ++ "/api/stream?id=" ++ fromInt songId, token = token }
+getAudioUrl : Model -> Int -> String
+getAudioUrl model songId =
+    model.config.root ++ "/api/stream?id=" ++ fromInt songId

@@ -17,7 +17,7 @@ import Json.Encode
 port setCache : Cache -> Cmd msg
 
 
-port stream : Audio.StreamRequest -> Cmd msg
+port stream : String -> Cmd msg
 
 
 port websocketOpen : String -> Cmd msg

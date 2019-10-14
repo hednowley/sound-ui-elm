@@ -20,12 +20,29 @@ let audio;
 let socket;
 window.app = app;
 
-app.ports.stream.subscribe(({ url, token }) => {
+app.ports.playAudio.subscribe(() => {
+  if (audio) {
+    audio.play();
+  }
+});
+
+app.ports.pauseAudio.subscribe(() => {
   if (audio) {
     audio.pause();
   }
+});
+
+app.ports.stream.subscribe(url => {
+  if (audio) {
+    audio.pause();
+    audio.oncanplay = null;
+    audio.ondurationchange = null;
+    audio.onended = null;
+  }
   var a = new Audio(url);
-  a.play();
+  a.oncanplay = () => console.log("oncanplay");
+  a.ondurationchange = () => console.log("ondurationchange");
+  a.onended = () => console.log("onended");
   audio = a;
 });
 
