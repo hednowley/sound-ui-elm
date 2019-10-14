@@ -8,6 +8,7 @@ import Routing exposing (Route(..))
 import Views.Album
 import Views.Artist
 import Views.Home
+import Views.Song
 
 
 view : Model -> Html.Html Msg
@@ -22,6 +23,10 @@ view model =
 
             Just (Album id) ->
                 Views.Album.view id model
+        , div []
+            [ div [] [ text "Playlist" ]
+            , div [] (List.map (\id -> div [] [ text "song" ]) model.playlist)
+            ]
         , div []
             [ case model.playing of
                 Just songId ->
