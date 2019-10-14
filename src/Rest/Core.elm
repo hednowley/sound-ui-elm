@@ -38,12 +38,12 @@ gotAuthenticateResponse response model =
         Ok result ->
             case result of
                 -- We got a token
-                Ok token ->
-                    ( { model | token = Loaded token }, getTicket model token )
+                Nothing ->
+                    ( { model | token = Loaded "" }, getTicket model )
 
                 -- Server has told us why we can't have a token
-                Err e ->
-                    ( { model | message = e, token = Absent }, Cmd.none )
+                Just err ->
+                    ( { model | message = err, token = Absent }, Cmd.none )
 
         -- We don't understand what the server said
         Err e ->
@@ -70,11 +70,11 @@ gotAuthenticateResponse response model =
 
 {-| Ask the server for a websocket ticket, using our JWT.
 -}
-getTicket : Model -> String -> Cmd Msg
-getTicket model token =
+getTicket : Model -> Cmd Msg
+getTicket model =
     Http.request
         { method = "GET"
-        , headers = [ Http.header "Authorization" ("Bearer " ++ token) ]
+        , headers = []
         , body = Http.emptyBody
         , timeout = Nothing
         , tracker = Nothing

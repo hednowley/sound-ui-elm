@@ -83,8 +83,8 @@ init flags url navKey =
 reconnect : Model -> Cmd Msg
 reconnect model =
     case model.token of
-        Loaded token ->
-            Rest.getTicket model token
+        Loaded _ ->
+            Rest.getTicket model
 
         _ ->
             Cmd.none

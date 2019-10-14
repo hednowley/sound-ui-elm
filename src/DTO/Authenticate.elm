@@ -1,12 +1,12 @@
 module DTO.Authenticate exposing (Response, decode)
 
-import Json.Decode exposing (Decoder, andThen, fail, field, map, string)
+import Json.Decode exposing (Decoder, andThen, fail, field, map, string, succeed)
 
 
-{-| Either an error message or a token.
+{-| A potential error message. Absense means success.
 -}
 type alias Response =
-    Result String String
+    Maybe String
 
 
 {-| Decode the message.
@@ -23,10 +23,10 @@ decodeData : String -> Decoder Response
 decodeData status =
     case status of
         "success" ->
-            map Ok (field "data" (field "token" string))
+            succeed Nothing
 
         "error" ->
-            map Err (field "data" string)
+            map Just (field "data" string)
 
         _ ->
             fail "Unknown status"
