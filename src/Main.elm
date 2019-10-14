@@ -5,11 +5,7 @@ import Browser.Navigation as Nav exposing (Key)
 import Cache exposing (makeCache, makeModel, tryDecode)
 import Config exposing (Config)
 import Dict
-import Html
-    exposing
-        ( div
-        , text
-        )
+import Html exposing (div, text)
 import Json.Decode
 import Loadable exposing (Loadable(..))
 import Model exposing (Listeners, Model)
@@ -203,6 +199,12 @@ update msg model =
 
                     else
                         ( model, Cmd.none )
+
+                Play ->
+                    ( model, Ports.playAudio () )
+
+                Pause ->
+                    ( model, Ports.pauseAudio () )
 
 
 

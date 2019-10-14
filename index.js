@@ -26,13 +26,11 @@ app.ports.playAudio.subscribe(() => {
   }
 });
 
-/*
 app.ports.pauseAudio.subscribe(() => {
   if (audio) {
     audio.pause();
   }
 });
-*/
 
 app.ports.loadAudio.subscribe(url => {
   if (audio) {
