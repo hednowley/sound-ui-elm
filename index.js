@@ -15,8 +15,49 @@ app.ports.setCache.subscribe(model =>
   localStorage.setItem("sound-ui-elm", JSON.stringify(model))
 );
 
+let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let source = audioCtx.createBufferSource();
+source.connect(audioCtx.destination);
+
 let socket;
 window.app = app;
+
+// Port for creating a websocket from elm
+app.ports.stream.subscribe(({ url, token }) => {
+  // prepare request
+  let request = new XMLHttpRequest();
+  request.open("GET", url, true);
+  request.responseType = "arraybuffer";
+
+  request.onload = () => {
+    // on load callback
+
+    // get audio data
+    let audioData = request.response;
+
+    // try to decode audio data
+    audioCtx.decodeAudioData(
+      audioData,
+      buffer => {
+        // on success callback
+        console.log("Successfully decoded");
+
+        // set source
+        source.buffer = buffer;
+
+        source.start(0);
+      },
+      e => {
+        // on error callback
+        console.log("An error occurred");
+        console.log(e);
+      }
+    );
+  };
+
+  request.setRequestHeader("Authorization", `Bearer ${token}`);
+  request.send();
+});
 
 // Port for creating a websocket from elm
 app.ports.websocketOpen.subscribe(url => {

@@ -1,5 +1,6 @@
 port module Ports exposing
     ( setCache
+    , stream
     , websocketClose
     , websocketClosed
     , websocketIn
@@ -8,11 +9,15 @@ port module Ports exposing
     , websocketOut
     )
 
+import Audio
 import Cache exposing (Cache)
 import Json.Encode
 
 
 port setCache : Cache -> Cmd msg
+
+
+port stream : Audio.StreamRequest -> Cmd msg
 
 
 port websocketOpen : String -> Cmd msg

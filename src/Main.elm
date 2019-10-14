@@ -19,7 +19,7 @@ import Rest.Core as Rest
 import Routing exposing (Route(..))
 import String exposing (fromInt)
 import Types exposing (Update)
-import Updaters exposing (logOut, onUrlChange)
+import Updaters exposing (logOut, onUrlChange, playSong)
 import Url exposing (Url)
 import Views.Login
 import Views.Root
@@ -28,7 +28,6 @@ import Ws.Listeners.ScanStatus
 import Ws.Methods.Handshake
 import Ws.Methods.Start
 import Ws.Methods.StartScan
-import Ws.Methods.StreamSong
 
 
 {-| This is the object passed in by the JS bootloader.
@@ -186,9 +185,7 @@ update msg model =
                 model
 
         PlaySong id ->
-            Ws.sendMessage
-                (Ws.Methods.StreamSong.streamSong id)
-                { model | message = "Playing song " ++ fromInt id }
+            playSong id { model | message = "Playing song " ++ fromInt id }
 
         ToggleScanUpdate ->
             ( { model | scanShouldUpdate = not model.scanShouldUpdate }, Cmd.none )
