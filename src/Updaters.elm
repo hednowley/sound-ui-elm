@@ -20,7 +20,7 @@ logOut model =
 
 playSong : Int -> Update Model Msg
 playSong id model =
-    ( model, Ports.loadAudio <| getAudioUrl model id )
+    ( { model | shouldPlay = True }, Ports.loadAudio <| getAudioUrl model id )
 
 
 onUrlChange : Url -> Update Model Msg

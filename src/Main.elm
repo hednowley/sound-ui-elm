@@ -13,7 +13,7 @@ import Html
 import Json.Decode
 import Loadable exposing (Loadable(..))
 import Model exposing (Listeners, Model)
-import Msg exposing (Msg(..))
+import Msg exposing (AudioMsg(..), Msg(..))
 import Ports
 import Rest.Core as Rest
 import Routing exposing (Route(..))
@@ -115,6 +115,7 @@ emptyModel url key config =
     , config = config
     , websocketIsOpen = False
     , route = Nothing
+    , shouldPlay = False
     }
 
 
@@ -126,6 +127,7 @@ subscriptions _ =
         [ Ports.websocketOpened <| always WebsocketOpened
         , Ports.websocketClosed <| always WebsocketClosed
         , Ports.websocketIn <| Msg.WebsocketIn
+        , Ports.canPlayAudio <| always (Msg.AudioMsg CanPlay)
         ]
 
 
@@ -192,6 +194,15 @@ update msg model =
 
         ToggleScanDelete ->
             ( { model | scanShouldDelete = not model.scanShouldDelete }, Cmd.none )
+
+        AudioMsg audio ->
+            case audio of
+                CanPlay ->
+                    if model.shouldPlay then
+                        ( model, Ports.playAudio () )
+
+                    else
+                        ( model, Cmd.none )
 
 
 

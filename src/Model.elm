@@ -41,6 +41,7 @@ type alias Model =
     , config : Config
     , websocketIsOpen : Bool
     , route : Maybe Route
+    , shouldPlay : Bool
     }
 
 

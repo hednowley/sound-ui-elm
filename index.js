@@ -26,11 +26,13 @@ app.ports.playAudio.subscribe(() => {
   }
 });
 
+/*
 app.ports.pauseAudio.subscribe(() => {
   if (audio) {
     audio.pause();
   }
 });
+*/
 
 app.ports.loadAudio.subscribe(url => {
   if (audio) {
@@ -40,7 +42,7 @@ app.ports.loadAudio.subscribe(url => {
     audio.onended = null;
   }
   var a = new Audio(url);
-  a.oncanplay = () => console.log("oncanplay");
+  a.oncanplay = () => app.ports.canPlayAudio.send(null);
   a.ondurationchange = () => console.log("ondurationchange");
   a.onended = () => console.log("onended");
   audio = a;
