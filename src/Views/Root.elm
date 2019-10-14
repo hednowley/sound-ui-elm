@@ -23,7 +23,10 @@ view model =
             Just (Album id) ->
                 Views.Album.view id model
         , div []
-            [ button [ onClick (AudioMsg Play) ] [ text "Play" ]
-            , button [ onClick (AudioMsg Pause) ] [ text "Pause" ]
+            [ if model.playing then
+                button [ onClick (AudioMsg Pause) ] [ text "Pause" ]
+
+              else
+                button [ onClick (AudioMsg Play) ] [ text "Play" ]
             ]
         ]

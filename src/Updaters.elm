@@ -1,4 +1,4 @@
-module Updaters exposing (logOut, onUrlChange, playSong)
+module Updaters exposing (logOut, onUrlChange, playAudio, playSong)
 
 import Audio exposing (getAudioUrl)
 import Loadable exposing (Loadable(..))
@@ -21,6 +21,11 @@ logOut model =
 playSong : Int -> Update Model Msg
 playSong id model =
     ( { model | shouldPlay = True }, Ports.loadAudio <| getAudioUrl model id )
+
+
+playAudio : Update Model Msg
+playAudio model =
+    ( { model | playing = True }, Ports.playAudio () )
 
 
 onUrlChange : Url -> Update Model Msg
