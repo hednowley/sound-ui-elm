@@ -32,7 +32,7 @@ app.ports.pauseAudio.subscribe(() => {
   }
 });
 
-app.ports.stream.subscribe(url => {
+app.ports.loadAudio.subscribe(url => {
   if (audio) {
     audio.pause();
     audio.oncanplay = null;
