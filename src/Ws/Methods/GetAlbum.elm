@@ -6,6 +6,7 @@ import Loadable exposing (Loadable(..))
 import Model exposing (Model, removeListener)
 import Msg exposing (Msg)
 import Types exposing (Update)
+import Util exposing (insertMany)
 import Ws.DTO.Album exposing (Album, convert, decode)
 import Ws.Listener exposing (Listener, makeIrresponsibleListener)
 import Ws.Types exposing (RequestData)
@@ -35,4 +36,13 @@ onResponse =
 
 setAlbum : Album -> Update Model Msg
 setAlbum album model =
-    ( { model | album = Loaded (convert album) }, Cmd.none )
+    let
+        a =
+            convert album
+    in
+    ( { model
+        | album = Loaded a
+        , songs = insertMany .id identity a.songs model.songs -- Store the songs
+      }
+    , Cmd.none
+    )

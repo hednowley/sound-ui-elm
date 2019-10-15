@@ -40,7 +40,7 @@ playSong songId model =
 
 queueSong : Int -> Model -> Model
 queueSong songId model =
-    { model | playlist = songId :: model.playlist }
+    { model | playlist = model.playlist ++ [ songId ] }
 
 
 loadSong : Int -> Update Model Msg

@@ -22,5 +22,5 @@ view id model =
             div []
                 [ div [] [ text album.name ]
                 , div [] <|
-                    List.map Views.Song.view album.songs
+                    List.map (.id >> Views.Song.view model) album.songs
                 ]

@@ -25,7 +25,7 @@ view model =
                 Views.Album.view id model
         , div []
             [ div [] [ text "Playlist" ]
-            , div [] (List.map (\id -> div [] [ text "song" ]) model.playlist)
+            , div [] (List.map (Views.Song.view model) model.playlist)
             ]
         , div []
             [ case model.playing of

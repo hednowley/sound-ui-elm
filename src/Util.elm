@@ -1,14 +1,11 @@
-module Util exposing (maybeApply)
+module Util exposing (insertMany)
 
-{-| Apply an optional transformation.
--}
+import Dict exposing (Dict)
 
 
-maybeApply : Maybe (a -> a) -> a -> a
-maybeApply maybeMap a =
-    case maybeMap of
-        Just map ->
-            map a
-
-        Nothing ->
-            a
+insertMany : (a -> comparable) -> (a -> value) -> List a -> Dict comparable value -> Dict comparable value
+insertMany toKey toValue list dict =
+    List.foldl
+        (\a -> \d -> Dict.insert (toKey a) (toValue a) d)
+        dict
+        list
