@@ -2,6 +2,7 @@ module Views.Player exposing (view)
 
 import Array
 import Html exposing (button, div, text)
+import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import Model exposing (Model)
 import Msg exposing (AudioMsg(..), Msg(..))
@@ -16,7 +17,7 @@ import Views.Song
 
 view : Model -> Html.Html Msg
 view model =
-    div []
+    div [ class "player__wrap" ]
         [ case model.playing of
             Just _ ->
                 button [ onClick (AudioMsg Pause) ] [ text "Pause" ]

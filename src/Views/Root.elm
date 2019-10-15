@@ -32,7 +32,7 @@ view model =
             ]
         , div [ class "app__playlist" ]
             [ div [] [ text "Playlist" ]
-            , div [] (Array.indexedMap (Views.PlaylistItem.view model) model.playlist |> Array.toList)
+            , div [ class "playlist__items" ] (Array.indexedMap (Views.PlaylistItem.view model) model.playlist |> Array.toList)
             ]
         , div [ class "app__player" ] [ Views.Player.view model ]
         ]

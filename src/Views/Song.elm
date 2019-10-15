@@ -14,10 +14,10 @@ view : Model -> Int -> Html.Html Msg
 view model songId =
     case Dict.get songId model.songs of
         Just song ->
-            div [ class "home__artist" ]
-                [ div [] [ text song.name ]
-                , button [ onClick <| AudioMsg (Play song.id) ] [ text "Play" ]
+            div [ class "album__song" ]
+                [ button [ onClick <| AudioMsg (Play song.id) ] [ text "Play" ]
                 , button [ onClick <| AudioMsg (Queue song.id) ] [ text "Queue" ]
+                , div [] [ text song.name ]
                 ]
 
         Nothing ->
