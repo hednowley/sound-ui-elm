@@ -49,6 +49,7 @@ app.ports.loadAudio.subscribe(({ url, songId }) => {
   a.oncanplay = () => {
     console.log(`oncanplay ${songId}`);
     app.ports.canPlayAudio.send(songId);
+    a.oncanplay = null;
   };
   a.ondurationchange = () => console.log("ondurationchange");
   a.onended = () => app.ports.audioEnded.send(songId);
