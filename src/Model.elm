@@ -8,6 +8,7 @@ module Model exposing
     , removeListener
     )
 
+import Array exposing (Array)
 import AudioState
 import Browser.Navigation exposing (Key)
 import Config exposing (Config)
@@ -46,7 +47,7 @@ type alias Model =
     , route : Maybe Route
     , songCache : Dict Int AudioState.State
     , playing : Maybe Int
-    , playlist : List Int
+    , playlist : Array Int
     }
 
 

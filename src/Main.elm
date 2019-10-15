@@ -1,5 +1,7 @@
 module Main exposing (main)
 
+import Array
+import Audio
 import AudioState exposing (State(..))
 import Browser
 import Browser.Navigation as Nav exposing (Key)
@@ -16,7 +18,15 @@ import Rest.Core as Rest
 import Routing exposing (Route(..))
 import String exposing (fromInt)
 import Types exposing (Update)
-import Updaters exposing (cacheSong, logOut, onUrlChange, playSong, queueSong)
+import Updaters
+    exposing
+        ( logOut
+        , onSongLoaded
+        , onUrlChange
+        , playItem
+        , queueAndPlaySong
+        , queueSong
+        )
 import Url exposing (Url)
 import Views.Login
 import Views.Root
@@ -115,7 +125,7 @@ emptyModel url key config =
     , route = Nothing
     , songCache = Dict.empty
     , playing = Nothing
-    , playlist = []
+    , playlist = Array.empty
     }
 
 
@@ -195,18 +205,13 @@ update msg model =
         AudioMsg audio ->
             case audio of
                 CanPlay songId ->
-                    let
-                        m =
-                            cacheSong songId AudioState.Loaded model
-                    in
-                    if m.playing == Just songId then
-                        playSong songId m
+                    onSongLoaded songId model
 
-                    else
-                        ( m, Cmd.none )
+                PlayItem index ->
+                    playItem index model
 
                 Play songId ->
-                    playSong songId model
+                    queueAndPlaySong songId model
 
                 Pause ->
                     ( { model | playing = Nothing }, Ports.pauseAudio () )

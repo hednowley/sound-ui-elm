@@ -1,5 +1,13 @@
-module Updaters exposing (cacheSong, logOut, onUrlChange, playSong, queueSong)
+module Updaters exposing
+    ( logOut
+    , onSongLoaded
+    , onUrlChange
+    , playItem
+    , queueAndPlaySong
+    , queueSong
+    )
 
+import Array exposing (push)
 import Audio exposing (makeLoadRequest)
 import AudioState exposing (State(..))
 import Dict
@@ -21,26 +29,57 @@ logOut model =
     ( { model | username = "", token = Absent }, Ports.websocketClose () )
 
 
-playSong : Int -> Update Model Msg
-playSong songId model =
+onSongLoaded : Int -> Update Model Msg
+onSongLoaded songId model =
     let
         m =
-            queueSong songId { model | playing = Just songId }
-    in
-    case Dict.get songId m.songCache of
-        Just AudioState.Loading ->
-            ( m, Cmd.none )
+            cacheSong songId AudioState.Loaded model
 
-        Just AudioState.Loaded ->
-            ( m, Ports.playAudio songId )
+        playing =
+            Maybe.andThen (Audio.getSongId model) model.playing
+    in
+    if playing == Just songId then
+        playSong songId m
+
+    else
+        ( m, Cmd.none )
+
+
+playItem : Int -> Update Model Msg
+playItem index model =
+    case Audio.getSongId model index of
+        Just songId ->
+            playSong songId { model | playing = Just index }
 
         Nothing ->
-            loadSong songId m
+            ( model, Cmd.none )
+
+
+queueAndPlaySong : Int -> Update Model Msg
+queueAndPlaySong songId model =
+    let
+        m =
+            queueSong songId model
+    in
+    playItem (Array.length m.playlist - 1) m
+
+
+playSong : Int -> Update Model Msg
+playSong songId model =
+    case Dict.get songId model.songCache of
+        Just AudioState.Loading ->
+            ( model, Cmd.none )
+
+        Just AudioState.Loaded ->
+            ( model, Ports.playAudio songId )
+
+        Nothing ->
+            loadSong songId model
 
 
 queueSong : Int -> Model -> Model
 queueSong songId model =
-    { model | playlist = model.playlist ++ [ songId ] }
+    { model | playlist = push songId model.playlist }
 
 
 loadSong : Int -> Update Model Msg

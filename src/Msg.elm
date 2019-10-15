@@ -27,5 +27,6 @@ type Msg
 type AudioMsg
     = CanPlay Int
     | Play Int
+    | PlayItem Int
     | Pause
     | Queue Int
