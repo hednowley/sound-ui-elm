@@ -2,6 +2,7 @@ module Views.Root exposing (view)
 
 import Array
 import Html exposing (button, div, text)
+import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import Model exposing (Model)
 import Msg exposing (AudioMsg(..), Msg(..))
@@ -10,44 +11,28 @@ import String exposing (fromFloat)
 import Views.Album
 import Views.Artist
 import Views.Home
+import Views.Player
 import Views.PlaylistItem
 import Views.Song
 
 
 view : Model -> Html.Html Msg
 view model =
-    div []
-        [ case model.route of
-            Nothing ->
-                Views.Home.view model
+    div [ class "app__wrap" ]
+        [ div [ class "app__main" ]
+            [ case model.route of
+                Nothing ->
+                    Views.Home.view model
 
-            Just (Artist id) ->
-                Views.Artist.view id model
+                Just (Artist id) ->
+                    Views.Artist.view id model
 
-            Just (Album id) ->
-                Views.Album.view id model
-        , div []
+                Just (Album id) ->
+                    Views.Album.view id model
+            ]
+        , div [ class "app__playlist" ]
             [ div [] [ text "Playlist" ]
             , div [] (Array.indexedMap (Views.PlaylistItem.view model) model.playlist |> Array.toList)
             ]
-        , div []
-            [ case model.playing of
-                Just _ ->
-                    button [ onClick (AudioMsg Pause) ] [ text "Pause" ]
-
-                Nothing ->
-                    text ""
-            , case model.audioTime of
-                Just time ->
-                    div [] [ text <| fromFloat time ]
-
-                Nothing ->
-                    text ""
-            , case model.audioTime of
-                Just time ->
-                    button [ onClick <| AudioMsg (SetTime <| time + 15) ] [ text "+15" ]
-
-                Nothing ->
-                    text ""
-            ]
+        , div [ class "app__player" ] [ Views.Player.view model ]
         ]

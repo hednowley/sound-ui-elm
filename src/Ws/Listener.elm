@@ -61,10 +61,6 @@ processSuccess json decoder makeUpdate model =
             makeUpdate body model
 
         Err e ->
-            let
-                y =
-                    Debug.log "e" e
-            in
             ( model, Cmd.none )
 
 
