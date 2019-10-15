@@ -21,6 +21,7 @@ import Types exposing (Update)
 import Updaters
     exposing
         ( logOut
+        , onSongEnded
         , onSongLoaded
         , onUrlChange
         , playItem
@@ -138,6 +139,7 @@ subscriptions _ =
         , Ports.websocketClosed <| always WebsocketClosed
         , Ports.websocketIn <| Msg.WebsocketIn
         , Ports.canPlayAudio <| (CanPlay >> Msg.AudioMsg)
+        , Ports.audioEnded <| (Ended >> Msg.AudioMsg)
         ]
 
 
@@ -218,6 +220,9 @@ update msg model =
 
                 Queue songId ->
                     ( queueSong songId model, Ports.pauseAudio () )
+
+                Ended songId ->
+                    onSongEnded songId model
 
 
 

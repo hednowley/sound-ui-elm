@@ -1,5 +1,6 @@
 port module Ports exposing
-    ( canPlayAudio
+    ( audioEnded
+    , canPlayAudio
     , loadAudio
     , pauseAudio
     , playAudio
@@ -47,6 +48,9 @@ port websocketClose : () -> Cmd msg
 
 
 port canPlayAudio : (Int -> msg) -> Sub msg
+
+
+port audioEnded : (Int -> msg) -> Sub msg
 
 
 port websocketOpened : (() -> msg) -> Sub msg

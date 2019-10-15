@@ -1,5 +1,6 @@
 module Updaters exposing
     ( logOut
+    , onSongEnded
     , onSongLoaded
     , onUrlChange
     , playItem
@@ -43,6 +44,21 @@ onSongLoaded songId model =
 
     else
         ( m, Cmd.none )
+
+
+onSongEnded : Int -> Update Model Msg
+onSongEnded songId model =
+    case model.playing of
+        Just index ->
+            if Array.length model.playlist - 1 == index then
+                -- The last song has finished
+                ( { model | playing = Nothing }, Cmd.none )
+
+            else
+                playItem (index + 1) model
+
+        Nothing ->
+            ( model, Cmd.none )
 
 
 playItem : Int -> Update Model Msg

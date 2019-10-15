@@ -30,3 +30,4 @@ type AudioMsg
     | PlayItem Int
     | Pause
     | Queue Int
+    | Ended Int
