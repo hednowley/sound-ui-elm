@@ -22,10 +22,15 @@ let socket;
 window.app = app;
 
 app.ports.playAudio.subscribe(songId => {
+  console.log(`playAudio ${songId}`);
+
   pause();
   const audio = audios.get(songId);
   if (audio) {
+    audio.pause();
+    audio.currentTime = 0;
     audio.play();
+
     currentAudio = audio;
   }
 });
@@ -41,7 +46,10 @@ app.ports.pauseAudio.subscribe(pause);
 app.ports.loadAudio.subscribe(({ url, songId }) => {
   var a = new Audio(url);
 
-  a.oncanplay = () => app.ports.canPlayAudio.send(songId);
+  a.oncanplay = () => {
+    console.log(`oncanplay ${songId}`);
+    app.ports.canPlayAudio.send(songId);
+  };
   a.ondurationchange = () => console.log("ondurationchange");
   a.onended = () => app.ports.audioEnded.send(songId);
 
