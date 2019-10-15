@@ -222,7 +222,7 @@ update msg model =
                     ( { model | playing = Nothing }, Ports.pauseAudio () )
 
                 Queue songId ->
-                    ( queueSong songId model, Ports.pauseAudio () )
+                    ( queueSong songId model, Cmd.none )
 
                 Ended songId ->
                     onSongEnded songId model

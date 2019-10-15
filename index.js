@@ -36,6 +36,7 @@ app.ports.playAudio.subscribe(songId => {
 });
 
 const pause = () => {
+  console.log(`pause`);
   if (currentAudio) {
     currentAudio.pause();
   }
@@ -44,6 +45,8 @@ const pause = () => {
 app.ports.pauseAudio.subscribe(pause);
 
 app.ports.loadAudio.subscribe(({ url, songId }) => {
+  console.log(`loadAudio ${songId}`);
+
   var a = new Audio(url);
 
   a.oncanplay = () => {
@@ -53,7 +56,10 @@ app.ports.loadAudio.subscribe(({ url, songId }) => {
   };
   a.ondurationchange = () => console.log("ondurationchange");
   a.ontimeupdate = () => app.ports.audioTime.send(a.currentTime);
-  a.onended = () => app.ports.audioEnded.send(songId);
+  a.onended = () => {
+    console.log(`onended ${songId}`);
+    app.ports.audioEnded.send(songId);
+  };
 
   audios.set(songId, a);
 });
