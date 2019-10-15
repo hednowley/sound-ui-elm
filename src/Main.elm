@@ -21,6 +21,7 @@ import Types exposing (Update)
 import Updaters
     exposing
         ( logOut
+        , onAudioTimeChanged
         , onSongEnded
         , onSongLoaded
         , onUrlChange
@@ -127,6 +128,7 @@ emptyModel url key config =
     , songCache = Dict.empty
     , playing = Nothing
     , playlist = Array.empty
+    , audioTime = Nothing
     }
 
 
@@ -140,6 +142,7 @@ subscriptions _ =
         , Ports.websocketIn <| Msg.WebsocketIn
         , Ports.canPlayAudio <| (CanPlay >> Msg.AudioMsg)
         , Ports.audioEnded <| (Ended >> Msg.AudioMsg)
+        , Ports.audioTime <| (TimeChanged >> Msg.AudioMsg)
         ]
 
 
@@ -223,6 +226,12 @@ update msg model =
 
                 Ended songId ->
                     onSongEnded songId model
+
+                TimeChanged time ->
+                    onAudioTimeChanged time model
+
+                SetTime time ->
+                    ( model, Ports.setAudioTime time )
 
 
 

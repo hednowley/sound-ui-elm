@@ -48,6 +48,7 @@ type alias Model =
     , songCache : Dict Int AudioState.State
     , playing : Maybe Int
     , playlist : Array Int
+    , audioTime : Maybe Float
     }
 
 

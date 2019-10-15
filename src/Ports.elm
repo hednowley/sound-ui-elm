@@ -1,9 +1,11 @@
 port module Ports exposing
     ( audioEnded
+    , audioTime
     , canPlayAudio
     , loadAudio
     , pauseAudio
     , playAudio
+    , setAudioTime
     , setCache
     , websocketClose
     , websocketClosed
@@ -34,6 +36,9 @@ port playAudio : Int -> Cmd msg
 port pauseAudio : () -> Cmd msg
 
 
+port setAudioTime : Float -> Cmd msg
+
+
 port websocketOut : Json.Encode.Value -> Cmd msg
 
 
@@ -51,6 +56,9 @@ port canPlayAudio : (Int -> msg) -> Sub msg
 
 
 port audioEnded : (Int -> msg) -> Sub msg
+
+
+port audioTime : (Float -> msg) -> Sub msg
 
 
 port websocketOpened : (() -> msg) -> Sub msg

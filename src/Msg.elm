@@ -31,3 +31,5 @@ type AudioMsg
     | Pause
     | Queue Int
     | Ended Int
+    | TimeChanged Float
+    | SetTime Float

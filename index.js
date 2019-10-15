@@ -52,9 +52,16 @@ app.ports.loadAudio.subscribe(({ url, songId }) => {
     a.oncanplay = null;
   };
   a.ondurationchange = () => console.log("ondurationchange");
+  a.ontimeupdate = () => app.ports.audioTime.send(a.currentTime);
   a.onended = () => app.ports.audioEnded.send(songId);
 
   audios.set(songId, a);
+});
+
+app.ports.setAudioTime.subscribe(time => {
+  if (currentAudio) {
+    currentAudio.currentTime = time;
+  }
 });
 
 // Port for creating a websocket from elm

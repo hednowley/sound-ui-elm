@@ -6,6 +6,7 @@ import Html.Events exposing (onClick)
 import Model exposing (Model)
 import Msg exposing (AudioMsg(..), Msg(..))
 import Routing exposing (Route(..))
+import String exposing (fromFloat)
 import Views.Album
 import Views.Artist
 import Views.Home
@@ -33,6 +34,18 @@ view model =
             [ case model.playing of
                 Just _ ->
                     button [ onClick (AudioMsg Pause) ] [ text "Pause" ]
+
+                Nothing ->
+                    text ""
+            , case model.audioTime of
+                Just time ->
+                    div [] [ text <| fromFloat time ]
+
+                Nothing ->
+                    text ""
+            , case model.audioTime of
+                Just time ->
+                    button [ onClick <| AudioMsg (SetTime <| time + 15) ] [ text "+15" ]
 
                 Nothing ->
                     text ""

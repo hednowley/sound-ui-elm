@@ -1,5 +1,6 @@
 module Updaters exposing
     ( logOut
+    , onAudioTimeChanged
     , onSongEnded
     , onSongLoaded
     , onUrlChange
@@ -69,6 +70,11 @@ playItem index model =
 
         Nothing ->
             ( model, Cmd.none )
+
+
+onAudioTimeChanged : Float -> Update Model Msg
+onAudioTimeChanged time model =
+    ( { model | audioTime = Just time }, Cmd.none )
 
 
 queueAndPlaySong : Int -> Update Model Msg
