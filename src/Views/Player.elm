@@ -21,21 +21,62 @@ view : Model -> Html.Html Msg
 view model =
     div [ class "player__wrap" ]
         [ case getCurrentSongState model of
-            Just (AudioState.Playing time) ->
-                button [ onClick (AudioMsg Pause) ] [ text "Pause" ]
-
-            _ ->
-                text ""
-        , case getCurrentSongState model of
-            Just (AudioState.Playing time) ->
-                div [] [ text <| fromFloat time ]
-
-            _ ->
-                text ""
-        , case getCurrentSongState model of
-            Just (AudioState.Playing time) ->
-                button [ onClick <| AudioMsg (SetTime <| time + 15) ] [ text "+15" ]
+            Just state ->
+                div []
+                    [ backButton state, playButton state, forwardButton state, slider state ]
 
             _ ->
                 text ""
         ]
+
+
+backButton : State -> Html.Html Msg
+backButton state =
+    case state of
+        AudioState.Playing time ->
+            button [ onClick <| AudioMsg (SetTime <| time - 15) ] [ text "-15" ]
+
+        AudioState.Paused time ->
+            button [ onClick <| AudioMsg (SetTime <| time - 15) ] [ text "-15" ]
+
+        _ ->
+            text ""
+
+
+playButton : State -> Html.Html Msg
+playButton state =
+    case state of
+        AudioState.Playing time ->
+            button [ onClick <| AudioMsg Pause ] [ text "Pause" ]
+
+        AudioState.Paused time ->
+            button [ onClick <| AudioMsg Resume ] [ text "Play" ]
+
+        _ ->
+            text ""
+
+
+forwardButton : State -> Html.Html Msg
+forwardButton state =
+    case state of
+        AudioState.Playing time ->
+            button [ onClick <| AudioMsg (SetTime <| time + 15) ] [ text "+15" ]
+
+        AudioState.Paused time ->
+            button [ onClick <| AudioMsg (SetTime <| time + 15) ] [ text "+15" ]
+
+        _ ->
+            text ""
+
+
+slider : State -> Html.Html Msg
+slider state =
+    case state of
+        AudioState.Playing time ->
+            div [] [ text <| fromFloat time ]
+
+        AudioState.Paused time ->
+            div [] [ text <| fromFloat time ]
+
+        _ ->
+            text ""

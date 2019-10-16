@@ -18,10 +18,13 @@ port loadAudio : Audio.LoadRequest -> Cmd msg
 port playAudio : Int -> Cmd msg
 
 
-port pauseAudio : () -> Cmd msg
+port pauseAudio : Int -> Cmd msg
 
 
-port setAudioTime : Float -> Cmd msg
+port resumeAudio : Int -> Cmd msg
+
+
+port setAudioTime : { songId : Int, time : Float } -> Cmd msg
 
 
 port websocketOut : Json.Encode.Value -> Cmd msg

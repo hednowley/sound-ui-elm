@@ -16,33 +16,35 @@ app.ports.setCache.subscribe(model =>
 );
 
 const audios = new Map();
-let currentAudio;
 
 let socket;
 window.app = app;
 
 app.ports.playAudio.subscribe(songId => {
   console.log(`playAudio ${songId}`);
-
-  pause();
   const audio = audios.get(songId);
   if (audio) {
     audio.pause();
     audio.currentTime = 0;
     audio.play();
-
-    currentAudio = audio;
   }
 });
 
-const pause = () => {
-  console.log(`pause`);
-  if (currentAudio) {
-    currentAudio.pause();
+app.ports.pauseAudio.subscribe(songId => {
+  console.log(`pause ${songId}`);
+  const audio = audios.get(songId);
+  if (audio) {
+    audio.pause();
   }
-};
+});
 
-app.ports.pauseAudio.subscribe(pause);
+app.ports.resumeAudio.subscribe(songId => {
+  console.log(`resume ${songId}`);
+  const audio = audios.get(songId);
+  if (audio) {
+    audio.play();
+  }
+});
 
 app.ports.loadAudio.subscribe(({ url, songId }) => {
   console.log(`loadAudio ${songId}`);
@@ -80,9 +82,10 @@ app.ports.loadAudio.subscribe(({ url, songId }) => {
   audios.set(songId, a);
 });
 
-app.ports.setAudioTime.subscribe(time => {
-  if (currentAudio) {
-    currentAudio.currentTime = time;
+app.ports.setAudioTime.subscribe(({ songId, time }) => {
+  const audio = audios.get(songId);
+  if (audio) {
+    audio.currentTime = time;
   }
 });
 

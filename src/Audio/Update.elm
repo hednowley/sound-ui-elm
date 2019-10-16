@@ -23,6 +23,36 @@ updateSongState songId state model =
     { model | songCache = Dict.insert songId state model.songCache }
 
 
+pauseCurrent : Update Model Msg
+pauseCurrent model =
+    case getCurrentSongId model of
+        Just songId ->
+            ( model, Ports.pauseAudio songId )
+
+        Nothing ->
+            ( model, Cmd.none )
+
+
+setCurrentTime : Float -> Update Model Msg
+setCurrentTime time model =
+    case getCurrentSongId model of
+        Just songId ->
+            ( model, Ports.setAudioTime { songId = songId, time = time } )
+
+        Nothing ->
+            ( model, Cmd.none )
+
+
+resumeCurrent : Update Model Msg
+resumeCurrent model =
+    case getCurrentSongId model of
+        Just songId ->
+            ( model, Ports.resumeAudio songId )
+
+        Nothing ->
+            ( model, Cmd.none )
+
+
 onSongLoaded : Int -> Update Model Msg
 onSongLoaded songId model =
     let

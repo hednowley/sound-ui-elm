@@ -211,7 +211,10 @@ update msg model =
                     queueAndPlaySong songId model
 
                 Pause ->
-                    ( { model | playing = Nothing }, Ports.pauseAudio () )
+                    pauseCurrent model
+
+                Resume ->
+                    resumeCurrent model
 
                 Queue songId ->
                     ( queueSong songId model, Cmd.none )
@@ -220,7 +223,7 @@ update msg model =
                     onSongEnded songId model
 
                 SetTime time ->
-                    ( model, Ports.setAudioTime time )
+                    setCurrentTime time model
 
                 Msg.Playing args ->
                     ( updateSongState args.songId (AudioState.Playing args.time) model, Cmd.none )
