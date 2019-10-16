@@ -55,10 +55,19 @@ app.ports.loadAudio.subscribe(({ url, songId }) => {
     a.oncanplay = null;
   };
   a.ondurationchange = () => console.log("ondurationchange");
-  a.ontimeupdate = () => app.ports.audioTime.send(a.currentTime);
+  a.ontimeupdate = () =>
+    app.ports.audioTime.send({ songId, time: a.currentTime });
   a.onended = () => {
     console.log(`onended ${songId}`);
     app.ports.audioEnded.send(songId);
+  };
+  a.onplay = () => {
+    console.log(`onplay ${songId}`);
+    app.ports.audioPlaying.send(songId);
+  };
+  a.onpause = () => {
+    console.log(`onpause ${songId}`);
+    app.ports.audioPaused.send(songId);
   };
 
   audios.set(songId, a);

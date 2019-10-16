@@ -1,4 +1,4 @@
-module Audio exposing (LoadRequest, State, getSongId, makeLoadRequest)
+module Audio exposing (LoadRequest, State, makeLoadRequest)
 
 import Array
 import Model exposing (Model)
@@ -19,8 +19,3 @@ makeLoadRequest model songId =
     { url = model.config.root ++ "/api/stream?id=" ++ fromInt songId
     , songId = songId
     }
-
-
-getSongId : Model -> Int -> Maybe Int
-getSongId model index =
-    Array.get index model.playlist

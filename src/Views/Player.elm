@@ -1,6 +1,8 @@
 module Views.Player exposing (view)
 
 import Array
+import Audio.Select exposing (getCurrentSongState)
+import AudioState exposing (State(..))
 import Html exposing (button, div, text)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
@@ -18,22 +20,22 @@ import Views.Song
 view : Model -> Html.Html Msg
 view model =
     div [ class "player__wrap" ]
-        [ case model.playing of
-            Just _ ->
+        [ case getCurrentSongState model of
+            Just (AudioState.Playing time) ->
                 button [ onClick (AudioMsg Pause) ] [ text "Pause" ]
 
-            Nothing ->
+            _ ->
                 text ""
-        , case model.audioTime of
-            Just time ->
+        , case getCurrentSongState model of
+            Just (AudioState.Playing time) ->
                 div [] [ text <| fromFloat time ]
 
-            Nothing ->
+            _ ->
                 text ""
-        , case model.audioTime of
-            Just time ->
+        , case getCurrentSongState model of
+            Just (AudioState.Playing time) ->
                 button [ onClick <| AudioMsg (SetTime <| time + 15) ] [ text "+15" ]
 
-            Nothing ->
+            _ ->
                 text ""
         ]

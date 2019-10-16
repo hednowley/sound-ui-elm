@@ -31,5 +31,6 @@ type AudioMsg
     | Pause
     | Queue Int
     | Ended Int
-    | TimeChanged Float
     | SetTime Float
+    | Playing { songId : Int, time : Float }
+    | Paused { songId : Int, time : Float }

@@ -1,6 +1,7 @@
 port module Ports exposing
     ( audioEnded
-    , audioTime
+    , audioPaused
+    , audioPlaying
     , canPlayAudio
     , loadAudio
     , pauseAudio
@@ -58,7 +59,10 @@ port canPlayAudio : (Int -> msg) -> Sub msg
 port audioEnded : (Int -> msg) -> Sub msg
 
 
-port audioTime : (Float -> msg) -> Sub msg
+port audioPlaying : ({ songId : Int, time : Float } -> msg) -> Sub msg
+
+
+port audioPaused : ({ songId : Int, time : Float } -> msg) -> Sub msg
 
 
 port websocketOpened : (() -> msg) -> Sub msg

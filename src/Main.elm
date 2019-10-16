@@ -2,6 +2,7 @@ module Main exposing (main)
 
 import Array
 import Audio
+import Audio.Update exposing (..)
 import AudioState exposing (State(..))
 import Browser
 import Browser.Navigation as Nav exposing (Key)
@@ -18,17 +19,7 @@ import Rest.Core as Rest
 import Routing exposing (Route(..))
 import String exposing (fromInt)
 import Types exposing (Update)
-import Updaters
-    exposing
-        ( logOut
-        , onAudioTimeChanged
-        , onSongEnded
-        , onSongLoaded
-        , onUrlChange
-        , playItem
-        , queueAndPlaySong
-        , queueSong
-        )
+import Updaters exposing (logOut, onUrlChange)
 import Url exposing (Url)
 import Views.Login
 import Views.Root
@@ -128,7 +119,6 @@ emptyModel url key config =
     , songCache = Dict.empty
     , playing = Nothing
     , playlist = Array.empty
-    , audioTime = Nothing
     }
 
 
@@ -142,7 +132,8 @@ subscriptions _ =
         , Ports.websocketIn <| Msg.WebsocketIn
         , Ports.canPlayAudio <| (CanPlay >> Msg.AudioMsg)
         , Ports.audioEnded <| (Ended >> Msg.AudioMsg)
-        , Ports.audioTime <| (TimeChanged >> Msg.AudioMsg)
+        , Ports.audioPlaying <| (Msg.Playing >> Msg.AudioMsg)
+        , Ports.audioPaused <| (Msg.Paused >> Msg.AudioMsg)
         ]
 
 
@@ -227,11 +218,14 @@ update msg model =
                 Ended songId ->
                     onSongEnded songId model
 
-                TimeChanged time ->
-                    onAudioTimeChanged time model
-
                 SetTime time ->
                     ( model, Ports.setAudioTime time )
+
+                Msg.Playing args ->
+                    ( updateSongState args.songId (AudioState.Playing args.time) model, Cmd.none )
+
+                Msg.Paused args ->
+                    ( updateSongState args.songId (AudioState.Paused args.time) model, Cmd.none )
 
 
 
