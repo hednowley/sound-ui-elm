@@ -134,6 +134,7 @@ subscriptions _ =
         , Ports.audioEnded <| (Ended >> Msg.AudioMsg)
         , Ports.audioPlaying <| (Msg.Playing >> Msg.AudioMsg)
         , Ports.audioPaused <| (Msg.Paused >> Msg.AudioMsg)
+        , Ports.audioTimeChanged <| (Msg.TimeChanged >> Msg.AudioMsg)
         ]
 
 
@@ -226,6 +227,9 @@ update msg model =
 
                 Msg.Paused args ->
                     ( updateSongState args.songId (AudioState.Paused args.time) model, Cmd.none )
+
+                Msg.TimeChanged args ->
+                    ( onTimeChanged args.songId args.time model, Cmd.none )
 
 
 

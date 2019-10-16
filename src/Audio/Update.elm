@@ -39,6 +39,19 @@ onSongLoaded songId model =
         ( m, Cmd.none )
 
 
+onTimeChanged : Int -> Float -> Model -> Model
+onTimeChanged songId time model =
+    case getSongState songId model of
+        Just (Playing _) ->
+            updateSongState songId (Playing time) model
+
+        Just (Paused _) ->
+            updateSongState songId (Paused time) model
+
+        _ ->
+            model
+
+
 playSong : Int -> Update Model Msg
 playSong songId model =
     case Dict.get songId model.songCache of

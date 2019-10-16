@@ -54,20 +54,27 @@ app.ports.loadAudio.subscribe(({ url, songId }) => {
     app.ports.canPlayAudio.send(songId);
     a.oncanplay = null;
   };
+
   a.ondurationchange = () => console.log("ondurationchange");
-  a.ontimeupdate = () =>
-    app.ports.audioTime.send({ songId, time: a.currentTime });
+
+  a.ontimeupdate = () => {
+    console.log(`ontimeupdate ${songId}`);
+    app.ports.audioTimeChanged.send({ songId, time: a.currentTime });
+  };
+
   a.onended = () => {
     console.log(`onended ${songId}`);
     app.ports.audioEnded.send(songId);
   };
+
   a.onplay = () => {
     console.log(`onplay ${songId}`);
-    app.ports.audioPlaying.send(songId);
+    app.ports.audioPlaying.send({ songId, time: a.currentTime });
   };
+
   a.onpause = () => {
     console.log(`onpause ${songId}`);
-    app.ports.audioPaused.send(songId);
+    app.ports.audioPaused.send({ songId, time: a.currentTime });
   };
 
   audios.set(songId, a);

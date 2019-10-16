@@ -1,20 +1,4 @@
-port module Ports exposing
-    ( audioEnded
-    , audioPaused
-    , audioPlaying
-    , canPlayAudio
-    , loadAudio
-    , pauseAudio
-    , playAudio
-    , setAudioTime
-    , setCache
-    , websocketClose
-    , websocketClosed
-    , websocketIn
-    , websocketOpen
-    , websocketOpened
-    , websocketOut
-    )
+port module Ports exposing (..)
 
 import Audio
 import Cache exposing (Cache)
@@ -63,6 +47,9 @@ port audioPlaying : ({ songId : Int, time : Float } -> msg) -> Sub msg
 
 
 port audioPaused : ({ songId : Int, time : Float } -> msg) -> Sub msg
+
+
+port audioTimeChanged : ({ songId : Int, time : Float } -> msg) -> Sub msg
 
 
 port websocketOpened : (() -> msg) -> Sub msg
