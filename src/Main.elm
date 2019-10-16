@@ -234,6 +234,9 @@ update msg model =
                 Msg.TimeChanged args ->
                     ( onTimeChanged args.songId args.time model, Cmd.none )
 
+                Msg.Next ->
+                    goNext model
+
 
 
 -- VIEWS

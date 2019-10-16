@@ -22,6 +22,12 @@ getSongState songId model =
     Dict.get songId model.songCache
 
 
+getItemState : Int -> Model -> Maybe State
+getItemState index model =
+    getSongId model index
+        |> Maybe.andThen (\s -> getSongState s model)
+
+
 getSongId : Model -> Int -> Maybe Int
 getSongId model index =
     Array.get index model.playlist

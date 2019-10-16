@@ -23,7 +23,7 @@ view model =
         [ case getCurrentSongState model of
             Just state ->
                 div []
-                    [ backButton state, playButton state, forwardButton state, slider state ]
+                    [ backButton state, playButton state, forwardButton state, nextButton state, slider state ]
 
             _ ->
                 text ""
@@ -64,6 +64,19 @@ forwardButton state =
 
         AudioState.Paused time ->
             button [ onClick <| AudioMsg (SetTime <| time + 15) ] [ text "+15" ]
+
+        _ ->
+            text ""
+
+
+nextButton : State -> Html.Html Msg
+nextButton state =
+    case state of
+        AudioState.Playing time ->
+            button [ onClick <| AudioMsg Next ] [ text ">|" ]
+
+        AudioState.Paused time ->
+            button [ onClick <| AudioMsg Next ] [ text ">|" ]
 
         _ ->
             text ""

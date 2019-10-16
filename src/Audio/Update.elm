@@ -11,7 +11,7 @@ import Model exposing (Model)
 import Msg exposing (Msg)
 import Ports
 import Routing exposing (Route(..))
-import Types exposing (Update)
+import Types exposing (Update, combine)
 import Url exposing (Url)
 import Ws.Core as Ws
 import Ws.Methods.GetAlbum exposing (getAlbum)
@@ -21,6 +21,31 @@ import Ws.Methods.GetArtist exposing (getArtist)
 updateSongState : Int -> AudioState.State -> Model -> Model
 updateSongState songId state model =
     { model | songCache = Dict.insert songId state model.songCache }
+
+
+goNext : Update Model Msg
+goNext model =
+    case model.playing of
+        Just index ->
+            if Array.length model.playlist - 1 == index then
+                -- No next song
+                ( model, Cmd.none )
+
+            else
+                case getCurrentSongState model of
+                    Just (Playing _) ->
+                        playItem (index + 1) model
+
+                    _ ->
+                        case getCurrentSongId model of
+                            Just songId ->
+                                loadSong songId model
+
+                            Nothing ->
+                                ( model, Cmd.none )
+
+        Nothing ->
+            ( model, Cmd.none )
 
 
 pauseCurrent : Update Model Msg
@@ -94,6 +119,9 @@ playSong songId model =
         Just (AudioState.Paused _) ->
             ( model, Ports.playAudio songId )
 
+        Just (AudioState.Playing _) ->
+            ( model, Ports.playAudio songId )
+
         _ ->
             loadSong songId model
 
@@ -117,7 +145,10 @@ playItem : Int -> Update Model Msg
 playItem index model =
     case getSongId model index of
         Just songId ->
-            playSong songId { model | playing = Just index }
+            model
+                |> combine
+                    pauseCurrent
+                    (\m -> playSong songId { m | playing = Just index })
 
         Nothing ->
             ( model, Cmd.none )
