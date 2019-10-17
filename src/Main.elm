@@ -1,5 +1,6 @@
 module Main exposing (main)
 
+import Album.Update exposing (..)
 import Array
 import Audio
 import Audio.Update exposing (..)
@@ -209,6 +210,9 @@ update msg model =
 
                 Play songId ->
                     queueAndPlaySong songId model
+
+                PlayAlbum album ->
+                    playAlbum album model
 
                 Pause ->
                     pauseCurrent model

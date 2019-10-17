@@ -6,7 +6,7 @@ import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
-import Msg exposing (Msg(..))
+import Msg exposing (AudioMsg(..), Msg(..))
 import Views.Song
 
 
@@ -21,7 +21,10 @@ view id model =
 
         Loaded album ->
             div []
-                [ div [] [ text album.name ]
+                [ div []
+                    [ div [] [ text album.name ]
+                    , button [ onClick <| AudioMsg (PlayAlbum album) ] [ text "Play album" ]
+                    ]
                 , div [] <|
                     List.map (Views.Song.view model) (getAlbumSongs album model)
                 ]
