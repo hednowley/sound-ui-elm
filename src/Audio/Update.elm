@@ -2,7 +2,13 @@ module Audio.Update exposing (..)
 
 import Array exposing (fromList, push)
 import Audio exposing (makeLoadRequest)
-import Audio.Select exposing (..)
+import Audio.Select
+    exposing
+        ( getCurrentSongId
+        , getCurrentSongState
+        , getSongId
+        , getSongState
+        )
 import AudioState exposing (State(..))
 import Dict
 import Entities.SongSummary exposing (SongSummary)
