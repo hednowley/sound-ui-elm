@@ -12,10 +12,6 @@ import Msg exposing (Msg)
 import Ports
 import Routing exposing (Route(..))
 import Types exposing (Update, combine)
-import Url exposing (Url)
-import Ws.Core as Ws
-import Ws.Methods.GetAlbum exposing (getAlbum)
-import Ws.Methods.GetArtist exposing (getArtist)
 
 
 updateSongState : Int -> AudioState.State -> Model -> Model

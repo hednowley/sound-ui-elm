@@ -1,19 +1,16 @@
 module Views.Root exposing (view)
 
 import Array
-import Html exposing (button, div, text)
+import Html exposing (div, text)
 import Html.Attributes exposing (class)
-import Html.Events exposing (onClick)
 import Model exposing (Model)
 import Msg exposing (AudioMsg(..), Msg(..))
 import Routing exposing (Route(..))
-import String exposing (fromFloat)
 import Views.Album
 import Views.Artist
 import Views.Home
 import Views.Player
 import Views.PlaylistItem
-import Views.Song
 
 
 view : Model -> Html.Html Msg

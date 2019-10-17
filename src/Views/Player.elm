@@ -1,6 +1,5 @@
 module Views.Player exposing (view)
 
-import Array
 import Audio.Select exposing (getCurrentSongState)
 import AudioState exposing (State(..))
 import Html exposing (button, div, text)
@@ -10,11 +9,6 @@ import Model exposing (Model)
 import Msg exposing (AudioMsg(..), Msg(..))
 import Routing exposing (Route(..))
 import String exposing (fromFloat)
-import Views.Album
-import Views.Artist
-import Views.Home
-import Views.PlaylistItem
-import Views.Song
 
 
 view : Model -> Html.Html Msg
@@ -46,10 +40,10 @@ backButton state =
 playButton : State -> Html.Html Msg
 playButton state =
     case state of
-        AudioState.Playing time ->
+        AudioState.Playing _ ->
             button [ onClick <| AudioMsg Pause ] [ text "Pause" ]
 
-        AudioState.Paused time ->
+        AudioState.Paused _ ->
             button [ onClick <| AudioMsg Resume ] [ text "Play" ]
 
         _ ->
@@ -72,10 +66,10 @@ forwardButton state =
 nextButton : State -> Html.Html Msg
 nextButton state =
     case state of
-        AudioState.Playing time ->
+        AudioState.Playing _ ->
             button [ onClick <| AudioMsg Next ] [ text ">|" ]
 
-        AudioState.Paused time ->
+        AudioState.Paused _ ->
             button [ onClick <| AudioMsg Next ] [ text ">|" ]
 
         _ ->

@@ -3,12 +3,9 @@ module Updaters exposing
     , onUrlChange
     )
 
-import Array exposing (push)
-import Audio exposing (makeLoadRequest)
 import Audio.Select exposing (..)
 import AudioState exposing (State(..))
 import Dict
-import Entities.SongSummary exposing (SongSummary)
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (Msg)

@@ -2,7 +2,6 @@ module Main exposing (main)
 
 import Album.Update exposing (..)
 import Array
-import Audio
 import Audio.Update exposing (..)
 import AudioState exposing (State(..))
 import Browser
@@ -18,7 +17,6 @@ import Msg exposing (AudioMsg(..), Msg(..))
 import Ports
 import Rest.Core as Rest
 import Routing exposing (Route(..))
-import String exposing (fromInt)
 import Types exposing (Update)
 import Updaters exposing (logOut, onUrlChange)
 import Url exposing (Url)

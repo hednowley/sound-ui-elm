@@ -1,12 +1,13 @@
 module Audio exposing (LoadRequest, State, makeLoadRequest)
 
-import Array
 import Model exposing (Model)
 import String exposing (fromInt)
 
 
 type alias LoadRequest =
-    { url : String, songId : Int }
+    { url : String
+    , songId : Int
+    }
 
 
 type State

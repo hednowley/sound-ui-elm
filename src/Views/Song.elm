@@ -1,6 +1,5 @@
 module Views.Song exposing (view)
 
-import Dict
 import Entities.SongSummary exposing (SongSummary)
 import Html exposing (button, div, text)
 import Html.Attributes exposing (class)
