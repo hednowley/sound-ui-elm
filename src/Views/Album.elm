@@ -1,5 +1,6 @@
 module Views.Album exposing (view)
 
+import Album.Select exposing (getAlbumSongs)
 import Html exposing (button, div, text)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
@@ -22,5 +23,5 @@ view id model =
             div []
                 [ div [] [ text album.name ]
                 , div [] <|
-                    List.map (.id >> Views.Song.view model) album.songs
+                    List.map (Views.Song.view model) (getAlbumSongs album model)
                 ]
