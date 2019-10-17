@@ -209,8 +209,8 @@ update msg model =
                 Play songId ->
                     queueAndPlaySong songId model
 
-                PlayAlbum album ->
-                    playAlbum album model
+                PlayAlbum albumId ->
+                    playAlbum albumId model
 
                 Pause ->
                     pauseCurrent model

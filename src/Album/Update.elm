@@ -8,8 +8,8 @@ import Msg exposing (AudioMsg(..), Msg(..))
 import Types exposing (Update)
 
 
-playAlbum : Album -> Update Model Msg
-playAlbum album model =
+playAlbum : Int -> Update Model Msg
+playAlbum albumId model =
     let
         playlist =
             List.map .id (getAlbumSongs album model)

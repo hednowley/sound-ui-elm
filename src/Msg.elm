@@ -39,4 +39,4 @@ type AudioMsg
     | Paused { songId : Int, time : Float }
     | Next
     | Prev
-    | PlayAlbum Album
+    | PlayAlbum Int

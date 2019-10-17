@@ -1,10 +1,11 @@
 module Views.Artist exposing (view)
 
-import Html exposing (a, div, text)
+import Html exposing (a, button, div, text)
 import Html.Attributes exposing (class, href)
+import Html.Events exposing (onClick)
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
-import Msg exposing (Msg(..))
+import Msg exposing (AudioMsg(..), Msg(..))
 import String exposing (fromInt)
 
 
@@ -20,11 +21,14 @@ view id model =
         Loaded artist ->
             div []
                 [ div [] [ text artist.name ]
-                , div [] <|
+                , div [ class "artist__albums" ] <|
                     List.map
                         (\album ->
                             div [ class "home__artist" ]
-                                [ a [ href <| "/album/" ++ fromInt album.id ] [ text album.name ]
+                                [ div []
+                                    [ a [ href <| "/album/" ++ fromInt album.id ] [ text album.name ]
+                                    , button [ onClick <| AudioMsg (PlayAlbum album.id) ] [ text "Play" ]
+                                    ]
                                 ]
                         )
                         artist.albums

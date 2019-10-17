@@ -1,0 +1,6 @@
+.artist {
+  &__albums {
+    display: flex;
+    flex-direction: column;
+  }
+}
