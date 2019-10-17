@@ -239,6 +239,9 @@ update msg model =
                 Msg.Next ->
                     goNext model
 
+                Msg.Prev ->
+                    goPrev model
+
 
 
 -- VIEWS

@@ -50,6 +50,31 @@ goNext model =
             ( model, Cmd.none )
 
 
+goPrev : Update Model Msg
+goPrev model =
+    case model.playing of
+        Just index ->
+            if index == 0 then
+                -- No prev song
+                ( model, Cmd.none )
+
+            else
+                case getCurrentSongState model of
+                    Just (Playing _) ->
+                        playItem (index - 1) model
+
+                    _ ->
+                        case getCurrentSongId model of
+                            Just songId ->
+                                loadSong songId model
+
+                            Nothing ->
+                                ( model, Cmd.none )
+
+        Nothing ->
+            ( model, Cmd.none )
+
+
 pauseCurrent : Update Model Msg
 pauseCurrent model =
     case getCurrentSongId model of

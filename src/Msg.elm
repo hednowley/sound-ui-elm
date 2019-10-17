@@ -38,4 +38,5 @@ type AudioMsg
     | Playing { songId : Int, time : Float }
     | Paused { songId : Int, time : Float }
     | Next
+    | Prev
     | PlayAlbum Album
