@@ -1,6 +1,6 @@
 module Audio.Update exposing (..)
 
-import Array exposing (push)
+import Array exposing (fromList, push)
 import Audio exposing (makeLoadRequest)
 import Audio.Select exposing (..)
 import AudioState exposing (State(..))
@@ -152,6 +152,27 @@ playItem index model =
 
         Nothing ->
             ( model, Cmd.none )
+
+
+replacePlaylistWithoutPausing : List Int -> Update Model Msg
+replacePlaylistWithoutPausing playlist model =
+    let
+        m =
+            { model | playlist = fromList playlist }
+    in
+    case playlist of
+        [] ->
+            ( m, Cmd.none )
+
+        first :: _ ->
+            playSong first { m | playing = Just 0 }
+
+
+replacePlaylist : List Int -> Update Model Msg
+replacePlaylist playlist =
+    combine
+        pauseCurrent
+        (replacePlaylistWithoutPausing playlist)
 
 
 queueAndPlaySong : Int -> Update Model Msg
