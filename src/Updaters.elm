@@ -38,4 +38,4 @@ onUrlChange url model =
                 { m | artist = Loadable.Loading }
 
         Just (Album id) ->
-            loadAlbum id Nothing model
+            loadAlbum id Nothing m
