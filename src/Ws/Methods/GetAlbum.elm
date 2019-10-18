@@ -1,5 +1,7 @@
 module Ws.Methods.GetAlbum exposing (getAlbum)
 
+import Dict
+import Entities.Album
 import Json.Decode exposing (int)
 import Json.Encode
 import Loadable exposing (Loadable(..))
@@ -12,11 +14,15 @@ import Ws.Listener exposing (Listener, makeIrresponsibleListener)
 import Ws.Types exposing (RequestData)
 
 
-getAlbum : Int -> RequestData
-getAlbum id =
+type alias Callback =
+    Entities.Album.Album -> Update Model Msg
+
+
+getAlbum : Int -> Maybe Callback -> RequestData
+getAlbum id callback =
     { method = "getAlbum"
     , params = makeRequest id |> Just
-    , listener = Just onResponse
+    , listener = Just (onResponse callback)
     }
 
 
@@ -26,23 +32,29 @@ makeRequest id =
         [ ( "id", Json.Encode.int id ) ]
 
 
-onResponse : Listener Model Msg
-onResponse =
+onResponse : Maybe Callback -> Listener Model Msg
+onResponse callback =
     makeIrresponsibleListener
         (.id >> removeListener)
         decode
-        setAlbum
+        (onSuccess callback)
 
 
-setAlbum : Album -> Update Model Msg
-setAlbum album model =
+onSuccess : Maybe Callback -> Album -> Update Model Msg
+onSuccess callback album model =
     let
         a =
             convert album
+
+        m =
+            { model
+                | songs = insertMany .id identity a.songs model.songs -- Store the songs
+                , albums = Dict.insert a.id (Loaded a) model.albums -- Store the album
+            }
     in
-    ( { model
-        | album = Loaded a
-        , songs = insertMany .id identity a.songs model.songs -- Store the songs
-      }
-    , Cmd.none
-    )
+    case callback of
+        Nothing ->
+            ( m, Cmd.none )
+
+        Just c ->
+            c a m

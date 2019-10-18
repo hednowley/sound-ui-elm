@@ -41,7 +41,7 @@ type alias Model =
     , artists : ArtistSummaries
     , artist : Loadable Artist
     , songs : Dict Int SongSummary
-    , album : Loadable Album
+    , albums : Dict Int (Loadable Album)
     , config : Config
     , websocketIsOpen : Bool
     , route : Maybe Route

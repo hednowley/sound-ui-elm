@@ -1,6 +1,6 @@
 module Views.Album exposing (view)
 
-import Album.Select exposing (getAlbumSongs)
+import Album.Select exposing (getAlbum, getAlbumSongs)
 import Html exposing (button, div, text)
 import Html.Events exposing (onClick)
 import Loadable exposing (Loadable(..))
@@ -11,7 +11,7 @@ import Views.Song
 
 view : Int -> Model -> Html.Html Msg
 view id model =
-    case model.album of
+    case getAlbum id model of
         Absent ->
             div [] [ text "No album" ]
 
@@ -22,7 +22,7 @@ view id model =
             div []
                 [ div []
                     [ div [] [ text album.name ]
-                    , button [ onClick <| AudioMsg (PlayAlbum album) ] [ text "Play album" ]
+                    , button [ onClick <| AudioMsg (PlayAlbum id) ] [ text "Play album" ]
                     ]
                 , div [] <|
                     List.map (Views.Song.view model) (getAlbumSongs album model)

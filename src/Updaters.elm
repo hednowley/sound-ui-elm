@@ -3,6 +3,7 @@ module Updaters exposing
     , onUrlChange
     )
 
+import Album.Update exposing (loadAlbum)
 import Audio.Select exposing (..)
 import AudioState exposing (State(..))
 import Dict
@@ -39,6 +40,4 @@ onUrlChange url model =
                 { m | artist = Loadable.Loading }
 
         Just (Album id) ->
-            Ws.sendMessage
-                (getAlbum id)
-                { m | album = Loadable.Loading }
+            loadAlbum id Nothing model
