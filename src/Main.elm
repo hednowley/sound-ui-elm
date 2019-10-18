@@ -1,8 +1,22 @@
 module Main exposing (main)
 
-import Album.Update exposing (..)
+import Album.Update exposing (playAlbum)
 import Array
-import Audio.Update exposing (..)
+import Audio.Update
+    exposing
+        ( goNext
+        , goPrev
+        , onSongEnded
+        , onSongLoaded
+        , onTimeChanged
+        , pauseCurrent
+        , playItem
+        , queueAndPlaySong
+        , queueSong
+        , resumeCurrent
+        , setCurrentTime
+        , updateSongState
+        )
 import AudioState exposing (State(..))
 import Browser
 import Browser.Navigation as Nav exposing (Key)
@@ -71,7 +85,7 @@ init flags url navKey =
     let
         model =
             makeModel
-                (emptyModel url navKey flags.config)
+                (emptyModel navKey flags.config)
                 (tryDecode flags.model)
     in
     ( model, reconnect model )
@@ -89,8 +103,8 @@ reconnect model =
             Cmd.none
 
 
-emptyModel : Url -> Key -> Config -> Model
-emptyModel url key config =
+emptyModel : Key -> Config -> Model
+emptyModel key config =
     { key = key
     , username = ""
     , password = ""
