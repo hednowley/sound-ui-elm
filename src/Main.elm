@@ -221,8 +221,8 @@ update msg model =
                 Queue songId ->
                     ( queueSong songId model, Cmd.none )
 
-                Ended songId ->
-                    onSongEnded songId model
+                Ended _ ->
+                    onSongEnded model
 
                 SetTime time ->
                     setCurrentTime time model

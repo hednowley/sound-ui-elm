@@ -2,7 +2,6 @@ module Msg exposing (AudioMsg(..), Msg(..))
 
 import Browser
 import DTO.Authenticate
-import Entities.Album exposing (Album)
 import Http
 import Url
 

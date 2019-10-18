@@ -6,7 +6,6 @@ module Updaters exposing
 import Album.Update exposing (loadAlbum)
 import Audio.Select exposing (..)
 import AudioState exposing (State(..))
-import Dict
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (Msg)
@@ -15,7 +14,6 @@ import Routing exposing (Route(..))
 import Types exposing (Update)
 import Url exposing (Url)
 import Ws.Core as Ws
-import Ws.Methods.GetAlbum exposing (getAlbum)
 import Ws.Methods.GetArtist exposing (getArtist)
 
 

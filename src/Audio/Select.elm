@@ -1,4 +1,4 @@
-module Audio.Select exposing (..)
+module Audio.Select exposing (getCurrentSongId, getCurrentSongState, getSongId, getSongState)
 
 import Array
 import AudioState exposing (State(..))
@@ -11,12 +11,6 @@ import Routing exposing (Route(..))
 getSongState : Int -> Model -> Maybe State
 getSongState songId model =
     Dict.get songId model.songCache
-
-
-getItemState : Int -> Model -> Maybe State
-getItemState index model =
-    getSongId model index
-        |> Maybe.andThen (\s -> getSongState s model)
 
 
 getSongId : Model -> Int -> Maybe Int

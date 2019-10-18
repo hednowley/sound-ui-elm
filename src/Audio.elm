@@ -1,4 +1,4 @@
-module Audio exposing (LoadRequest, State, makeLoadRequest)
+module Audio exposing (LoadRequest, makeLoadRequest)
 
 import Model exposing (Model)
 import String exposing (fromInt)
@@ -8,11 +8,6 @@ type alias LoadRequest =
     { url : String
     , songId : Int
     }
-
-
-type State
-    = Loading
-    | Loaded
 
 
 makeLoadRequest : Model -> Int -> LoadRequest

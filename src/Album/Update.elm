@@ -19,15 +19,17 @@ loadAlbum id callback model =
         { model | albums = Dict.insert id Loading model.albums }
 
 
-playAlbum2 : Album -> Update Model Msg
-playAlbum2 album model =
+playLoadedAlbum : Album -> Update Model Msg
+playLoadedAlbum album =
     let
         playlist =
-            List.map .id (getAlbumSongs album model)
+            List.map .id (getAlbumSongs album)
     in
-    replacePlaylist playlist model
+    replacePlaylist playlist
 
 
 playAlbum : Int -> Update Model Msg
 playAlbum albumId =
-    loadAlbum albumId (Just playAlbum2)
+    loadAlbum
+        albumId
+        (Just playLoadedAlbum)

@@ -1,4 +1,18 @@
-module Audio.Update exposing (..)
+module Audio.Update exposing
+    ( goNext
+    , goPrev
+    , onSongEnded
+    , onSongLoaded
+    , onTimeChanged
+    , pauseCurrent
+    , playItem
+    , queueAndPlaySong
+    , queueSong
+    , replacePlaylist
+    , resumeCurrent
+    , setCurrentTime
+    , updateSongState
+    )
 
 import Array exposing (fromList, push)
 import Audio exposing (makeLoadRequest)
@@ -11,7 +25,6 @@ import Audio.Select
         )
 import AudioState exposing (State(..))
 import Dict
-import Entities.SongSummary exposing (SongSummary)
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (Msg)
@@ -153,8 +166,8 @@ playSong songId model =
             loadSong songId model
 
 
-onSongEnded : Int -> Update Model Msg
-onSongEnded songId model =
+onSongEnded : Update Model Msg
+onSongEnded model =
     case model.playing of
         Just index ->
             if Array.length model.playlist - 1 == index then
@@ -223,8 +236,3 @@ loadSong songId model =
             updateSongState songId AudioState.Loading model
     in
     ( m, Ports.loadAudio <| makeLoadRequest m songId )
-
-
-saveSong : SongSummary -> Model -> Model
-saveSong song model =
-    { model | songs = Dict.insert song.id song model.songs }

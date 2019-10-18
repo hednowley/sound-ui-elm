@@ -60,7 +60,7 @@ processSuccess json decoder makeUpdate model =
         Ok body ->
             makeUpdate body model
 
-        Err e ->
+        Err _ ->
             ( model, Cmd.none )
 
 
