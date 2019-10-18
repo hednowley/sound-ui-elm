@@ -68,13 +68,23 @@ goPrev model =
     case model.playing of
         Just index ->
             if index == 0 then
-                -- No prev song
-                ( model, Cmd.none )
+                playItem 0 model
 
             else
                 case getCurrentSongState model of
-                    Just (Playing _) ->
-                        playItem (index - 1) model
+                    Just (Playing time) ->
+                        if time > 2 then
+                            playItem index model
+
+                        else
+                            playItem (index - 1) model
+
+                    Just (Paused time) ->
+                        if time > 2 then
+                            playItem index model
+
+                        else
+                            playItem (index - 1) model
 
                     _ ->
                         case getCurrentSongId model of

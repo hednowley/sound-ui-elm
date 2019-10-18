@@ -148,6 +148,8 @@ subscriptions _ =
         , Ports.audioPlaying <| (Msg.Playing >> Msg.AudioMsg)
         , Ports.audioPaused <| (Msg.Paused >> Msg.AudioMsg)
         , Ports.audioTimeChanged <| (Msg.TimeChanged >> Msg.AudioMsg)
+        , Ports.audioNextPressed <| always (Msg.AudioMsg Next)
+        , Ports.audioPrevPressed <| always (Msg.AudioMsg Prev)
         ]
 
 

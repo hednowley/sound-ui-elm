@@ -55,6 +55,12 @@ port audioPaused : ({ songId : Int, time : Float } -> msg) -> Sub msg
 port audioTimeChanged : ({ songId : Int, time : Float } -> msg) -> Sub msg
 
 
+port audioNextPressed : (() -> msg) -> Sub msg
+
+
+port audioPrevPressed : (() -> msg) -> Sub msg
+
+
 port websocketOpened : (() -> msg) -> Sub msg
 
 
