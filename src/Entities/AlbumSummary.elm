@@ -6,4 +6,5 @@ type alias AlbumSummary =
     , name : String
     , duration : Int
     , year : Maybe Int
+    , artId : Maybe String
     }

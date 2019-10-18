@@ -3,4 +3,12 @@
     display: flex;
     flex-direction: column;
   }
+
+  &__album {
+    &--art {
+      width: 3rem;
+      height: 3rem;
+      object-fit: contain;
+    }
+  }
 }

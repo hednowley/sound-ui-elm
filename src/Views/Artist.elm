@@ -1,7 +1,8 @@
 module Views.Artist exposing (view)
 
-import Html exposing (a, button, div, text)
-import Html.Attributes exposing (class, href)
+import Album.Select exposing (getAlbumArt)
+import Html exposing (a, button, div, img, text)
+import Html.Attributes exposing (class, href, src)
 import Html.Events exposing (onClick)
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
@@ -26,7 +27,8 @@ view id model =
                         (\album ->
                             div [ class "home__artist" ]
                                 [ div []
-                                    [ a [ href <| "/album/" ++ fromInt album.id ] [ text album.name ]
+                                    [ img [ class "artist__album--art", src <| getAlbumArt model album ] []
+                                    , a [ href <| "/album/" ++ fromInt album.id ] [ text album.name ]
                                     , button [ onClick <| AudioMsg (PlayAlbum album.id) ] [ text "Play" ]
                                     ]
                                 ]

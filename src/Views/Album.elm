@@ -25,5 +25,5 @@ view id model =
                     , button [ onClick <| AudioMsg (PlayAlbum id) ] [ text "Play album" ]
                     ]
                 , div [] <|
-                    List.map (Views.Song.view model) (getAlbumSongs album model)
+                    List.map (Views.Song.view model) (getAlbumSongs album)
                 ]
