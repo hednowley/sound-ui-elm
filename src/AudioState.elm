@@ -3,6 +3,6 @@ module AudioState exposing (State(..))
 
 type State
     = Loading
-    | Loaded
-    | Paused Float
-    | Playing Float
+    | Loaded { duration : Maybe Float }
+    | Paused { time : Float, duration : Maybe Float }
+    | Playing { time : Float, duration : Maybe Float }

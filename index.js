@@ -65,7 +65,10 @@ app.ports.loadAudio.subscribe(({ url, songId }) => {
     a.oncanplay = null;
   };
 
-  a.ondurationchange = () => console.log("ondurationchange");
+  a.ondurationchange = () => {
+    console.log(`ondurationchange ${songId}`);
+    app.ports.audioDurationChanged.send({ songId, duration: a.duration });
+  };
 
   a.ontimeupdate = () => {
     console.log(`ontimeupdate ${songId}`);

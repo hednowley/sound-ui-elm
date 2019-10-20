@@ -3,7 +3,7 @@ module Views.Player exposing (view)
 import Audio.Select exposing (getCurrentSongState)
 import AudioState exposing (State(..))
 import Html exposing (button, div, text)
-import Html.Attributes exposing (class)
+import Html.Attributes exposing (class, style)
 import Html.Events exposing (onClick)
 import Model exposing (Model)
 import Msg exposing (AudioMsg(..), Msg(..))
@@ -13,21 +13,21 @@ import String exposing (fromFloat)
 
 view : Model -> Html.Html Msg
 view model =
-    div [ class "player__wrap" ]
-        [ case getCurrentSongState model of
+    div [ class "player__wrap" ] <|
+        case getCurrentSongState model of
             Just state ->
-                div []
+                [ div [ class "player__controls" ]
                     [ prevButton state
                     , backButton state
                     , playButton state
                     , forwardButton state
                     , nextButton state
-                    , slider state
                     ]
+                , slider state
+                ]
 
             _ ->
-                text ""
-        ]
+                []
 
 
 backButton : State -> Html.Html Msg
@@ -97,12 +97,14 @@ prevButton state =
 
 slider : State -> Html.Html Msg
 slider state =
-    case state of
-        AudioState.Playing time ->
-            div [] [ text <| fromFloat time ]
+    div [ class "player__slider--wrap" ]
+        [ case state of
+            AudioState.Playing time ->
+                div [ class "player__slider--elapsed", style "right" "50%" ] []
 
-        AudioState.Paused time ->
-            div [] [ text <| fromFloat time ]
+            AudioState.Paused time ->
+                div [] [ text <| fromFloat time ]
 
-        _ ->
-            text ""
+            _ ->
+                text ""
+        ]
