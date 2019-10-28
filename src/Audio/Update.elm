@@ -72,14 +72,7 @@ goPrev model =
 
             else
                 case getCurrentSongState model of
-                    Just (Playing time) ->
-                        if time > 2 then
-                            playItem index model
-
-                        else
-                            playItem (index - 1) model
-
-                    Just (Paused time) ->
+                    Just (Playing { time }) ->
                         if time > 2 then
                             playItem index model
 
@@ -132,7 +125,10 @@ onSongLoaded : Int -> Update Model Msg
 onSongLoaded songId model =
     let
         m =
-            updateSongState songId AudioState.Loaded model
+            updateSongState
+                songId
+                (AudioState.Loaded { duration = Nothing })
+                model
 
         playing =
             Maybe.andThen (getSongId model) model.playing
@@ -147,11 +143,8 @@ onSongLoaded songId model =
 onTimeChanged : Int -> Float -> Model -> Model
 onTimeChanged songId time model =
     case getSongState songId model of
-        Just (Playing _) ->
-            updateSongState songId (Playing time) model
-
-        Just (Paused _) ->
-            updateSongState songId (Paused time) model
+        Just (Playing p) ->
+            updateSongState songId (Playing { p | time = time }) model
 
         _ ->
             model
@@ -163,10 +156,7 @@ playSong songId model =
         Just AudioState.Loading ->
             ( model, Cmd.none )
 
-        Just AudioState.Loaded ->
-            ( model, Ports.playAudio songId )
-
-        Just (AudioState.Paused _) ->
+        Just (AudioState.Loaded _) ->
             ( model, Ports.playAudio songId )
 
         Just (AudioState.Playing _) ->

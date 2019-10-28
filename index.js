@@ -82,12 +82,20 @@ app.ports.loadAudio.subscribe(({ url, songId }) => {
 
   a.onplay = () => {
     console.log(`onplay ${songId}`);
-    app.ports.audioPlaying.send({ songId, time: a.currentTime });
+    app.ports.audioPlaying.send({
+      songId,
+      time: a.currentTime,
+      duration: a.duration
+    });
   };
 
   a.onpause = () => {
     console.log(`onpause ${songId}`);
-    app.ports.audioPaused.send({ songId, time: a.currentTime });
+    app.ports.audioPaused.send({
+      songId,
+      time: a.currentTime,
+      duration: a.duration
+    });
   };
 
   audios.set(songId, a);

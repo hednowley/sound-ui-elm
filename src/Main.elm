@@ -243,11 +243,21 @@ update msg model =
                 SetTime time ->
                     setCurrentTime time model
 
-                Msg.Playing args ->
-                    ( updateSongState args.songId (AudioState.Playing args.time) model, Cmd.none )
+                Msg.Playing { songId, time, duration } ->
+                    ( updateSongState
+                        songId
+                        (AudioState.Playing { paused = False, time = time, duration = duration })
+                        model
+                    , Cmd.none
+                    )
 
-                Msg.Paused args ->
-                    ( updateSongState args.songId (AudioState.Paused args.time) model, Cmd.none )
+                Msg.Paused { songId, time, duration } ->
+                    ( updateSongState
+                        songId
+                        (AudioState.Playing { paused = True, time = time, duration = duration })
+                        model
+                    , Cmd.none
+                    )
 
                 Msg.TimeChanged args ->
                     ( onTimeChanged args.songId args.time model, Cmd.none )

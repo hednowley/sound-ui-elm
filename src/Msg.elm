@@ -34,8 +34,8 @@ type AudioMsg
     | Ended Int
     | SetTime Float
     | TimeChanged { songId : Int, time : Float }
-    | Playing { songId : Int, time : Float }
-    | Paused { songId : Int, time : Float }
+    | Playing { songId : Int, time : Float, duration : Maybe Float }
+    | Paused { songId : Int, time : Float, duration : Maybe Float }
     | Next
     | Prev
     | PlayAlbum Int

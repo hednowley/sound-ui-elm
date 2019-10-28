@@ -33,10 +33,7 @@ view model =
 backButton : State -> Html.Html Msg
 backButton state =
     case state of
-        AudioState.Playing time ->
-            button [ onClick <| AudioMsg (SetTime <| time - 15) ] [ text "-15" ]
-
-        AudioState.Paused time ->
+        AudioState.Playing { time } ->
             button [ onClick <| AudioMsg (SetTime <| time - 15) ] [ text "-15" ]
 
         _ ->
@@ -46,11 +43,12 @@ backButton state =
 playButton : State -> Html.Html Msg
 playButton state =
     case state of
-        AudioState.Playing _ ->
-            button [ onClick <| AudioMsg Pause ] [ text "Pause" ]
+        AudioState.Playing { paused } ->
+            if paused then
+                button [ onClick <| AudioMsg Resume ] [ text "Play" ]
 
-        AudioState.Paused _ ->
-            button [ onClick <| AudioMsg Resume ] [ text "Play" ]
+            else
+                button [ onClick <| AudioMsg Pause ] [ text "Pause" ]
 
         _ ->
             text ""
@@ -59,10 +57,7 @@ playButton state =
 forwardButton : State -> Html.Html Msg
 forwardButton state =
     case state of
-        AudioState.Playing time ->
-            button [ onClick <| AudioMsg (SetTime <| time + 15) ] [ text "+15" ]
-
-        AudioState.Paused time ->
+        AudioState.Playing { time } ->
             button [ onClick <| AudioMsg (SetTime <| time + 15) ] [ text "+15" ]
 
         _ ->
@@ -75,9 +70,6 @@ nextButton state =
         AudioState.Playing _ ->
             button [ onClick <| AudioMsg Next ] [ text ">|" ]
 
-        AudioState.Paused _ ->
-            button [ onClick <| AudioMsg Next ] [ text ">|" ]
-
         _ ->
             text ""
 
@@ -88,9 +80,6 @@ prevButton state =
         AudioState.Playing _ ->
             button [ onClick <| AudioMsg Prev ] [ text "|<" ]
 
-        AudioState.Paused _ ->
-            button [ onClick <| AudioMsg Prev ] [ text "|<" ]
-
         _ ->
             text ""
 
@@ -99,11 +88,13 @@ slider : State -> Html.Html Msg
 slider state =
     div [ class "player__slider--wrap" ]
         [ case state of
-            AudioState.Playing time ->
-                div [ class "player__slider--elapsed", style "right" "50%" ] []
+            AudioState.Playing { time, duration } ->
+                case duration of
+                    Just d ->
+                        div [ class "player__slider--elapsed", style "width" (fromFloat (100 * time / d) ++ "%") ] []
 
-            AudioState.Paused time ->
-                div [] [ text <| fromFloat time ]
+                    Nothing ->
+                        text ""
 
             _ ->
                 text ""
