@@ -20,12 +20,14 @@ import Entities.SongSummary exposing (SongSummary)
 import Loadable exposing (Loadable(..))
 import Msg exposing (Msg)
 import Routing exposing (Route)
+import Url exposing (Url)
 import Ws.Listener exposing (Listener)
 import Ws.NotificationListener exposing (NotificationListener)
 
 
 type alias Model =
     { key : Key
+    , url : Url
     , username : String
     , password : String
     , message : String

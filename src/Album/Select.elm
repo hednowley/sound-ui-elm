@@ -18,11 +18,11 @@ getAlbumSongs album =
     List.sortBy .track album.songs
 
 
-getAlbumArt : Model -> AlbumSummary -> String
-getAlbumArt model album =
+getAlbumArt : AlbumSummary -> String
+getAlbumArt album =
     case album.artId of
         Nothing ->
             ""
 
         Just id ->
-            model.config.root ++ "/api/art?id=" ++ id
+            "/api/art?id=" ++ id

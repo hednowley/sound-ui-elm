@@ -10,8 +10,8 @@ type alias LoadRequest =
     }
 
 
-makeLoadRequest : Model -> Int -> LoadRequest
-makeLoadRequest model songId =
-    { url = model.config.root ++ "/api/stream?id=" ++ fromInt songId
+makeLoadRequest : Int -> LoadRequest
+makeLoadRequest songId =
+    { url = "/api/stream?id=" ++ fromInt songId
     , songId = songId
     }

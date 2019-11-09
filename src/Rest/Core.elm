@@ -28,7 +28,7 @@ authenticate password model =
         , timeout = Nothing
         , tracker = Nothing
         , body = Http.jsonBody credentials
-        , url = model.config.root ++ "/api/authenticate"
+        , url = "/api/authenticate"
         , expect = Http.expectJson GotAuthenticateResponse DTO.Authenticate.decode
         }
     )
@@ -83,7 +83,7 @@ getTicket model =
         , body = Http.emptyBody
         , timeout = Nothing
         , tracker = Nothing
-        , url = model.config.root ++ "/api/ticket"
+        , url = "/api/ticket"
         , expect = Http.expectJson GotTicketResponse DTO.Ticket.decode
         }
 

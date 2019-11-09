@@ -235,4 +235,4 @@ loadSong songId model =
         m =
             updateSongState songId AudioState.Loading model
     in
-    ( m, Ports.loadAudio <| makeLoadRequest m songId )
+    ( m, Ports.loadAudio <| makeLoadRequest songId )

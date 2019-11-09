@@ -1,7 +1,22 @@
-module Routing exposing (Route(..), parseUrl)
+module Routing exposing (Route(..), getWebsocketUrl, parseUrl)
 
+import String exposing (fromInt)
 import Url exposing (Url)
 import Url.Parser exposing ((</>), Parser, int, map, oneOf, parse, s)
+
+
+getWebsocketUrl : Url -> String
+getWebsocketUrl url =
+    let
+        port_ =
+            case url.port_ of
+                Just p ->
+                    ":" ++ fromInt p
+
+                Nothing ->
+                    ""
+    in
+    "ws://" ++ url.host ++ port_ ++ "/ws"
 
 
 type Route

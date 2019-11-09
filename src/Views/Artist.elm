@@ -27,7 +27,7 @@ view id model =
                         (\album ->
                             div [ class "home__artist" ]
                                 [ div []
-                                    [ img [ class "artist__album--art", src <| getAlbumArt model album ] []
+                                    [ img [ class "artist__album--art", src <| getAlbumArt album ] []
                                     , a [ href <| "/album/" ++ fromInt album.id ] [ text album.name ]
                                     , button [ onClick <| AudioMsg (PlayAlbum album.id) ] [ text "Play" ]
                                     ]

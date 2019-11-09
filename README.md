@@ -13,8 +13,6 @@ You'll need
 
 ## Building
 
-Edit `root` in [Config.elm](src/Config.elm) to point to your _sound_ instance.
-
 ```shell
 $ npm install
 $ npm run-script build

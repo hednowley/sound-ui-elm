@@ -5,10 +5,10 @@ module Ws.Core exposing
     , sendMessage
     )
 
-import Config exposing (getWebsocketUrl)
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Ports
+import Routing exposing (getWebsocketUrl)
 import Types exposing (Update)
 import Ws.Listener exposing (Listener)
 import Ws.Message as Message exposing (Message(..), parse)
@@ -22,7 +22,7 @@ import Ws.Types exposing (RequestData)
 -}
 open : String -> Update Model Msg
 open ticket model =
-    ( { model | websocketTicket = Just ticket }, Ports.websocketOpen <| getWebsocketUrl model.config )
+    ( { model | websocketTicket = Just ticket }, Ports.websocketOpen <| getWebsocketUrl model.url )
 
 
 {-| Sends a message.

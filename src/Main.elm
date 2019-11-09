@@ -85,7 +85,7 @@ init flags url navKey =
     let
         model =
             makeModel
-                (emptyModel navKey flags.config)
+                (emptyModel navKey url flags.config)
                 (tryDecode flags.model)
     in
     ( model, reconnect model )
@@ -103,9 +103,10 @@ reconnect model =
             Cmd.none
 
 
-emptyModel : Key -> Config -> Model
-emptyModel key config =
+emptyModel : Key -> Url -> Config -> Model
+emptyModel key url config =
     { key = key
+    , url = url
     , username = ""
     , password = ""
     , message = ""
