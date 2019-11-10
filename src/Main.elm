@@ -123,6 +123,7 @@ emptyModel key url config =
     , websocketId = 1
     , scanShouldUpdate = False
     , scanShouldDelete = False
+    , playlists = Dict.empty
     , artists = Dict.empty
     , artist = Absent
     , songs = Dict.empty

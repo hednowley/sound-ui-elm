@@ -2,6 +2,7 @@ module Views.Home exposing (view)
 
 import Dict
 import Entities.ArtistSummary exposing (ArtistSummaries)
+import Entities.PlaylistSummary exposing (PlaylistSummaries)
 import Html exposing (Html, a, button, div, input, label, span, text)
 import Html.Attributes exposing (checked, class, href, type_)
 import Html.Events exposing (onClick)
@@ -19,6 +20,7 @@ view model =
         , checkboxInput "Delete?" model.scanShouldDelete ToggleScanDelete
         , button [ onClick StartScan ] [ text "Start scan" ]
         , viewArtists model.artists
+        , viewPlaylists model.playlists
         ]
 
 
@@ -33,4 +35,13 @@ viewArtists artists =
         (List.map
             (\artist -> div [ class "home__artist" ] [ a [ href <| "/artist/" ++ fromInt artist.id ] [ text artist.name ] ])
             (Dict.values artists)
+        )
+
+
+viewPlaylists : PlaylistSummaries -> Html msg
+viewPlaylists playlists =
+    div [ class "home__artists" ]
+        (List.map
+            (\playlist -> div [ class "home__artist" ] [ a [ href <| "/artist/" ++ fromInt playlist.id ] [ text playlist.name ] ])
+            (Dict.values playlists)
         )

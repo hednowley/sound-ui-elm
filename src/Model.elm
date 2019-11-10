@@ -16,6 +16,7 @@ import Dict exposing (Dict)
 import Entities.Album exposing (Album)
 import Entities.Artist exposing (Artist)
 import Entities.ArtistSummary exposing (ArtistSummaries)
+import Entities.PlaylistSummary exposing (PlaylistSummaries)
 import Entities.SongSummary exposing (SongSummary)
 import Loadable exposing (Loadable(..))
 import Msg exposing (Msg)
@@ -40,6 +41,7 @@ type alias Model =
     , websocketId : Int -- The next unused ID for a websocket message
     , scanShouldUpdate : Bool
     , scanShouldDelete : Bool
+    , playlists : PlaylistSummaries
     , artists : ArtistSummaries
     , artist : Loadable Artist
     , songs : Dict Int SongSummary
