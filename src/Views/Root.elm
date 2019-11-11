@@ -10,6 +10,7 @@ import Views.Album
 import Views.Artist
 import Views.Home
 import Views.Player
+import Views.Playlist
 import Views.PlaylistItem
 
 
@@ -26,6 +27,9 @@ view model =
 
                 Just (Album id) ->
                     Views.Album.view id model
+
+                Just (Playlist id) ->
+                    Views.Playlist.view model
             ]
         , div [ class "app__playlist" ]
             [ div [] [ text "Playlist" ]

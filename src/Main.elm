@@ -126,6 +126,7 @@ emptyModel key url config =
     , playlists = Dict.empty
     , artists = Dict.empty
     , artist = Absent
+    , currentPlaylist = Absent
     , songs = Dict.empty
     , albums = Dict.empty
     , config = config
@@ -228,6 +229,9 @@ update msg model =
                     queueAndPlaySong songId model
 
                 PlayAlbum albumId ->
+                    playAlbum albumId model
+
+                PlayPlaylist albplaylisumId ->
                     playAlbum albumId model
 
                 Pause ->

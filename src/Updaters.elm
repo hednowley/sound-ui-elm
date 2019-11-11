@@ -15,6 +15,7 @@ import Types exposing (Update)
 import Url exposing (Url)
 import Ws.Core as Ws
 import Ws.Methods.GetArtist exposing (getArtist)
+import Ws.Methods.GetPlaylist exposing (getPlaylist)
 
 
 logOut : Update Model Msg
@@ -39,3 +40,8 @@ onUrlChange url model =
 
         Just (Album id) ->
             loadAlbum id Nothing m
+
+        Just (Playlist id) ->
+            Ws.sendMessage
+                (getArtist id)
+                { m | artist = Loadable.Loading }

@@ -22,6 +22,7 @@ getWebsocketUrl url =
 type Route
     = Artist Int
     | Album Int
+    | Playlist Int
 
 
 parseUrl : Url -> Maybe Route
@@ -34,4 +35,5 @@ routeParser =
     oneOf
         [ map Artist (s "artist" </> int)
         , map Album (s "album" </> int)
+        , map Playlist (s "playlist" </> int)
         ]

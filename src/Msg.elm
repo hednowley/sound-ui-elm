@@ -2,6 +2,7 @@ module Msg exposing (AudioMsg(..), Msg(..))
 
 import Browser
 import DTO.Authenticate
+import Entities.Playlist exposing (Playlist)
 import Http
 import Url
 
@@ -39,3 +40,4 @@ type AudioMsg
     | Next
     | Prev
     | PlayAlbum Int
+    | PlayPlaylist Playlist
