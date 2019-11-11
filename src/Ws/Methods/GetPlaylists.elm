@@ -53,4 +53,4 @@ setPlaylists body model =
         tuples =
             List.map (\a -> ( a.id, a )) body.playlists
     in
-    ( { model | artists = Dict.fromList tuples }, Cmd.none )
+    ( { model | playlists = Dict.fromList tuples }, Cmd.none )

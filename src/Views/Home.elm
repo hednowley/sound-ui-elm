@@ -19,7 +19,9 @@ view model =
         , checkboxInput "Update?" model.scanShouldUpdate ToggleScanUpdate
         , checkboxInput "Delete?" model.scanShouldDelete ToggleScanDelete
         , button [ onClick StartScan ] [ text "Start scan" ]
+        , div [] [ text "Artists" ]
         , viewArtists model.artists
+        , div [] [ text "Playlists" ]
         , viewPlaylists model.playlists
         ]
 
@@ -42,6 +44,6 @@ viewPlaylists : PlaylistSummaries -> Html msg
 viewPlaylists playlists =
     div [ class "home__artists" ]
         (List.map
-            (\playlist -> div [ class "home__artist" ] [ a [ href <| "/artist/" ++ fromInt playlist.id ] [ text playlist.name ] ])
+            (\playlist -> div [ class "home__artist" ] [ a [ href <| "/playlist/" ++ fromInt playlist.id ] [ text playlist.name ] ])
             (Dict.values playlists)
         )
