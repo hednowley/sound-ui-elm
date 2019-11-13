@@ -40,4 +40,4 @@ type AudioMsg
     | Next
     | Prev
     | PlayAlbum Int
-    | PlayPlaylist Playlist
+    | PlayPlaylist Int

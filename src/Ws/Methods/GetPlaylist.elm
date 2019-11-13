@@ -21,7 +21,7 @@ type alias Callback =
 getPlaylist : Int -> Maybe Callback -> RequestData
 getPlaylist id callback =
     { method = "getPlaylist"
-    , params = makeRequest id |> Just
+    , params = Just (makeRequest id)
     , listener = Just (onResponse callback)
     }
 

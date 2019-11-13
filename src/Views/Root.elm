@@ -29,7 +29,7 @@ view model =
                     Views.Album.view id model
 
                 Just (Playlist id) ->
-                    Views.Playlist.view model
+                    Views.Playlist.view id model
             ]
         , div [ class "app__playlist" ]
             [ div [] [ text "Playlist" ]

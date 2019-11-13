@@ -43,9 +43,9 @@ type alias Model =
     , scanShouldUpdate : Bool
     , scanShouldDelete : Bool
     , playlists : PlaylistSummaries
+    , loadedPlaylists : Dict Int (Loadable Playlist)
     , artists : ArtistSummaries
     , artist : Loadable Artist
-    , currentPlaylist : Loadable Playlist
     , songs : Dict Int SongSummary
     , albums : Dict Int (Loadable Album)
     , config : Config

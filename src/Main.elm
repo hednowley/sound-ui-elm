@@ -28,6 +28,7 @@ import Json.Decode
 import Loadable exposing (Loadable(..))
 import Model exposing (Listeners, Model)
 import Msg exposing (AudioMsg(..), Msg(..))
+import Playlist.Update exposing (playPlaylist)
 import Ports
 import Rest.Core as Rest
 import Routing exposing (Route(..))
@@ -124,9 +125,9 @@ emptyModel key url config =
     , scanShouldUpdate = False
     , scanShouldDelete = False
     , playlists = Dict.empty
+    , loadedPlaylists = Dict.empty
     , artists = Dict.empty
     , artist = Absent
-    , currentPlaylist = Absent
     , songs = Dict.empty
     , albums = Dict.empty
     , config = config
@@ -231,8 +232,8 @@ update msg model =
                 PlayAlbum albumId ->
                     playAlbum albumId model
 
-                PlayPlaylist albplaylisumId ->
-                    playAlbum albumId model
+                PlayPlaylist playlistId ->
+                    playPlaylist playlistId model
 
                 Pause ->
                     pauseCurrent model

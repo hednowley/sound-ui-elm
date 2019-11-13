@@ -1,17 +1,17 @@
 module Views.Playlist exposing (view)
 
-import Album.Select exposing (getAlbum, getAlbumSongs)
 import Html exposing (button, div, text)
 import Html.Events exposing (onClick)
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (AudioMsg(..), Msg(..))
+import Playlist.Select exposing (getPlaylist, getPlaylistSongs)
 import Views.Song
 
 
-view : Model -> Html.Html Msg
-view model =
-    case model.currentPlaylist of
+view : Int -> Model -> Html.Html Msg
+view playlistId model =
+    case getPlaylist playlistId model of
         Absent ->
             div [] [ text "No playlist" ]
 
@@ -22,8 +22,8 @@ view model =
             div []
                 [ div []
                     [ div [] [ text playlist.name ]
-                    , button [ onClick <| AudioMsg (PlayPlaylist playlist) ] [ text "Play playlist" ]
+                    , button [ onClick <| AudioMsg (PlayPlaylist playlistId) ] [ text "Play playlist" ]
                     ]
                 , div [] <|
-                    List.map (Views.Song.view model) (getAlbumSongs playlist)
+                    List.map (Views.Song.view model) (getPlaylistSongs playlist)
                 ]

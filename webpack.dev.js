@@ -10,10 +10,10 @@ module.exports = merge(common(false), {
     port: 8080,
     proxy: {
       "/api": {
-        target: "http://localhost:3684"
+        target: "hhtp://192.168.1.77:7071" // "http://localhost:3684"
       },
       "/ws": {
-        target: "http://localhost:3684",
+        target: "hhtp://192.168.1.77:7071", // "http://localhost:3684"
         ws: true
       }
     }
