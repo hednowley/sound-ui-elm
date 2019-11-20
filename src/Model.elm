@@ -23,7 +23,7 @@ import Loadable exposing (Loadable(..))
 import Msg exposing (Msg)
 import Routing exposing (Route)
 import Url exposing (Url)
-import Ws.Listener exposing (Listener)
+import Ws.Listener exposing (Listener, combineListeners)
 import Ws.NotificationListener exposing (NotificationListener)
 
 
@@ -83,11 +83,24 @@ addListener id listener model =
         (Listeners listeners) =
             model.websocketListeners
     in
-    { model
-        | websocketListeners =
-            Listeners <|
-                Dict.insert id listener listeners
-    }
+    case getListener id model of
+        Just existing ->
+            let
+                combined =
+                    combineListeners existing listener
+            in
+            { model
+                | websocketListeners =
+                    Listeners <|
+                        Dict.insert id combined listeners
+            }
+
+        Nothing ->
+            { model
+                | websocketListeners =
+                    Listeners <|
+                        Dict.insert id listener listeners
+            }
 
 
 {-| Remove a stored Websocket listener from the model.

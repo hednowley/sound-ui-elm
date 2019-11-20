@@ -9,7 +9,7 @@ import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Ports
 import Routing exposing (getWebsocketUrl)
-import Types exposing (Update)
+import Types exposing (Update, UpdateWithReturn)
 import Ws.Listener exposing (Listener)
 import Ws.Message as Message exposing (Message(..), parse)
 import Ws.Notification exposing (Notification)
@@ -27,17 +27,19 @@ open ticket model =
 
 {-| Sends a message.
 -}
-sendMessage : RequestData -> Update Model Msg
+sendMessage : RequestData -> UpdateWithReturn Model Msg Int
 sendMessage request model =
     let
-        id =
+        messageId =
             model.websocketId
 
         newModel =
-            addListener id request.listener model
+            addListener messageId request.listener model
     in
-    ( { newModel | websocketId = id + 1 }
-    , Ports.websocketOut <| Ws.Request.makeRequest id request.method request.params
+    ( ( { newModel | websocketId = messageId + 1 }
+      , Ports.websocketOut <| Ws.Request.makeRequest messageId request.method request.params
+      )
+    , messageId
     )
 
 

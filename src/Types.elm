@@ -1,8 +1,12 @@
-module Types exposing (Update, combine, noOp)
+module Types exposing (Update, UpdateWithReturn, combine, noOp)
 
 
 type alias Update model msg =
     model -> ( model, Cmd msg )
+
+
+type alias UpdateWithReturn model msg return =
+    model -> ( ( model, Cmd msg ), return )
 
 
 noOp : Update model msg
@@ -13,12 +17,12 @@ noOp model =
 {-| Running one update and then another.
 -}
 combine : Update model msg -> Update model msg -> Update model msg
-combine updateA updateB model =
+combine first second model =
     let
         ( modelA, cmdA ) =
-            updateA model
+            first model
 
         ( modelB, cmdB ) =
-            updateB modelA
+            second modelA
     in
     ( modelB, Cmd.batch [ cmdB, cmdA ] )

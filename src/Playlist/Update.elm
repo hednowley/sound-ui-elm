@@ -4,7 +4,7 @@ import Audio.Update exposing (replacePlaylist)
 import Dict
 import Entities.Playlist exposing (Playlist)
 import Loadable exposing (Loadable(..))
-import Model exposing (Model)
+import Model exposing (Model, addListener)
 import Msg exposing (AudioMsg(..), Msg(..))
 import Playlist.Select exposing (getPlaylistSongs)
 import Types exposing (Update, noOp)
@@ -27,11 +27,10 @@ loadPlaylist2 id maybeCallback model =
                 (getPlaylist id maybeCallback)
                 { model | loadedPlaylists = Dict.insert id Loading model.loadedPlaylists }
 
-        Loading ->
+        Loading requestId ->
             case maybeCallback of
                 Just callback ->
-                    {- TODO: Combine existing listener with ours -}
-                    ( model, Cmd.none )
+                    ( addListener requestId callback model, Cmd.none )
 
                 Nothing ->
                     ( model, Cmd.none )

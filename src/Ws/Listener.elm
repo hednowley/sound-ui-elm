@@ -1,7 +1,7 @@
-module Ws.Listener exposing (Listener, makeIrresponsibleListener, makeResponsibleListener)
+module Ws.Listener exposing (Listener, combineListeners, makeIrresponsibleListener, makeResponsibleListener)
 
 import Json.Decode exposing (Decoder, Value, decodeValue)
-import Types exposing (Update, noOp)
+import Types exposing (Update, combine, noOp)
 import Ws.Response exposing (Response)
 
 
@@ -10,6 +10,18 @@ First parameter is the ID of the incoming message.
 -}
 type alias Listener model msg =
     Response -> Update model msg
+
+
+combineListeners : Listener model msg -> Listener model msg -> Listener model msg
+combineListeners first second response =
+    let
+        u1 =
+            first response
+
+        u2 =
+            second response
+    in
+    combine u1 u2
 
 
 {-| Make a new listener which has error handling.

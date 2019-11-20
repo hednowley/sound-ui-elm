@@ -6,7 +6,7 @@ module Loadable exposing (Loadable(..), fromMaybe, toMaybe)
 
 type Loadable value
     = Absent
-    | Loading
+    | Loading Int
     | Loaded value
 
 
