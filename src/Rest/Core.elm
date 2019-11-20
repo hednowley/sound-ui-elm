@@ -21,7 +21,7 @@ authenticate password model =
         credentials =
             DTO.Credentials.credentialsEncoder model.username password
     in
-    ( { model | token = Loading }
+    ( { model | token = Loading 1337 }
     , Http.riskyRequest
         { method = "POST"
         , headers = []

@@ -290,7 +290,7 @@ view model =
                 Absent ->
                     Views.Login.view model
 
-                Loadable.Loading ->
+                Loadable.Loading _ ->
                     div [] [ text "Getting token..." ]
 
                 _ ->

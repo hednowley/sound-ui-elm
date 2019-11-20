@@ -15,7 +15,7 @@ view playlistId model =
         Absent ->
             div [] [ text "No playlist" ]
 
-        Loading ->
+        Loading _ ->
             div [] [ text "Loading playlist" ]
 
         Loaded playlist ->

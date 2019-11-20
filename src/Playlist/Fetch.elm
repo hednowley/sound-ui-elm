@@ -10,7 +10,7 @@ import Msg exposing (Msg)
 import Playlist.Select exposing (getPlaylistSongs)
 import Types exposing (Update)
 import Util exposing (insertMany)
-import Ws.Core exposing (sendMessage)
+import Ws.Core exposing (sendMessageWithId)
 import Ws.DTO.Playlist exposing (convert, decode)
 import Ws.Listener exposing (Listener, makeIrresponsibleListener)
 import Ws.Types exposing (RequestData)
@@ -32,7 +32,7 @@ fetchPlaylist playlistId maybeCallback model =
         Absent ->
             let
                 ( ( newModel, cmd ), messageId ) =
-                    sendMessage
+                    sendMessageWithId
                         (makeFetchPlaylistMessage playlistId maybeCallback)
                         model
             in

@@ -7,7 +7,7 @@ module.exports = merge(common(false), {
   devtool: "inline-source-map",
   devServer: {
     contentBase: path.join(__dirname, "dist"),
-    port: 8080,
+    port: 9000,
     proxy: {
       "/api": {
         target: "hhtp://192.168.1.77:7071" // "http://localhost:3684"

@@ -9,6 +9,7 @@ import AudioState exposing (State(..))
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (Msg)
+import Playlist.Fetch exposing (fetchPlaylist)
 import Ports
 import Routing exposing (Route(..))
 import Types exposing (Update)
@@ -36,12 +37,10 @@ onUrlChange url model =
         Just (Artist id) ->
             Ws.sendMessage
                 (getArtist id)
-                { m | artist = Loadable.Loading }
+                { m | artist = Loadable.Loading 1337 }
 
         Just (Album id) ->
             loadAlbum id Nothing m
 
         Just (Playlist id) ->
-            Ws.sendMessage
-                (getArtist id)
-                { m | artist = Loadable.Loading }
+            fetchPlaylist id Nothing m

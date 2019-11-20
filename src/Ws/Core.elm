@@ -3,6 +3,7 @@ module Ws.Core exposing
     , messageIn
     , open
     , sendMessage
+    , sendMessageWithId
     )
 
 import Model exposing (Model)
@@ -27,8 +28,8 @@ open ticket model =
 
 {-| Sends a message.
 -}
-sendMessage : RequestData -> UpdateWithReturn Model Msg Int
-sendMessage request model =
+sendMessageWithId : RequestData -> UpdateWithReturn Model Msg Int
+sendMessageWithId request model =
     let
         messageId =
             model.websocketId
@@ -41,6 +42,17 @@ sendMessage request model =
       )
     , messageId
     )
+
+
+{-| Sends a message.
+-}
+sendMessage : RequestData -> Update Model Msg
+sendMessage request model =
+    let
+        ( result, _ ) =
+            sendMessageWithId request model
+    in
+    result
 
 
 {-| Store a websocket listener in the given model.

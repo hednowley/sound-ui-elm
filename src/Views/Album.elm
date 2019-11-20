@@ -15,7 +15,7 @@ view id model =
         Absent ->
             div [] [ text "No album" ]
 
-        Loading ->
+        Loading _ ->
             div [] [ text "Loading album" ]
 
         Loaded album ->

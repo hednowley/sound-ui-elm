@@ -8,15 +8,21 @@ import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (AudioMsg(..), Msg(..))
 import Types exposing (Update)
-import Ws.Core exposing (sendMessage)
+import Ws.Core exposing (sendMessageWithId)
 import Ws.Methods.GetAlbum exposing (getAlbum)
 
 
 loadAlbum : Int -> Maybe (Album -> Update Model Msg) -> Update Model Msg
 loadAlbum id callback model =
-    sendMessage
-        (getAlbum id callback)
-        { model | albums = Dict.insert id Loading model.albums }
+    let
+        ( ( newModel, cmd ), messageId ) =
+            sendMessageWithId
+                (getAlbum id callback)
+                model
+    in
+    ( { newModel | albums = Dict.insert id (Loading messageId) newModel.albums }
+    , cmd
+    )
 
 
 playLoadedAlbum : Album -> Update Model Msg
