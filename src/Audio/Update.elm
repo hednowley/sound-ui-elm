@@ -11,10 +11,12 @@ module Audio.Update exposing
     , replacePlaylist
     , resumeCurrent
     , setCurrentTime
+    , shuffle
+    , shuffled
     , updateSongState
     )
 
-import Array exposing (fromList, push)
+import Array exposing (Array, append, fromList, length, push, slice)
 import Audio exposing (makeLoadRequest)
 import Audio.Select
     exposing
@@ -29,6 +31,8 @@ import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (Msg)
 import Ports
+import Random exposing (Generator)
+import Random.Array exposing (shuffle)
 import Routing exposing (Route(..))
 import Types exposing (Update, combine)
 
@@ -86,6 +90,39 @@ goPrev model =
 
                             Nothing ->
                                 ( model, Cmd.none )
+
+        Nothing ->
+            ( model, Cmd.none )
+
+
+shuffle : Update Model Msg
+shuffle model =
+    case model.playing of
+        Just index ->
+            let
+                upcoming =
+                    slice (index + 1) (length model.playlist) model.playlist
+            in
+            ( model, Random.generate (Msg.AudioMsg << Msg.Shuffled) (Random.Array.shuffle upcoming) )
+
+        Nothing ->
+            ( model, Cmd.none )
+
+
+shuffled : Array Int -> Update Model Msg
+shuffled s model =
+    case model.playing of
+        Just index ->
+            let
+                past =
+                    slice 0 (index + 1) model.playlist
+            in
+            ( { model
+                | playlist =
+                    append past s
+              }
+            , Cmd.none
+            )
 
         Nothing ->
             ( model, Cmd.none )

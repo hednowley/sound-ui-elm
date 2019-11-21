@@ -1,5 +1,6 @@
 module Msg exposing (AudioMsg(..), Msg(..))
 
+import Array exposing (Array)
 import Browser
 import DTO.Authenticate
 import Entities.Playlist exposing (Playlist)
@@ -41,3 +42,5 @@ type AudioMsg
     | Prev
     | PlayAlbum Int
     | PlayPlaylist Int
+    | Shuffle
+    | Shuffled (Array Int)

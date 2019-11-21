@@ -22,6 +22,7 @@ view model =
                     , playButton state
                     , forwardButton state
                     , nextButton state
+                    , shuffleButton
                     ]
                 , slider state
                 ]
@@ -72,6 +73,11 @@ nextButton state =
 
         _ ->
             text ""
+
+
+shuffleButton : Html.Html Msg
+shuffleButton =
+    button [ onClick <| AudioMsg Shuffle ] [ text "Shuffle" ]
 
 
 prevButton : State -> Html.Html Msg

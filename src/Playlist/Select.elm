@@ -15,4 +15,4 @@ getPlaylist id model =
 
 getPlaylistSongs : Playlist -> List SongSummary
 getPlaylistSongs playlist =
-    List.sortBy .track playlist.songs
+    playlist.songs

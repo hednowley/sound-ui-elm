@@ -20,6 +20,10 @@
 
   &__playlist {
     grid-area: playlist;
+    max-height: 30vh;
+    overflow: auto;
+    background-color: black;
+    color: white;
   }
 
   &__player {

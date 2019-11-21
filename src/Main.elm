@@ -15,6 +15,8 @@ import Audio.Update
         , queueSong
         , resumeCurrent
         , setCurrentTime
+        , shuffle
+        , shuffled
         , updateSongState
         )
 import AudioState exposing (State(..))
@@ -274,6 +276,12 @@ update msg model =
 
                 Msg.Prev ->
                     goPrev model
+
+                Msg.Shuffle ->
+                    shuffle model
+
+                Msg.Shuffled playlist ->
+                    shuffled playlist model
 
 
 
