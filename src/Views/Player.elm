@@ -1,6 +1,6 @@
 module Views.Player exposing (view)
 
-import Audio.Select exposing (getCurrentSongState)
+import Audio.Select exposing (getCurrentSongId, getCurrentSongState)
 import AudioState exposing (State(..))
 import Html exposing (button, div, text)
 import Html.Attributes exposing (class, style)
@@ -8,6 +8,7 @@ import Html.Events exposing (onClick)
 import Model exposing (Model)
 import Msg exposing (AudioMsg(..), Msg(..))
 import Routing exposing (Route(..))
+import Song.Select exposing (getSong)
 import String exposing (fromFloat)
 
 
@@ -23,6 +24,7 @@ view model =
                     , forwardButton state
                     , nextButton state
                     , shuffleButton
+                    , songDetails model
                     ]
                 , slider state
                 ]
@@ -75,11 +77,6 @@ nextButton state =
             text ""
 
 
-shuffleButton : Html.Html Msg
-shuffleButton =
-    button [ onClick <| AudioMsg Shuffle ] [ text "Shuffle" ]
-
-
 prevButton : State -> Html.Html Msg
 prevButton state =
     case state of
@@ -88,6 +85,27 @@ prevButton state =
 
         _ ->
             text ""
+
+
+shuffleButton : Html.Html Msg
+shuffleButton =
+    button [ onClick <| AudioMsg Shuffle ] [ text "Shuffle" ]
+
+
+songDetails : Model -> Html.Html Msg
+songDetails model =
+    let
+        title =
+            case
+                getCurrentSongId model |> Maybe.andThen (getSong model)
+            of
+                Just song ->
+                    song.name
+
+                Nothing ->
+                    ""
+    in
+    div [] [ text title ]
 
 
 slider : State -> Html.Html Msg

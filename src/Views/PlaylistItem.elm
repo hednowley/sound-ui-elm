@@ -7,11 +7,12 @@ import Html.Events exposing (onClick)
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (AudioMsg(..), Msg(..))
+import Song.Select exposing (getSong)
 
 
 view : Model -> Int -> Int -> Html.Html Msg
 view model index songId =
-    case Dict.get songId model.songs of
+    case getSong model songId of
         Just song ->
             div [ class "playlist__item" ]
                 [ button [ onClick <| AudioMsg (PlayItem index) ] [ text "Play" ]
