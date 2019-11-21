@@ -1,7 +1,8 @@
 module Views.Album exposing (view)
 
-import Album.Select exposing (getAlbum, getAlbumSongs)
-import Html exposing (button, div, text)
+import Album.Select exposing (getAlbum, getAlbumArt, getAlbumSongs)
+import Html exposing (button, div, img, text)
+import Html.Attributes exposing (class, href, src)
 import Html.Events exposing (onClick)
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
@@ -22,6 +23,7 @@ view id model =
             div []
                 [ div []
                     [ div [] [ text album.name ]
+                    , img [ class "album__art", src <| getAlbumArt album.artId ] []
                     , button [ onClick <| AudioMsg (PlayAlbum id) ] [ text "Play album" ]
                     ]
                 , div [] <|

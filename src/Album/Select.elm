@@ -18,11 +18,11 @@ getAlbumSongs album =
     List.sortBy .track album.songs
 
 
-getAlbumArt : AlbumSummary -> String
-getAlbumArt album =
-    case album.artId of
+getAlbumArt : Maybe String -> String
+getAlbumArt art =
+    case art of
         Nothing ->
             ""
 
         Just id ->
-            "/api/art?id=" ++ id
+            "/api/art?size=120&id=" ++ id
