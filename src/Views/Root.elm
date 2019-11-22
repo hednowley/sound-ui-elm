@@ -1,10 +1,11 @@
 module Views.Root exposing (view)
 
 import Array
+import Audio.AudioMsg exposing (AudioMsg(..))
 import Html exposing (div, text)
 import Html.Attributes exposing (class)
 import Model exposing (Model)
-import Msg exposing (AudioMsg(..), Msg(..))
+import Msg exposing (Msg(..))
 import Routing exposing (Route(..))
 import Views.Album
 import Views.Artist

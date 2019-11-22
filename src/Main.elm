@@ -2,23 +2,8 @@ module Main exposing (main)
 
 import Album.Update exposing (playAlbum)
 import Array
+import Audio.AudioMsg exposing (AudioMsg(..))
 import Audio.Update
-    exposing
-        ( goNext
-        , goPrev
-        , onSongEnded
-        , onSongLoaded
-        , onTimeChanged
-        , pauseCurrent
-        , playItem
-        , queueAndPlaySong
-        , queueSong
-        , resumeCurrent
-        , setCurrentTime
-        , shuffle
-        , shuffled
-        , updateSongState
-        )
 import AudioState exposing (State(..))
 import Browser
 import Browser.Navigation as Nav exposing (Key)
@@ -29,7 +14,7 @@ import Html exposing (div, text)
 import Json.Decode
 import Loadable exposing (Loadable(..))
 import Model exposing (Listeners, Model)
-import Msg exposing (AudioMsg(..), Msg(..))
+import Msg exposing (Msg(..))
 import Playlist.Update exposing (playPlaylist)
 import Ports
 import Rest.Core as Rest
@@ -143,9 +128,9 @@ subscriptions _ =
         , Ports.websocketIn <| SocketIn >> Msg.SocketMsg
         , Ports.canPlayAudio <| CanPlay >> Msg.AudioMsg
         , Ports.audioEnded <| Ended >> Msg.AudioMsg
-        , Ports.audioPlaying <| Msg.Playing >> Msg.AudioMsg
-        , Ports.audioPaused <| Msg.Paused >> Msg.AudioMsg
-        , Ports.audioTimeChanged <| Msg.TimeChanged >> Msg.AudioMsg
+        , Ports.audioPlaying <| Audio.AudioMsg.Playing >> Msg.AudioMsg
+        , Ports.audioPaused <| Audio.AudioMsg.Paused >> Msg.AudioMsg
+        , Ports.audioTimeChanged <| Audio.AudioMsg.TimeChanged >> Msg.AudioMsg
         , Ports.audioNextPressed <| always (Msg.AudioMsg Next)
         , Ports.audioPrevPressed <| always (Msg.AudioMsg Prev)
         ]
@@ -197,68 +182,8 @@ update msg model =
         SocketMsg socketMsg ->
             Ws.Update.update socketMsg model
 
-        AudioMsg audio ->
-            case audio of
-                CanPlay songId ->
-                    onSongLoaded songId model
-
-                PlayItem index ->
-                    playItem index model
-
-                Play songId ->
-                    queueAndPlaySong songId model
-
-                PlayAlbum albumId ->
-                    playAlbum albumId model
-
-                PlayPlaylist playlistId ->
-                    playPlaylist playlistId model
-
-                Pause ->
-                    pauseCurrent model
-
-                Resume ->
-                    resumeCurrent model
-
-                Queue songId ->
-                    ( queueSong songId model, Cmd.none )
-
-                Ended _ ->
-                    onSongEnded model
-
-                SetTime time ->
-                    setCurrentTime time model
-
-                Msg.Playing { songId, time, duration } ->
-                    ( updateSongState
-                        songId
-                        (AudioState.Playing { paused = False, time = time, duration = duration })
-                        model
-                    , Cmd.none
-                    )
-
-                Msg.Paused { songId, time, duration } ->
-                    ( updateSongState
-                        songId
-                        (AudioState.Playing { paused = True, time = time, duration = duration })
-                        model
-                    , Cmd.none
-                    )
-
-                Msg.TimeChanged args ->
-                    ( onTimeChanged args.songId args.time model, Cmd.none )
-
-                Msg.Next ->
-                    goNext model
-
-                Msg.Prev ->
-                    goPrev model
-
-                Msg.Shuffle ->
-                    shuffle model
-
-                Msg.Shuffled playlist ->
-                    shuffled playlist model
+        AudioMsg audioMsg ->
+            Audio.Update.update audioMsg model
 
 
 

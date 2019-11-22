@@ -22,6 +22,7 @@ import Entities.SongSummary exposing (SongSummary)
 import Loadable exposing (Loadable(..))
 import Msg exposing (Msg)
 import Routing exposing (Route)
+import Song.Types exposing (SongId)
 import Url exposing (Url)
 import Ws.Listener exposing (Listener, combineListeners)
 import Ws.NotificationListener exposing (NotificationListener)
@@ -51,7 +52,7 @@ type alias Model =
     , config : Config
     , websocketIsOpen : Bool
     , route : Maybe Route
-    , songCache : Dict Int AudioState.State
+    , songCache : Dict SongId AudioState.State
     , playing : Maybe Int
     , playlist : Array Int
     }

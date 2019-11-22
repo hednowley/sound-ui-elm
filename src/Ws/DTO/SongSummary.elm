@@ -2,6 +2,7 @@ module Ws.DTO.SongSummary exposing (SongSummary, convert, decode)
 
 import Entities.SongSummary
 import Json.Decode exposing (Decoder, field, int, map3, string)
+import Song.Types exposing (SongId(..))
 
 
 type alias SongSummary =
@@ -21,7 +22,7 @@ decode =
 
 convert : SongSummary -> Entities.SongSummary.SongSummary
 convert song =
-    { id = song.id
+    { id = SongId song.id
     , name = song.name
     , track = song.track
     }

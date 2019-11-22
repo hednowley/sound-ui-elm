@@ -1,16 +1,17 @@
 module Audio.AudioMsg exposing (AudioMsg(..))
 
 import Array exposing (Array)
+import Song.Types exposing (SongId)
 
 
 type AudioMsg
-    = CanPlay Int
-    | Play Int
+    = CanPlay SongId -- A song is ready to be played
+    | Play SongId
     | Resume
-    | PlayItem Int
+    | PlayItem SongId
     | Pause
-    | Queue Int
-    | Ended Int
+    | Queue SongId
+    | Ended SongId
     | SetTime Float
     | TimeChanged { songId : Int, time : Float }
     | Playing { songId : Int, time : Float, duration : Maybe Float }

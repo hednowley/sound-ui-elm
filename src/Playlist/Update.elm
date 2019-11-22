@@ -1,11 +1,12 @@
 module Playlist.Update exposing (playPlaylist)
 
-import Audio.Update exposing (replacePlaylist)
+import Audio.Actions exposing (replacePlaylist)
+import Audio.AudioMsg exposing (AudioMsg(..))
 import Dict
 import Entities.Playlist exposing (Playlist)
 import Loadable exposing (Loadable(..))
 import Model exposing (Model, addListener)
-import Msg exposing (AudioMsg(..), Msg(..))
+import Msg exposing (Msg(..))
 import Playlist.Fetch exposing (fetchPlaylist)
 import Playlist.Select exposing (getPlaylistSongs)
 import Types exposing (Update, noOp)

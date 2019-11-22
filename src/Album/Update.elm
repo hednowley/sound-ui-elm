@@ -1,12 +1,13 @@
 module Album.Update exposing (loadAlbum, playAlbum)
 
 import Album.Select exposing (getAlbumSongs)
-import Audio.Update exposing (replacePlaylist)
+import Audio.Actions exposing (replacePlaylist)
+import Audio.AudioMsg exposing (AudioMsg(..))
 import Dict
 import Entities.Album exposing (Album)
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
-import Msg exposing (AudioMsg(..), Msg(..))
+import Msg exposing (Msg(..))
 import Types exposing (Update)
 import Ws.Core exposing (sendMessageWithId)
 import Ws.Methods.GetAlbum exposing (getAlbum)

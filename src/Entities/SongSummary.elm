@@ -1,8 +1,10 @@
 module Entities.SongSummary exposing (SongSummary)
 
+import Song.Types exposing (SongId)
+
 
 type alias SongSummary =
-    { id : Int
+    { id : SongId
     , name : String
     , track : Int
     }
