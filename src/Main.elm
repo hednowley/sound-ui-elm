@@ -1,10 +1,8 @@
 module Main exposing (main)
 
-import Album.Update exposing (playAlbum)
 import Array
 import Audio.AudioMsg exposing (AudioMsg(..))
 import Audio.Update
-import AudioState exposing (State(..))
 import Browser
 import Browser.Navigation as Nav exposing (Key)
 import Cache exposing (makeCache, makeModel, tryDecode)
@@ -15,11 +13,10 @@ import Json.Decode
 import Loadable exposing (Loadable(..))
 import Model exposing (Listeners, Model)
 import Msg exposing (Msg(..))
-import Playlist.Update exposing (playPlaylist)
 import Ports
 import Rest.Core as Rest
 import Routing exposing (Route(..))
-import Song.Types exposing (SongId(..), getRawSongId)
+import Song.Types exposing (SongId(..))
 import Types exposing (Update, combine)
 import Updaters exposing (logOut, onUrlChange)
 import Url exposing (Url)
@@ -27,7 +24,6 @@ import Views.Login
 import Views.Root
 import Ws.Core as Ws
 import Ws.Listeners.ScanStatus
-import Ws.Methods.Handshake
 import Ws.Methods.Start
 import Ws.Methods.StartScan
 import Ws.SocketMsg exposing (SocketMsg(..))

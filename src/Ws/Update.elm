@@ -1,7 +1,7 @@
 module Ws.Update exposing (reconnect, update)
 
 import Loadable exposing (Loadable(..))
-import Model exposing (Listeners, Model)
+import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Rest.Core as Rest
 import Types exposing (Update)

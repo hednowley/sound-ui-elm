@@ -20,16 +20,11 @@ import Audio.Actions
         )
 import Audio.AudioMsg exposing (AudioMsg(..))
 import AudioState
-import Loadable exposing (Loadable(..))
 import Model exposing (Listeners, Model)
-import Msg exposing (Msg(..))
+import Msg exposing (Msg)
 import Playlist.Update exposing (playPlaylist)
-import Rest.Core as Rest
 import Song.Types exposing (SongId(..))
 import Types exposing (Update)
-import Ws.Core exposing (messageIn, sendMessage)
-import Ws.Methods.Handshake
-import Ws.Methods.Start
 
 
 update : AudioMsg -> Update Model Msg

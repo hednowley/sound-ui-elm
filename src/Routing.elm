@@ -1,6 +1,7 @@
 module Routing exposing (Route(..), getWebsocketUrl, parseUrl)
 
 import Album.Types exposing (AlbumId(..))
+import Artist.Types exposing (ArtistId(..))
 import String exposing (fromInt)
 import Url exposing (Url)
 import Url.Parser exposing ((</>), Parser, int, map, oneOf, parse, s)
@@ -21,7 +22,7 @@ getWebsocketUrl url =
 
 
 type Route
-    = Artist Int
+    = Artist ArtistId
     | Album AlbumId
     | Playlist Int
 
@@ -34,7 +35,7 @@ parseUrl =
 routeParser : Parser (Route -> a) a
 routeParser =
     oneOf
-        [ map Artist (s "artist" </> int)
+        [ map (Artist << ArtistId) (s "artist" </> int)
         , map (Album << AlbumId) (s "album" </> int)
         , map Playlist (s "playlist" </> int)
         ]

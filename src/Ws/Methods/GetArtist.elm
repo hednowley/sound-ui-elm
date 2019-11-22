@@ -1,5 +1,6 @@
 module Ws.Methods.GetArtist exposing (getArtist)
 
+import Artist.Types exposing (ArtistId, getRawArtistId)
 import Json.Decode exposing (int)
 import Json.Encode
 import Loadable exposing (Loadable(..))
@@ -11,18 +12,18 @@ import Ws.Listener exposing (Listener, makeIrresponsibleListener)
 import Ws.Types exposing (RequestData)
 
 
-getArtist : Int -> RequestData
+getArtist : ArtistId -> RequestData
 getArtist id =
     { method = "getArtist"
-    , params = makeRequest id |> Just
+    , params = Just <| makeRequest id
     , listener = Just onResponse
     }
 
 
-makeRequest : Int -> Json.Encode.Value
+makeRequest : ArtistId -> Json.Encode.Value
 makeRequest id =
     Json.Encode.object
-        [ ( "id", Json.Encode.int id ) ]
+        [ ( "id", Json.Encode.int (getRawArtistId id) ) ]
 
 
 onResponse : Listener Model Msg

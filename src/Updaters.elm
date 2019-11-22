@@ -4,6 +4,7 @@ module Updaters exposing
     )
 
 import Album.Update exposing (loadAlbum)
+import Artist.Types exposing (ArtistId(..))
 import Audio.Select exposing (..)
 import AudioState exposing (State(..))
 import Loadable exposing (Loadable(..))
