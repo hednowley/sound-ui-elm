@@ -1,5 +1,6 @@
 module Album.Select exposing (getAlbum, getAlbumArt, getAlbumSongs)
 
+import Album.Types exposing (AlbumId, getRawAlbumId)
 import Dict
 import Entities.Album exposing (Album)
 import Entities.AlbumSummary exposing (AlbumSummary)
@@ -8,9 +9,9 @@ import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 
 
-getAlbum : Int -> Model -> Loadable Album
-getAlbum id model =
-    Dict.get id model.albums |> Maybe.withDefault Absent
+getAlbum : AlbumId -> Model -> Loadable Album
+getAlbum albumId model =
+    Dict.get (getRawAlbumId albumId) model.albums |> Maybe.withDefault Absent
 
 
 getAlbumSongs : Album -> List SongSummary

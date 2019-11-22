@@ -25,6 +25,7 @@ import Model exposing (Listeners, Model)
 import Msg exposing (Msg(..))
 import Playlist.Update exposing (playPlaylist)
 import Rest.Core as Rest
+import Song.Types exposing (SongId(..))
 import Types exposing (Update)
 import Ws.Core exposing (messageIn, sendMessage)
 import Ws.Methods.Handshake
@@ -66,7 +67,7 @@ update msg model =
 
         Playing { songId, time, duration } ->
             ( updateSongState
-                songId
+                (SongId songId)
                 (AudioState.Playing { paused = False, time = time, duration = duration })
                 model
             , Cmd.none
@@ -74,14 +75,19 @@ update msg model =
 
         Paused { songId, time, duration } ->
             ( updateSongState
-                songId
+                (SongId songId)
                 (AudioState.Playing { paused = True, time = time, duration = duration })
                 model
             , Cmd.none
             )
 
         TimeChanged args ->
-            ( onTimeChanged args.songId args.time model, Cmd.none )
+            ( onTimeChanged
+                (SongId args.songId)
+                args.time
+                model
+            , Cmd.none
+            )
 
         Next ->
             goNext model

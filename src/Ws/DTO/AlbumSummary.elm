@@ -1,5 +1,6 @@
 module Ws.DTO.AlbumSummary exposing (AlbumSummary, convert, decode)
 
+import Album.Types exposing (AlbumId(..), getRawAlbumId)
 import Entities.AlbumSummary
 import Json.Decode exposing (Decoder, field, int, map5, maybe, string)
 
@@ -25,7 +26,7 @@ decode =
 
 convert : AlbumSummary -> Entities.AlbumSummary.AlbumSummary
 convert album =
-    { id = album.id
+    { id = AlbumId album.id
     , name = album.name
     , duration = album.duration
     , year = album.year

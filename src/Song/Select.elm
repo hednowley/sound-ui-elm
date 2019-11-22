@@ -7,8 +7,13 @@ import Entities.SongSummary exposing (SongSummary)
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Routing exposing (Route(..))
+import Song.Types exposing (SongId(..))
 
 
-getSong : Model -> Int -> Maybe SongSummary
+getSong : Model -> SongId -> Maybe SongSummary
 getSong model songId =
-    Dict.get songId model.songs
+    let
+        (SongId id) =
+            songId
+    in
+    Dict.get id model.songs

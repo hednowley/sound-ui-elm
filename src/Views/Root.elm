@@ -23,8 +23,8 @@ view model =
                 Nothing ->
                     Views.Home.view model
 
-                Just (Artist id) ->
-                    Views.Artist.view id model
+                Just (Artist _) ->
+                    Views.Artist.view model
 
                 Just (Album id) ->
                     Views.Album.view id model

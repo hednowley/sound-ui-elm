@@ -1,8 +1,10 @@
 module Entities.AlbumSummary exposing (AlbumSummary)
 
+import Album.Types exposing (AlbumId)
+
 
 type alias AlbumSummary =
-    { id : Int
+    { id : AlbumId
     , name : String
     , duration : Int
     , year : Maybe Int

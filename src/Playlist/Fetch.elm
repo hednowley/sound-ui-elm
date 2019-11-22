@@ -8,6 +8,7 @@ import Loadable exposing (Loadable(..))
 import Model exposing (Model, addListener, removeListener)
 import Msg exposing (Msg)
 import Playlist.Select exposing (getPlaylistSongs)
+import Song.Types exposing (SongId(..), getRawSongId)
 import Types exposing (Update)
 import Util exposing (insertMany)
 import Ws.Core exposing (sendMessageWithId)
@@ -90,7 +91,14 @@ onSuccess maybeCallback dto model =
     let
         newModel =
             { model
-                | songs = insertMany .id identity playlist.songs model.songs -- Store the songs
+                | songs =
+                    insertMany
+                        (.id >> getRawSongId)
+                        identity
+                        playlist.songs
+                        model.songs
+
+                -- Store the songs
                 , loadedPlaylists = Dict.insert playlist.id (Loaded playlist) model.loadedPlaylists -- Store the playlist
             }
     in

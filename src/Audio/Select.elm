@@ -6,19 +6,20 @@ import Dict
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Routing exposing (Route(..))
+import Song.Types exposing (SongId(..), getRawSongId)
 
 
-getSongState : Int -> Model -> Maybe State
+getSongState : SongId -> Model -> Maybe State
 getSongState songId model =
-    Dict.get songId model.songCache
+    Dict.get (getRawSongId songId) model.songCache
 
 
-getSongId : Model -> Int -> Maybe Int
+getSongId : Model -> Int -> Maybe SongId
 getSongId model index =
     Array.get index model.playlist
 
 
-getCurrentSongId : Model -> Maybe Int
+getCurrentSongId : Model -> Maybe SongId
 getCurrentSongId model =
     model.playing
         |> Maybe.andThen (getSongId model)

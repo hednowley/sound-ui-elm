@@ -1,5 +1,6 @@
 module Audio.AudioMsg exposing (AudioMsg(..))
 
+import Album.Types exposing (AlbumId)
 import Array exposing (Array)
 import Song.Types exposing (SongId)
 
@@ -8,7 +9,7 @@ type AudioMsg
     = CanPlay SongId -- A song is ready to be played
     | Play SongId
     | Resume
-    | PlayItem SongId
+    | PlayItem Int
     | Pause
     | Queue SongId
     | Ended SongId
@@ -18,7 +19,7 @@ type AudioMsg
     | Paused { songId : Int, time : Float, duration : Maybe Float }
     | Next
     | Prev
-    | PlayAlbum Int
+    | PlayAlbum AlbumId
     | PlayPlaylist Int
     | Shuffle
-    | Shuffled (Array Int)
+    | Shuffled (Array SongId)

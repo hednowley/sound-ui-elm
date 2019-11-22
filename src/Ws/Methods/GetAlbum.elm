@@ -1,5 +1,6 @@
 module Ws.Methods.GetAlbum exposing (getAlbum)
 
+import Album.Types exposing (AlbumId, getRawAlbumId)
 import Dict
 import Entities.Album
 import Json.Decode exposing (int)
@@ -7,6 +8,7 @@ import Json.Encode
 import Loadable exposing (Loadable(..))
 import Model exposing (Model, removeListener)
 import Msg exposing (Msg)
+import Song.Types exposing (SongId(..), getRawSongId)
 import Types exposing (Update)
 import Util exposing (insertMany)
 import Ws.DTO.Album exposing (Album, convert, decode)
@@ -18,7 +20,7 @@ type alias Callback =
     Entities.Album.Album -> Update Model Msg
 
 
-getAlbum : Int -> Maybe Callback -> RequestData
+getAlbum : AlbumId -> Maybe Callback -> RequestData
 getAlbum id callback =
     { method = "getAlbum"
     , params = makeRequest id |> Just
@@ -26,10 +28,10 @@ getAlbum id callback =
     }
 
 
-makeRequest : Int -> Json.Encode.Value
+makeRequest : AlbumId -> Json.Encode.Value
 makeRequest id =
     Json.Encode.object
-        [ ( "id", Json.Encode.int id ) ]
+        [ ( "id", Json.Encode.int (getRawAlbumId id) ) ]
 
 
 onResponse : Maybe Callback -> Listener Model Msg
@@ -48,7 +50,14 @@ onSuccess callback album model =
 
         m =
             { model
-                | songs = insertMany .id identity a.songs model.songs -- Store the songs
+                | songs =
+                    insertMany
+                        (.id >> getRawSongId)
+                        identity
+                        a.songs
+                        model.songs
+
+                -- Store the songs
                 , albums = Dict.insert a.id (Loaded a) model.albums -- Store the album
             }
     in

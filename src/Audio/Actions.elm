@@ -35,13 +35,17 @@ import Ports
 import Random exposing (Generator)
 import Random.Array exposing (shuffle)
 import Routing exposing (Route(..))
-import Song.Types exposing (SongId)
+import Song.Types exposing (SongId(..), getRawSongId)
 import Types exposing (Update, combine)
 
 
 updateSongState : SongId -> AudioState.State -> Model -> Model
 updateSongState songId state model =
-    { model | songCache = Dict.insert songId state model.songCache }
+    let
+        (SongId s) =
+            songId
+    in
+    { model | songCache = Dict.insert s state model.songCache }
 
 
 goNext : Update Model Msg
@@ -115,7 +119,7 @@ shuffle model =
             ( model, Cmd.none )
 
 
-shuffled : Array Int -> Update Model Msg
+shuffled : Array SongId -> Update Model Msg
 shuffled s model =
     case model.playing of
         Just index ->
@@ -138,7 +142,7 @@ pauseCurrent : Update Model Msg
 pauseCurrent model =
     case getCurrentSongId model of
         Just songId ->
-            ( model, Ports.pauseAudio songId )
+            ( model, Ports.pauseAudio (getRawSongId songId) )
 
         Nothing ->
             ( model, Cmd.none )
@@ -148,7 +152,7 @@ setCurrentTime : Float -> Update Model Msg
 setCurrentTime time model =
     case getCurrentSongId model of
         Just songId ->
-            ( model, Ports.setAudioTime { songId = songId, time = time } )
+            ( model, Ports.setAudioTime { songId = getRawSongId songId, time = time } )
 
         Nothing ->
             ( model, Cmd.none )
@@ -158,7 +162,7 @@ resumeCurrent : Update Model Msg
 resumeCurrent model =
     case getCurrentSongId model of
         Just songId ->
-            ( model, Ports.resumeAudio songId )
+            ( model, Ports.resumeAudio (getRawSongId songId) )
 
         Nothing ->
             ( model, Cmd.none )
@@ -183,7 +187,7 @@ onSongLoaded songId model =
         ( m, Cmd.none )
 
 
-onTimeChanged : Int -> Float -> Model -> Model
+onTimeChanged : SongId -> Float -> Model -> Model
 onTimeChanged songId time model =
     case getSongState songId model of
         Just (Playing p) ->
@@ -193,17 +197,17 @@ onTimeChanged songId time model =
             model
 
 
-playSong : Int -> Update Model Msg
+playSong : SongId -> Update Model Msg
 playSong songId model =
-    case Dict.get songId model.songCache of
+    case getSongState songId model of
         Just AudioState.Loading ->
             ( model, Cmd.none )
 
         Just (AudioState.Loaded _) ->
-            ( model, Ports.playAudio songId )
+            ( model, Ports.playAudio (getRawSongId songId) )
 
         Just (AudioState.Playing _) ->
-            ( model, Ports.playAudio songId )
+            ( model, Ports.playAudio (getRawSongId songId) )
 
         _ ->
             loadSong songId model
@@ -237,7 +241,7 @@ playItem index model =
             ( model, Cmd.none )
 
 
-replacePlaylistWithoutPausing : List Int -> Update Model Msg
+replacePlaylistWithoutPausing : List SongId -> Update Model Msg
 replacePlaylistWithoutPausing playlist model =
     let
         m =
@@ -251,14 +255,14 @@ replacePlaylistWithoutPausing playlist model =
             playSong first { m | playing = Just 0 }
 
 
-replacePlaylist : List Int -> Update Model Msg
+replacePlaylist : List SongId -> Update Model Msg
 replacePlaylist playlist =
     combine
         pauseCurrent
         (replacePlaylistWithoutPausing playlist)
 
 
-queueAndPlaySong : Int -> Update Model Msg
+queueAndPlaySong : SongId -> Update Model Msg
 queueAndPlaySong songId model =
     let
         m =
@@ -267,12 +271,12 @@ queueAndPlaySong songId model =
     playItem (Array.length m.playlist - 1) m
 
 
-queueSong : Int -> Model -> Model
+queueSong : SongId -> Model -> Model
 queueSong songId model =
     { model | playlist = push songId model.playlist }
 
 
-loadSong : Int -> Update Model Msg
+loadSong : SongId -> Update Model Msg
 loadSong songId model =
     let
         m =

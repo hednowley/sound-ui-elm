@@ -1,5 +1,6 @@
 module Views.Home exposing (view)
 
+import Artist.Types exposing (ArtistId, getRawArtistId)
 import Dict
 import Entities.ArtistSummary exposing (ArtistSummaries)
 import Entities.PlaylistSummary exposing (PlaylistSummaries)
@@ -35,7 +36,7 @@ viewArtists : ArtistSummaries -> Html msg
 viewArtists artists =
     div [ class "home__artists" ]
         (List.map
-            (\artist -> div [ class "home__artist" ] [ a [ href <| "/artist/" ++ fromInt artist.id ] [ text artist.name ] ])
+            (\artist -> div [ class "home__artist" ] [ a [ href <| "/artist/" ++ fromInt (getRawArtistId artist.id) ] [ text artist.name ] ])
             (Dict.values artists)
         )
 

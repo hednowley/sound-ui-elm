@@ -7,6 +7,7 @@ import Json.Encode
 import Loadable exposing (Loadable(..))
 import Model exposing (Model, removeListener)
 import Msg exposing (Msg)
+import Song.Types exposing (SongId(..), getRawSongId)
 import Types exposing (Update)
 import Util exposing (insertMany)
 import Ws.DTO.Album exposing (Album, convert, decode)
@@ -24,8 +25,6 @@ getPlaylist id callback =
     , params = Just (makeRequest id)
     , listener = Just (onResponse callback)
     }
-
-
 
 
 makeRequest : Int -> Json.Encode.Value
@@ -50,7 +49,7 @@ onSuccess callback album model =
 
         m =
             { model
-                | songs = insertMany .id identity a.songs model.songs -- Store the songs
+                | songs = insertMany (.id >> getRawSongId) identity a.songs model.songs -- Store the songs
                 , albums = Dict.insert a.id (Loaded a) model.albums -- Store the album
             }
     in

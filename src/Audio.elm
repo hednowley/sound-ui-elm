@@ -1,6 +1,7 @@
 module Audio exposing (LoadRequest, makeLoadRequest)
 
 import Model exposing (Model)
+import Song.Types exposing (SongId, getRawSongId)
 import String exposing (fromInt)
 
 
@@ -10,8 +11,8 @@ type alias LoadRequest =
     }
 
 
-makeLoadRequest : Int -> LoadRequest
+makeLoadRequest : SongId -> LoadRequest
 makeLoadRequest songId =
-    { url = "/api/stream?id=" ++ fromInt songId
-    , songId = songId
+    { url = "/api/stream?id=" ++ fromInt (getRawSongId songId)
+    , songId = getRawSongId songId
     }

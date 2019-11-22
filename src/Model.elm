@@ -52,9 +52,9 @@ type alias Model =
     , config : Config
     , websocketIsOpen : Bool
     , route : Maybe Route
-    , songCache : Dict SongId AudioState.State
+    , songCache : Dict Int AudioState.State
     , playing : Maybe Int
-    , playlist : Array Int
+    , playlist : Array SongId
     }
 
 

@@ -1,6 +1,7 @@
 module Album.Update exposing (loadAlbum, playAlbum)
 
 import Album.Select exposing (getAlbumSongs)
+import Album.Types exposing (AlbumId, getRawAlbumId)
 import Audio.Actions exposing (replacePlaylist)
 import Audio.AudioMsg exposing (AudioMsg(..))
 import Dict
@@ -13,7 +14,7 @@ import Ws.Core exposing (sendMessageWithId)
 import Ws.Methods.GetAlbum exposing (getAlbum)
 
 
-loadAlbum : Int -> Maybe (Album -> Update Model Msg) -> Update Model Msg
+loadAlbum : AlbumId -> Maybe (Album -> Update Model Msg) -> Update Model Msg
 loadAlbum id callback model =
     let
         ( ( newModel, cmd ), messageId ) =
@@ -21,7 +22,10 @@ loadAlbum id callback model =
                 (getAlbum id callback)
                 model
     in
-    ( { newModel | albums = Dict.insert id (Loading messageId) newModel.albums }
+    ( { newModel
+        | albums =
+            Dict.insert (getRawAlbumId id) (Loading messageId) newModel.albums
+      }
     , cmd
     )
 
@@ -35,7 +39,7 @@ playLoadedAlbum album =
     replacePlaylist playlist
 
 
-playAlbum : Int -> Update Model Msg
+playAlbum : AlbumId -> Update Model Msg
 playAlbum albumId =
     loadAlbum
         albumId

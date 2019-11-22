@@ -9,9 +9,10 @@ import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Song.Select exposing (getSong)
+import Song.Types exposing (SongId)
 
 
-view : Model -> Int -> Int -> Html.Html Msg
+view : Model -> Int -> SongId -> Html.Html Msg
 view model index songId =
     case getSong model songId of
         Just song ->

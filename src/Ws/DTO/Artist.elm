@@ -1,5 +1,6 @@
 module Ws.DTO.Artist exposing (Artist, convert, decode)
 
+import Artist.Types exposing (ArtistId(..), getRawArtistId)
 import Entities.Artist
 import Json.Decode exposing (Decoder, field, int, list, map3, string)
 import Ws.DTO.AlbumSummary exposing (AlbumSummary)
@@ -24,7 +25,7 @@ decode =
 
 convert : Artist -> Entities.Artist.Artist
 convert artist =
-    { id = artist.id
+    { id = ArtistId artist.id
     , name = artist.name
     , albums = List.map Ws.DTO.AlbumSummary.convert artist.albums
     }

@@ -19,6 +19,7 @@ import Playlist.Update exposing (playPlaylist)
 import Ports
 import Rest.Core as Rest
 import Routing exposing (Route(..))
+import Song.Types exposing (SongId(..), getRawSongId)
 import Types exposing (Update, combine)
 import Updaters exposing (logOut, onUrlChange)
 import Url exposing (Url)
@@ -126,8 +127,8 @@ subscriptions _ =
         [ Ports.websocketOpened <| always (SocketMsg SocketOpened)
         , Ports.websocketClosed <| always (SocketMsg SocketClosed)
         , Ports.websocketIn <| SocketIn >> Msg.SocketMsg
-        , Ports.canPlayAudio <| CanPlay >> Msg.AudioMsg
-        , Ports.audioEnded <| Ended >> Msg.AudioMsg
+        , Ports.canPlayAudio <| SongId >> CanPlay >> Msg.AudioMsg
+        , Ports.audioEnded <| SongId >> Ended >> Msg.AudioMsg
         , Ports.audioPlaying <| Audio.AudioMsg.Playing >> Msg.AudioMsg
         , Ports.audioPaused <| Audio.AudioMsg.Paused >> Msg.AudioMsg
         , Ports.audioTimeChanged <| Audio.AudioMsg.TimeChanged >> Msg.AudioMsg
@@ -170,7 +171,10 @@ update msg model =
 
         StartScan ->
             Ws.sendMessage
-                (Ws.Methods.StartScan.prepareRequest model.scanShouldUpdate model.scanShouldDelete)
+                (Ws.Methods.StartScan.prepareRequest
+                    model.scanShouldUpdate
+                    model.scanShouldDelete
+                )
                 model
 
         ToggleScanUpdate ->

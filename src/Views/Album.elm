@@ -1,6 +1,7 @@
 module Views.Album exposing (view)
 
 import Album.Select exposing (getAlbum, getAlbumArt, getAlbumSongs)
+import Album.Types exposing (AlbumId, getRawAlbumId)
 import Audio.AudioMsg exposing (AudioMsg(..))
 import Html exposing (button, div, img, text)
 import Html.Attributes exposing (class, href, src)
@@ -11,7 +12,7 @@ import Msg exposing (Msg(..))
 import Views.Song
 
 
-view : Int -> Model -> Html.Html Msg
+view : AlbumId -> Model -> Html.Html Msg
 view id model =
     case getAlbum id model of
         Absent ->
