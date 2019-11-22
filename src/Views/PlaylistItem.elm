@@ -1,12 +1,13 @@
 module Views.PlaylistItem exposing (view)
 
+import Audio.AudioMsg exposing (AudioMsg(..))
 import Dict
 import Html exposing (button, div, text)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
-import Msg exposing (AudioMsg(..), Msg(..))
+import Msg exposing (Msg(..))
 import Song.Select exposing (getSong)
 
 

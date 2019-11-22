@@ -1,11 +1,12 @@
-module Msg exposing (AudioMsg(..), Msg(..))
+module Msg exposing (Msg(..))
 
-import Array exposing (Array)
+import Audio.AudioMsg exposing (AudioMsg)
 import Browser
 import DTO.Authenticate
 import Entities.Playlist exposing (Playlist)
 import Http
 import Url
+import Ws.SocketMsg exposing (SocketMsg)
 
 
 type Msg
@@ -17,30 +18,8 @@ type Msg
     | LogOut
     | ToggleScanUpdate
     | ToggleScanDelete
-    | WebsocketOpened -- The websocket has been successfully opened
-    | WebsocketClosed -- The websocket has been closed
-    | WebsocketIn String -- A message has been received over the websocket
     | AudioMsg AudioMsg
     | StartScan -- Ask for a scan to be started
     | GotAuthenticateResponse (Result Http.Error DTO.Authenticate.Response) -- Server has replied to posting of credentials
     | GotTicketResponse (Result Http.Error String) -- Server has replied to a request for a websocket ticket
-
-
-type AudioMsg
-    = CanPlay Int
-    | Play Int
-    | Resume
-    | PlayItem Int
-    | Pause
-    | Queue Int
-    | Ended Int
-    | SetTime Float
-    | TimeChanged { songId : Int, time : Float }
-    | Playing { songId : Int, time : Float, duration : Maybe Float }
-    | Paused { songId : Int, time : Float, duration : Maybe Float }
-    | Next
-    | Prev
-    | PlayAlbum Int
-    | PlayPlaylist Int
-    | Shuffle
-    | Shuffled (Array Int)
+    | SocketMsg SocketMsg

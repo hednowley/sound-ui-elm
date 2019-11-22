@@ -1,12 +1,13 @@
 module Views.Artist exposing (view)
 
 import Album.Select exposing (getAlbumArt)
+import Audio.AudioMsg exposing (AudioMsg(..))
 import Html exposing (a, button, div, img, text)
 import Html.Attributes exposing (class, href, src)
 import Html.Events exposing (onClick)
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
-import Msg exposing (AudioMsg(..), Msg(..))
+import Msg exposing (Msg(..))
 import String exposing (fromInt)
 
 

@@ -18,6 +18,7 @@ module Audio.Update exposing
 
 import Array exposing (Array, append, fromList, length, push, slice)
 import Audio exposing (makeLoadRequest)
+import Audio.AudioMsg exposing (AudioMsg(..))
 import Audio.Select
     exposing
         ( getCurrentSongId

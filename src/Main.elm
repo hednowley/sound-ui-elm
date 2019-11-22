@@ -34,7 +34,7 @@ import Playlist.Update exposing (playPlaylist)
 import Ports
 import Rest.Core as Rest
 import Routing exposing (Route(..))
-import Types exposing (Update)
+import Types exposing (Update, combine)
 import Updaters exposing (logOut, onUrlChange)
 import Url exposing (Url)
 import Views.Login
@@ -44,6 +44,8 @@ import Ws.Listeners.ScanStatus
 import Ws.Methods.Handshake
 import Ws.Methods.Start
 import Ws.Methods.StartScan
+import Ws.SocketMsg exposing (SocketMsg(..))
+import Ws.Update
 
 
 {-| This is the object passed in by the JS bootloader.
@@ -91,19 +93,9 @@ init flags url navKey =
                 (emptyModel navKey url flags.config)
                 (tryDecode flags.model)
     in
-    ( model, reconnect model )
-
-
-{-| Tries to connect to the websocket if there is cached token.
--}
-reconnect : Model -> Cmd Msg
-reconnect model =
-    case model.token of
-        Loadable.Loaded _ ->
-            Rest.getTicket model
-
-        _ ->
-            Cmd.none
+    combine (onUrlChange url)
+        (\m -> ( m, Ws.Update.reconnect m ))
+        model
 
 
 emptyModel : Key -> Url -> Config -> Model
@@ -146,14 +138,14 @@ emptyModel key url config =
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
-        [ Ports.websocketOpened <| always WebsocketOpened
-        , Ports.websocketClosed <| always WebsocketClosed
-        , Ports.websocketIn <| Msg.WebsocketIn
-        , Ports.canPlayAudio <| (CanPlay >> Msg.AudioMsg)
-        , Ports.audioEnded <| (Ended >> Msg.AudioMsg)
-        , Ports.audioPlaying <| (Msg.Playing >> Msg.AudioMsg)
-        , Ports.audioPaused <| (Msg.Paused >> Msg.AudioMsg)
-        , Ports.audioTimeChanged <| (Msg.TimeChanged >> Msg.AudioMsg)
+        [ Ports.websocketOpened <| always (SocketMsg SocketOpened)
+        , Ports.websocketClosed <| always (SocketMsg SocketClosed)
+        , Ports.websocketIn <| SocketIn >> Msg.SocketMsg
+        , Ports.canPlayAudio <| CanPlay >> Msg.AudioMsg
+        , Ports.audioEnded <| Ended >> Msg.AudioMsg
+        , Ports.audioPlaying <| Msg.Playing >> Msg.AudioMsg
+        , Ports.audioPaused <| Msg.Paused >> Msg.AudioMsg
+        , Ports.audioTimeChanged <| Msg.TimeChanged >> Msg.AudioMsg
         , Ports.audioNextPressed <| always (Msg.AudioMsg Next)
         , Ports.audioPrevPressed <| always (Msg.AudioMsg Prev)
         ]
@@ -191,24 +183,6 @@ update msg model =
         GotTicketResponse response ->
             Rest.gotTicketResponse response model
 
-        -- Start the ticket handshake now that websocket is open
-        WebsocketOpened ->
-            case model.websocketTicket of
-                Just ticket ->
-                    Ws.sendMessage
-                        (Ws.Methods.Handshake.prepareRequest ticket Ws.Methods.Start.start)
-                        model
-
-                Nothing ->
-                    ( { model | message = "Can't negotiate websocket as there is no ticket" }, Cmd.none )
-
-        WebsocketClosed ->
-            -- Try to reopen the websocket
-            ( { model | websocketIsOpen = False }, reconnect model )
-
-        WebsocketIn message ->
-            Ws.messageIn message model
-
         StartScan ->
             Ws.sendMessage
                 (Ws.Methods.StartScan.prepareRequest model.scanShouldUpdate model.scanShouldDelete)
@@ -219,6 +193,9 @@ update msg model =
 
         ToggleScanDelete ->
             ( { model | scanShouldDelete = not model.scanShouldDelete }, Cmd.none )
+
+        SocketMsg socketMsg ->
+            Ws.Update.update socketMsg model
 
         AudioMsg audio ->
             case audio of
