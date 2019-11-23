@@ -16,18 +16,18 @@ import Msg exposing (Msg(..))
 import Ports
 import Rest.Core as Rest
 import Routing exposing (Route(..))
+import Socket.Core as Socket
+import Socket.Listeners.ScanStatus
+import Socket.Methods.Start
+import Socket.Methods.StartScan
+import Socket.SocketMsg exposing (SocketMsg(..))
+import Socket.Update
 import Song.Types exposing (SongId(..))
 import Types exposing (Update, combine)
 import Updaters exposing (logOut, onUrlChange)
 import Url exposing (Url)
 import Views.Login
 import Views.Root
-import Ws.Core as Ws
-import Ws.Listeners.ScanStatus
-import Ws.Methods.Start
-import Ws.Methods.StartScan
-import Ws.SocketMsg exposing (SocketMsg(..))
-import Ws.Update
 
 
 {-| This is the object passed in by the JS bootloader.
@@ -76,7 +76,7 @@ init flags url navKey =
                 (tryDecode flags.model)
     in
     combine (onUrlChange url)
-        (\m -> ( m, Ws.Update.reconnect m ))
+        (\m -> ( m, Socket.Update.reconnect m ))
         model
 
 
@@ -95,7 +95,7 @@ emptyModel key url config =
     , notificationListeners =
         Model.NotificationListeners <|
             Dict.fromList
-                [ ( "scanStatus", Ws.Listeners.ScanStatus.listener )
+                [ ( "scanStatus", Socket.Listeners.ScanStatus.listener )
                 ]
     , websocketId = 1
     , scanShouldUpdate = False
@@ -166,8 +166,8 @@ update msg model =
             Rest.gotTicketResponse response model
 
         StartScan ->
-            Ws.sendMessage
-                (Ws.Methods.StartScan.prepareRequest
+            Socket.sendMessage
+                (Socket.Methods.StartScan.prepareRequest
                     model.scanShouldUpdate
                     model.scanShouldDelete
                 )
@@ -180,7 +180,7 @@ update msg model =
             ( { model | scanShouldDelete = not model.scanShouldDelete }, Cmd.none )
 
         SocketMsg socketMsg ->
-            Ws.Update.update socketMsg model
+            Socket.Update.update socketMsg model
 
         AudioMsg audioMsg ->
             Audio.Update.update audioMsg model

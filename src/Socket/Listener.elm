@@ -1,8 +1,8 @@
-module Ws.Listener exposing (Listener, combineListeners, makeIrresponsibleListener, makeResponsibleListener)
+module Socket.Listener exposing (Listener, combineListeners, makeIrresponsibleListener, makeResponsibleListener)
 
 import Json.Decode exposing (Decoder, Value, decodeValue)
+import Socket.Response exposing (Response)
 import Types exposing (Update, combine, noOp)
-import Ws.Response exposing (Response)
 
 
 {-| Describes how to transform the model and dispatch commands with an incoming websocket message.

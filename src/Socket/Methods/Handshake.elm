@@ -1,12 +1,12 @@
-module Ws.Methods.Handshake exposing (makeRequest, prepareRequest)
+module Socket.Methods.Handshake exposing (makeRequest, prepareRequest)
 
 import Json.Decode
 import Json.Encode
 import Model exposing (Model, removeListener)
 import Msg exposing (Msg)
+import Socket.Listener exposing (Listener, makeIrresponsibleListener)
+import Socket.Types exposing (RequestData)
 import Types exposing (Update)
-import Ws.Listener exposing (Listener, makeIrresponsibleListener)
-import Ws.Types exposing (RequestData)
 
 
 type alias Body =

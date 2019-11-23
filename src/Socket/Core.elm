@@ -1,4 +1,4 @@
-module Ws.Core exposing
+module Socket.Core exposing
     ( addListener
     , messageIn
     , open
@@ -10,13 +10,13 @@ import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Ports
 import Routing exposing (getWebsocketUrl)
+import Socket.Listener exposing (Listener)
+import Socket.Message as Message exposing (Message(..), parse)
+import Socket.Notification exposing (Notification)
+import Socket.Request
+import Socket.Response exposing (Response)
+import Socket.Types exposing (RequestData)
 import Types exposing (Update, UpdateWithReturn)
-import Ws.Listener exposing (Listener)
-import Ws.Message as Message exposing (Message(..), parse)
-import Ws.Notification exposing (Notification)
-import Ws.Request
-import Ws.Response exposing (Response)
-import Ws.Types exposing (RequestData)
 
 
 {-| Open a new websocket.
@@ -38,7 +38,7 @@ sendMessageWithId request model =
             addListener messageId request.listener model
     in
     ( ( { newModel | websocketId = messageId + 1 }
-      , Ports.websocketOut <| Ws.Request.makeRequest messageId request.method request.params
+      , Ports.websocketOut <| Socket.Request.makeRequest messageId request.method request.params
       )
     , messageId
     )

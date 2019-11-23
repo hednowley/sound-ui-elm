@@ -1,4 +1,4 @@
-module Ws.SocketMsg exposing (SocketMsg(..))
+module Socket.SocketMsg exposing (SocketMsg(..))
 
 
 type SocketMsg

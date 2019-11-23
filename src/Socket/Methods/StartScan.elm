@@ -1,7 +1,7 @@
-module Ws.Methods.StartScan exposing (prepareRequest)
+module Socket.Methods.StartScan exposing (prepareRequest)
 
 import Json.Encode
-import Ws.Types exposing (RequestData)
+import Socket.Types exposing (RequestData)
 
 
 prepareRequest : Bool -> Bool -> RequestData

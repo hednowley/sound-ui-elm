@@ -1,4 +1,4 @@
-module Ws.Request exposing (makeRequest)
+module Socket.Request exposing (makeRequest)
 
 import Json.Encode exposing (Value, int, object, string)
 

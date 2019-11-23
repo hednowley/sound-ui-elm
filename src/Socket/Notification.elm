@@ -1,4 +1,4 @@
-module Ws.Notification exposing (Notification, decode)
+module Socket.Notification exposing (Notification, decode)
 
 import Json.Decode exposing (Decoder, field, map2, maybe, string, value)
 

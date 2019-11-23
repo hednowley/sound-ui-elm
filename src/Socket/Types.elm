@@ -1,9 +1,9 @@
-module Ws.Types exposing (RequestData)
+module Socket.Types exposing (RequestData)
 
 import Json.Encode
 import Model exposing (Model)
 import Msg exposing (Msg)
-import Ws.Listener
+import Socket.Listener
 
 
 {-| Describes a message to send down the websocket and optionally how to handle a response to that message.
@@ -11,5 +11,5 @@ import Ws.Listener
 type alias RequestData =
     { method : String
     , params : Maybe Json.Encode.Value
-    , listener : Maybe (Ws.Listener.Listener Model Msg) -- How any replies to the message should be handled.
+    , listener : Maybe (Socket.Listener.Listener Model Msg) -- How any replies to the message should be handled.
     }

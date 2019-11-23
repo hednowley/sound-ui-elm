@@ -13,11 +13,11 @@ import Msg exposing (Msg)
 import Playlist.Fetch exposing (fetchPlaylist)
 import Ports
 import Routing exposing (Route(..))
+import Socket.Core as Socket
+import Socket.Methods.GetArtist exposing (getArtist)
+import Socket.Methods.GetPlaylist exposing (getPlaylist)
 import Types exposing (Update)
 import Url exposing (Url)
-import Ws.Core as Ws
-import Ws.Methods.GetArtist exposing (getArtist)
-import Ws.Methods.GetPlaylist exposing (getPlaylist)
 
 
 logOut : Update Model Msg
@@ -36,7 +36,7 @@ onUrlChange url model =
             ( m, Cmd.none )
 
         Just (Artist id) ->
-            Ws.sendMessage
+            Socket.sendMessage
                 (getArtist id)
                 { m | artist = Loadable.Loading 1337 }
 

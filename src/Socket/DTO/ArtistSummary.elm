@@ -1,4 +1,4 @@
-module Ws.DTO.ArtistSummary exposing (ArtistSummary, convert, decode)
+module Socket.DTO.ArtistSummary exposing (ArtistSummary, convert, decode)
 
 import Artist.Types exposing (ArtistId(..))
 import Entities.ArtistSummary

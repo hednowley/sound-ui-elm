@@ -1,10 +1,10 @@
-module Ws.Listeners.ScanStatus exposing (listener)
+module Socket.Listeners.ScanStatus exposing (listener)
 
 import Json.Decode exposing (bool, int)
 import Model exposing (Model)
 import Msg exposing (Msg)
+import Socket.NotificationListener exposing (NotificationListener, makeListenerWithParams)
 import Types exposing (Update)
-import Ws.NotificationListener exposing (NotificationListener, makeListenerWithParams)
 
 
 type alias Params =

@@ -1,11 +1,11 @@
-module Ws.Methods.Start exposing (start)
+module Socket.Methods.Start exposing (start)
 
 import Model exposing (Model)
 import Msg exposing (Msg)
+import Socket.Core as Socket
+import Socket.Methods.GetArtists exposing (getArtists)
+import Socket.Methods.GetPlaylists exposing (getPlaylists)
 import Types exposing (Update, combine)
-import Ws.Core as Ws
-import Ws.Methods.GetArtists exposing (getArtists)
-import Ws.Methods.GetPlaylists exposing (getPlaylists)
 
 
 {-| This should be run once the websocket handshake is complete.
@@ -13,8 +13,8 @@ import Ws.Methods.GetPlaylists exposing (getPlaylists)
 start : Update Model Msg
 start =
     combine
-        (combine setWebsocketOpen (Ws.sendMessage getArtists))
-        (Ws.sendMessage getPlaylists)
+        (combine setWebsocketOpen (Socket.sendMessage getArtists))
+        (Socket.sendMessage getPlaylists)
 
 
 setWebsocketOpen : Update Model Msg

@@ -1,4 +1,4 @@
-module Ws.DTO.SongSummary exposing (SongSummary, convert, decode)
+module Socket.DTO.SongSummary exposing (SongSummary, convert, decode)
 
 import Entities.SongSummary
 import Json.Decode exposing (Decoder, field, int, map3, string)

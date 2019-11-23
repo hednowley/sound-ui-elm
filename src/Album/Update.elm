@@ -9,9 +9,9 @@ import Entities.Album exposing (Album)
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (Msg(..))
+import Socket.Core exposing (sendMessageWithId)
+import Socket.Methods.GetAlbum exposing (getAlbum)
 import Types exposing (Update)
-import Ws.Core exposing (sendMessageWithId)
-import Ws.Methods.GetAlbum exposing (getAlbum)
 
 
 loadAlbum : AlbumId -> Maybe (Album -> Update Model Msg) -> Update Model Msg

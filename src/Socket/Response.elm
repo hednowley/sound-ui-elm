@@ -1,4 +1,4 @@
-module Ws.Response exposing (Response, decode)
+module Socket.Response exposing (Response, decode)
 
 import Json.Decode exposing (Decoder, Value, andThen, field, int, map, oneOf, value)
 

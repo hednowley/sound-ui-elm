@@ -5,8 +5,8 @@ import Browser
 import DTO.Authenticate
 import Entities.Playlist exposing (Playlist)
 import Http
+import Socket.SocketMsg exposing (SocketMsg)
 import Url
-import Ws.SocketMsg exposing (SocketMsg)
 
 
 type Msg

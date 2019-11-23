@@ -1,4 +1,4 @@
-module Ws.Methods.GetArtist exposing (getArtist)
+module Socket.Methods.GetArtist exposing (getArtist)
 
 import Artist.Types exposing (ArtistId, getRawArtistId)
 import Json.Decode exposing (int)
@@ -6,10 +6,10 @@ import Json.Encode
 import Loadable exposing (Loadable(..))
 import Model exposing (Model, removeListener)
 import Msg exposing (Msg)
+import Socket.DTO.Artist exposing (Artist, convert, decode)
+import Socket.Listener exposing (Listener, makeIrresponsibleListener)
+import Socket.Types exposing (RequestData)
 import Types exposing (Update)
-import Ws.DTO.Artist exposing (Artist, convert, decode)
-import Ws.Listener exposing (Listener, makeIrresponsibleListener)
-import Ws.Types exposing (RequestData)
 
 
 getArtist : ArtistId -> RequestData

@@ -1,6 +1,5 @@
-module Ws.Methods.GetAlbum exposing (getAlbum)
+module Socket.Methods.GetPlaylist exposing (getPlaylist)
 
-import Album.Types exposing (AlbumId, getRawAlbumId)
 import Dict
 import Entities.Album
 import Json.Decode exposing (int)
@@ -8,30 +7,30 @@ import Json.Encode
 import Loadable exposing (Loadable(..))
 import Model exposing (Model, removeListener)
 import Msg exposing (Msg)
+import Socket.DTO.Album exposing (Album, convert, decode)
+import Socket.Listener exposing (Listener, makeIrresponsibleListener)
+import Socket.Types exposing (RequestData)
 import Song.Types exposing (SongId(..), getRawSongId)
 import Types exposing (Update)
 import Util exposing (insertMany)
-import Ws.DTO.Album exposing (Album, convert, decode)
-import Ws.Listener exposing (Listener, makeIrresponsibleListener)
-import Ws.Types exposing (RequestData)
 
 
 type alias Callback =
     Entities.Album.Album -> Update Model Msg
 
 
-getAlbum : AlbumId -> Maybe Callback -> RequestData
-getAlbum id callback =
-    { method = "getAlbum"
-    , params = makeRequest id |> Just
+getPlaylist : Int -> Maybe Callback -> RequestData
+getPlaylist id callback =
+    { method = "getPlaylist"
+    , params = Just (makeRequest id)
     , listener = Just (onResponse callback)
     }
 
 
-makeRequest : AlbumId -> Json.Encode.Value
+makeRequest : Int -> Json.Encode.Value
 makeRequest id =
     Json.Encode.object
-        [ ( "id", Json.Encode.int (getRawAlbumId id) ) ]
+        [ ( "id", Json.Encode.int id ) ]
 
 
 onResponse : Maybe Callback -> Listener Model Msg
@@ -50,14 +49,7 @@ onSuccess callback album model =
 
         m =
             { model
-                | songs =
-                    insertMany
-                        (.id >> getRawSongId)
-                        identity
-                        a.songs
-                        model.songs
-
-                -- Store the songs
+                | songs = insertMany (.id >> getRawSongId) identity a.songs model.songs -- Store the songs
                 , albums = Dict.insert a.id (Loaded a) model.albums -- Store the album
             }
     in

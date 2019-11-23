@@ -9,9 +9,9 @@ import Model exposing (Model, addListener)
 import Msg exposing (Msg(..))
 import Playlist.Fetch exposing (fetchPlaylist)
 import Playlist.Select exposing (getPlaylistSongs)
+import Socket.Core exposing (sendMessage)
+import Socket.Methods.GetPlaylist exposing (getPlaylist)
 import Types exposing (Update, noOp)
-import Ws.Core exposing (sendMessage)
-import Ws.Methods.GetPlaylist exposing (getPlaylist)
 
 
 playLoadedPlaylist : Playlist -> Update Model Msg

@@ -8,13 +8,13 @@ import Loadable exposing (Loadable(..))
 import Model exposing (Model, addListener, removeListener)
 import Msg exposing (Msg)
 import Playlist.Select exposing (getPlaylistSongs)
+import Socket.Core exposing (sendMessageWithId)
+import Socket.DTO.Playlist exposing (convert, decode)
+import Socket.Listener exposing (Listener, makeIrresponsibleListener)
+import Socket.Types exposing (RequestData)
 import Song.Types exposing (SongId(..), getRawSongId)
 import Types exposing (Update)
 import Util exposing (insertMany)
-import Ws.Core exposing (sendMessageWithId)
-import Ws.DTO.Playlist exposing (convert, decode)
-import Ws.Listener exposing (Listener, makeIrresponsibleListener)
-import Ws.Types exposing (RequestData)
 
 
 type alias Callback =
@@ -82,7 +82,7 @@ onResponse callback =
         (onSuccess callback)
 
 
-onSuccess : Maybe Callback -> Ws.DTO.Playlist.Playlist -> Update Model Msg
+onSuccess : Maybe Callback -> Socket.DTO.Playlist.Playlist -> Update Model Msg
 onSuccess maybeCallback dto model =
     let
         playlist =

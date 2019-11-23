@@ -1,8 +1,8 @@
-module Ws.DTO.Album exposing (Album, convert, decode)
+module Socket.DTO.Album exposing (Album, convert, decode)
 
 import Entities.Album
 import Json.Decode exposing (Decoder, field, int, list, map6, maybe, string)
-import Ws.DTO.SongSummary exposing (SongSummary)
+import Socket.DTO.SongSummary exposing (SongSummary)
 
 
 type alias Album =
@@ -23,7 +23,7 @@ decode =
         (field "name" string)
         (field "duration" int)
         (maybe <| field "year" int)
-        (field "songs" <| list Ws.DTO.SongSummary.decode)
+        (field "songs" <| list Socket.DTO.SongSummary.decode)
 
 
 convert : Album -> Entities.Album.Album
@@ -31,5 +31,5 @@ convert album =
     { id = album.id
     , artId = album.artId
     , name = album.name
-    , songs = List.map Ws.DTO.SongSummary.convert album.songs
+    , songs = List.map Socket.DTO.SongSummary.convert album.songs
     }

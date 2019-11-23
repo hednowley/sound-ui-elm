@@ -1,14 +1,14 @@
-module Ws.Update exposing (reconnect, update)
+module Socket.Update exposing (reconnect, update)
 
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Rest.Core as Rest
+import Socket.Core exposing (messageIn, sendMessage)
+import Socket.Methods.Handshake
+import Socket.Methods.Start
+import Socket.SocketMsg exposing (SocketMsg(..))
 import Types exposing (Update)
-import Ws.Core exposing (messageIn, sendMessage)
-import Ws.Methods.Handshake
-import Ws.Methods.Start
-import Ws.SocketMsg exposing (SocketMsg(..))
 
 
 update : SocketMsg -> Update Model Msg
@@ -19,7 +19,7 @@ update msg model =
             case model.websocketTicket of
                 Just ticket ->
                     sendMessage
-                        (Ws.Methods.Handshake.prepareRequest ticket Ws.Methods.Start.start)
+                        (Socket.Methods.Handshake.prepareRequest ticket Socket.Methods.Start.start)
                         model
 
                 Nothing ->

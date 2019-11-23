@@ -7,10 +7,10 @@ import Http exposing (Error(..))
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (Msg(..))
+import Socket.Core
 import String exposing (fromInt)
 import Types exposing (Update)
 import Updaters exposing (logOut)
-import Ws.Core
 
 
 {-| Post credentials to the server.
@@ -94,7 +94,7 @@ gotTicketResponse : Result Http.Error String -> Update Model Msg
 gotTicketResponse response model =
     case response of
         Ok ticket ->
-            Ws.Core.open ticket model
+            Socket.Core.open ticket model
 
         Err _ ->
             -- Log out as something must be wrong with our session

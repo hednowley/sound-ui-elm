@@ -1,8 +1,8 @@
-module Ws.NotificationListener exposing (NotificationListener, makeListener, makeListenerWithParams)
+module Socket.NotificationListener exposing (NotificationListener, makeListener, makeListenerWithParams)
 
 import Json.Decode exposing (Decoder, errorToString)
+import Socket.Notification exposing (Notification)
 import Types exposing (Update)
-import Ws.Notification exposing (Notification)
 
 
 type alias NotificationListener model msg =

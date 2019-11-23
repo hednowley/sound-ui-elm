@@ -1,14 +1,14 @@
-module Ws.Methods.GetArtists exposing (getArtists)
+module Socket.Methods.GetArtists exposing (getArtists)
 
 import Artist.Types exposing (ArtistId, getRawArtistId)
 import Dict
 import Json.Decode exposing (field, int, list, string)
 import Model exposing (Model, removeListener)
 import Msg exposing (Msg)
+import Socket.DTO.ArtistSummary exposing (convert, decode)
+import Socket.Listener exposing (Listener, makeIrresponsibleListener)
+import Socket.Types exposing (RequestData)
 import Types exposing (Update)
-import Ws.DTO.ArtistSummary exposing (convert, decode)
-import Ws.Listener exposing (Listener, makeIrresponsibleListener)
-import Ws.Types exposing (RequestData)
 
 
 type alias Body =

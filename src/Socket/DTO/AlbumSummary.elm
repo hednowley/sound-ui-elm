@@ -1,4 +1,4 @@
-module Ws.DTO.AlbumSummary exposing (AlbumSummary, convert, decode)
+module Socket.DTO.AlbumSummary exposing (AlbumSummary, convert, decode)
 
 import Album.Types exposing (AlbumId(..), getRawAlbumId)
 import Entities.AlbumSummary

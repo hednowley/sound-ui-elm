@@ -1,4 +1,4 @@
-module Ws.Message exposing (Message(..), parse)
+module Socket.Message exposing (Message(..), parse)
 
 import Json.Decode
     exposing
@@ -12,8 +12,8 @@ import Json.Decode
         , oneOf
         , string
         )
-import Ws.Notification as N exposing (Notification, decode)
-import Ws.Response as R exposing (Response, decode)
+import Socket.Notification as N exposing (Notification, decode)
+import Socket.Response as R exposing (Response, decode)
 
 
 {-| A message received through a websocket.
