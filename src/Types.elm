@@ -32,4 +32,4 @@ combine first second model =
 -}
 combineMany : List (Update model msg) -> Update model msg
 combineMany updates =
-    List.foldl combine noOp updates
+    List.foldr combine noOp updates
