@@ -23,6 +23,7 @@ emptyModel =
             Dict.fromList
                 [ ( "scanStatus", Socket.Listeners.ScanStatus.listener )
                 ]
+    , messageQueue = []
     , websocketId = MessageId 1
     , isOpen = False
     , ticket = Nothing

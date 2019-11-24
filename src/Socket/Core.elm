@@ -40,10 +40,55 @@ open ticket model =
     )
 
 
-{-| Sends a message.
+{-| Sends a socket message. Returns the ID of the message.
 -}
 sendMessageWithId : RequestData Model.Model -> UpdateWithReturn Model.Model Msg MessageId
 sendMessageWithId request model =
+    let
+        socket =
+            getSocketModel model
+    in
+    if (getSocketModel model).isOpen then
+        sendMessageNowWithId request model
+
+    else
+        queueMessageWithId request model
+
+
+{-| Sends a socket message (for a consumer who doesn't need the message ID).
+-}
+sendMessage : RequestData Model.Model -> Update Model.Model Msg
+sendMessage request model =
+    let
+        ( result, _ ) =
+            sendMessageWithId request model
+    in
+    result
+
+
+{-| Adds the request to the socket queue for sending once the socket is open.
+-}
+queueMessageWithId : MessageId -> RequestData Model.Model -> UpdateWithReturn Model.Model Msg MessageId
+queueMessageWithId messageId request model =
+    let
+        socket =
+            getSocketModel model
+
+        added =
+            { socket
+                | messageQueue =
+                    socket.messageQueue ++ [ ( messageId, request ) ]
+            }
+    in
+    ( ( setSocketModel model added, Cmd.none )
+    , messageId
+    )
+
+
+{-| Sends a message immediately (assumes the socket is open).
+-}
+sendMessageNowWithId : RequestData Model.Model -> UpdateWithReturn Model.Model Msg MessageId
+sendMessageNowWithId request model =
     let
         socket =
             getSocketModel model
@@ -64,21 +109,6 @@ sendMessageWithId request model =
       )
     , messageId
     )
-
-
-{-| Sends a message.
--}
-sendMessage : RequestData Model.Model -> Update Model.Model Msg
-sendMessage request model =
-    let
-        socket =
-            getSocketModel model
-    in
-    let
-        ( result, _ ) =
-            sendMessageWithId request model
-    in
-    result
 
 
 {-| Handles a message arriving through the websocket.

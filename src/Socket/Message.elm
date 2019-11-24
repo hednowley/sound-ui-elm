@@ -12,8 +12,8 @@ import Json.Decode
         , oneOf
         , string
         )
-import Socket.Notification as N exposing (Notification, decode)
-import Socket.Response as R exposing (Response, decode)
+import Socket.Notification exposing (Notification)
+import Socket.Response exposing (Response)
 
 
 {-| A message received through a websocket.
@@ -43,8 +43,8 @@ decodeInner version =
     case version of
         "2.0" ->
             oneOf
-                [ map Response R.decode
-                , map Notification N.decode
+                [ map Response Socket.Response.decode
+                , map Notification Socket.Notification.decode
                 ]
 
         _ ->

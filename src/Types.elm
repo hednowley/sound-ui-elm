@@ -1,4 +1,4 @@
-module Types exposing (Update, UpdateWithReturn, combine, noOp)
+module Types exposing (Update, UpdateWithReturn, combine, combineMany, noOp)
 
 
 type alias Update model msg =
@@ -26,3 +26,10 @@ combine first second model =
             second modelA
     in
     ( modelB, Cmd.batch [ cmdB, cmdA ] )
+
+
+{-| Running all the given updates in the order they appear in the list.
+-}
+combineMany : List (Update model msg) -> Update model msg
+combineMany updates =
+    List.foldl combine noOp updates
