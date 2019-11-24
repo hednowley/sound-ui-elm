@@ -2,7 +2,7 @@ module Socket.Methods.Start exposing (start)
 
 import Model exposing (Model, getSocketModel, setSocketModel)
 import Msg exposing (Msg)
-import Socket.Core as Socket
+import Socket.Core exposing (sendMessage, sendQueuedMessage)
 import Socket.Methods.GetArtists exposing (getArtists)
 import Socket.Methods.GetPlaylists exposing (getPlaylists)
 import Socket.RequestData exposing (RequestData)
@@ -17,8 +17,8 @@ start =
     combineMany
         [ setWebsocketOpen
         , processQueue
-        , Socket.sendMessage getArtists
-        , Socket.sendMessage getPlaylists
+        , sendMessage getArtists
+        , sendMessage getPlaylists
         ]
 
 
@@ -29,13 +29,6 @@ setWebsocketOpen model =
             getSocketModel model
     in
     ( setSocketModel model { socket | isOpen = True }, Cmd.none )
-
-
-sendQueuedMessage : ( MessageId, RequestData Model ) -> Update Model Msg
-sendQueuedMessage ( messageId, request ) =
-    combine
-        ()
-        (Socket.sendMessage request)
 
 
 processQueue : Update Model Msg

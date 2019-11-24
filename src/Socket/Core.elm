@@ -3,6 +3,7 @@ module Socket.Core exposing
     , open
     , sendMessage
     , sendMessageWithId
+    , sendQueuedMessage
     )
 
 import Model exposing (getSocketModel, setSocketModel)
@@ -47,12 +48,18 @@ sendMessageWithId request model =
     let
         socket =
             getSocketModel model
+
+        messageId =
+            socket.websocketId
+
+        incremented =
+            setSocketModel model { socket | websocketId = increment messageId }
     in
     if (getSocketModel model).isOpen then
-        sendMessageNowWithId request model
+        sendMessageNowWithId messageId request incremented
 
     else
-        queueMessageWithId request model
+        queueMessageWithId messageId request incremented
 
 
 {-| Sends a socket message (for a consumer who doesn't need the message ID).
@@ -66,9 +73,54 @@ sendMessage request model =
     result
 
 
+{-| Sends a socket message. Returns the ID of the message.
+-}
+sendQueuedMessage :
+    ( MessageId, RequestData Model.Model )
+    -> Update Model.Model Msg
+sendQueuedMessage ( messageId, request ) model =
+    let
+        cleaned =
+            unqueueMessage messageId model
+
+        socketOpen =
+            (getSocketModel cleaned).isOpen
+
+        ( response, _ ) =
+            if socketOpen then
+                sendMessageNowWithId messageId request cleaned
+
+            else
+                queueMessageWithId messageId request cleaned
+    in
+    response
+
+
+{-| Removes the message with the given ID from the queue.
+-}
+unqueueMessage : MessageId -> Model.Model -> Model.Model
+unqueueMessage messageId model =
+    let
+        rawMessageId =
+            getRawMessageId messageId
+
+        socket =
+            getSocketModel model
+
+        queue =
+            List.filter
+                (\( id, _ ) -> getRawMessageId id /= rawMessageId)
+                socket.messageQueue
+    in
+    setSocketModel model { socket | messageQueue = queue }
+
+
 {-| Adds the request to the socket queue for sending once the socket is open.
 -}
-queueMessageWithId : MessageId -> RequestData Model.Model -> UpdateWithReturn Model.Model Msg MessageId
+queueMessageWithId :
+    MessageId
+    -> RequestData Model.Model
+    -> UpdateWithReturn Model.Model Msg MessageId
 queueMessageWithId messageId request model =
     let
         socket =
@@ -87,14 +139,14 @@ queueMessageWithId messageId request model =
 
 {-| Sends a message immediately (assumes the socket is open).
 -}
-sendMessageNowWithId : RequestData Model.Model -> UpdateWithReturn Model.Model Msg MessageId
-sendMessageNowWithId request model =
+sendMessageNowWithId :
+    MessageId
+    -> RequestData Model.Model
+    -> UpdateWithReturn Model.Model Msg MessageId
+sendMessageNowWithId messageId request model =
     let
         socket =
             getSocketModel model
-
-        messageId =
-            socket.websocketId
 
         added =
             case request.listener of
@@ -103,9 +155,12 @@ sendMessageNowWithId request model =
 
                 Nothing ->
                     socket
+
+        message =
+            Socket.Request.makeRequest messageId request.method request.params
     in
-    ( ( setSocketModel model { added | websocketId = increment messageId }
-      , Ports.websocketOut <| Socket.Request.makeRequest messageId request.method request.params
+    ( ( setSocketModel model added
+      , Ports.websocketOut message
       )
     , messageId
     )
