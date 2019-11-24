@@ -20,6 +20,7 @@ loadAlbum id callback model =
         ( ( newModel, cmd ), messageId ) =
             sendMessageWithId
                 (getAlbum id callback)
+                False
                 model
     in
     ( { newModel

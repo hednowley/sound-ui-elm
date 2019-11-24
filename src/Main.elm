@@ -163,6 +163,7 @@ update msg model =
                     model.scanShouldUpdate
                     model.scanShouldDelete
                 )
+                False
                 model
 
         ToggleScanUpdate ->

@@ -17,8 +17,8 @@ start =
     combineMany
         [ setWebsocketOpen
         , processQueue
-        , sendMessage getArtists
-        , sendMessage getPlaylists
+        , sendMessage getArtists False
+        , sendMessage getPlaylists False
         ]
 
 
@@ -27,16 +27,15 @@ setWebsocketOpen model =
     let
         socket =
             getSocketModel model
+
+        updated =
+            setSocketModel model { socket | isOpen = True }
     in
-    ( setSocketModel model { socket | isOpen = True }, Cmd.none )
+    ( updated, Cmd.none )
 
 
 processQueue : Update Model Msg
 processQueue model =
-    let
-        socket =
-            getSocketModel model
-    in
     combineMany
-        (List.map sendQueuedMessage socket.messageQueue)
+        (List.map sendQueuedMessage (getSocketModel model).messageQueue)
         model

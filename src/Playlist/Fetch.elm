@@ -37,6 +37,7 @@ fetchPlaylist playlistId maybeCallback model =
                 ( ( newModel, cmd ), messageId ) =
                     sendMessageWithId
                         (makeFetchPlaylistMessage playlistId maybeCallback)
+                        False
                         model
             in
             ( recordFetchingPlaylist playlistId messageId newModel

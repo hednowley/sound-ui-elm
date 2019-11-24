@@ -41,9 +41,7 @@ update msg model =
         SocketOpened ->
             case socket.ticket of
                 Just ticket ->
-                    sendMessage
-                        (Socket.Methods.Handshake.prepareRequest ticket Socket.Methods.Start.start)
-                        model
+                    negotiateSocket ticket model
 
                 Nothing ->
                     ( { model | message = "Can't negotiate websocket as there is no ticket" }, Cmd.none )
@@ -54,6 +52,14 @@ update msg model =
 
         SocketIn message ->
             messageIn message model
+
+
+negotiateSocket : String -> Update Model Msg
+negotiateSocket ticket model =
+    sendMessage
+        (Socket.Methods.Handshake.prepareRequest ticket Socket.Methods.Start.start)
+        True
+        model
 
 
 {-| Tries to connect to the websocket if there is cached token.

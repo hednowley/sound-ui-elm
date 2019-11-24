@@ -43,8 +43,11 @@ open ticket model =
 
 {-| Sends a socket message. Returns the ID of the message.
 -}
-sendMessageWithId : RequestData Model.Model -> UpdateWithReturn Model.Model Msg MessageId
-sendMessageWithId request model =
+sendMessageWithId :
+    RequestData Model.Model
+    -> Bool
+    -> UpdateWithReturn Model.Model Msg MessageId
+sendMessageWithId request force model =
     let
         socket =
             getSocketModel model
@@ -55,7 +58,7 @@ sendMessageWithId request model =
         incremented =
             setSocketModel model { socket | websocketId = increment messageId }
     in
-    if (getSocketModel model).isOpen then
+    if force || (getSocketModel model).isOpen then
         sendMessageNowWithId messageId request incremented
 
     else
@@ -64,11 +67,11 @@ sendMessageWithId request model =
 
 {-| Sends a socket message (for a consumer who doesn't need the message ID).
 -}
-sendMessage : RequestData Model.Model -> Update Model.Model Msg
-sendMessage request model =
+sendMessage : RequestData Model.Model -> Bool -> Update Model.Model Msg
+sendMessage request force model =
     let
         ( result, _ ) =
-            sendMessageWithId request model
+            sendMessageWithId request force model
     in
     result
 

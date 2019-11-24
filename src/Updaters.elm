@@ -39,6 +39,7 @@ onUrlChange url model =
         Just (Artist id) ->
             Socket.sendMessage
                 (getArtist id)
+                False
                 { m | artist = Loadable.Loading <| MessageId 1337 }
 
         Just (Album id) ->
