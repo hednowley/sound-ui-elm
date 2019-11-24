@@ -74,7 +74,7 @@ sendMessage request force model =
     result
 
 
-{-| Sends a socket message. Returns the ID of the message.
+{-| Sends a message from the websocket queue.
 -}
 sendQueuedMessage :
     ( MessageId, RequestData Model.Model )

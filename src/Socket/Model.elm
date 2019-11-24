@@ -11,9 +11,9 @@ import Socket.RequestData exposing (RequestData)
 type alias Model m =
     { listeners : Listeners m
     , notificationListeners : NotificationListeners m
-    , messageQueue : List ( MessageId, RequestData m )
-    , nextMessageId : MessageId -- The next unused ID for a websocket message
-    , isOpen : Bool
+    , messageQueue : List ( MessageId, RequestData m ) -- Queue for messages which have arrived while the socket is closed
+    , nextMessageId : MessageId -- The next unused ID for a message
+    , isOpen : Bool -- True iff the socket is open and authenticated
     , ticket : Maybe String
     }
 
