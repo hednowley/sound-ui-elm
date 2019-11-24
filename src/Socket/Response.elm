@@ -1,7 +1,7 @@
 module Socket.Response exposing (Response, decode)
 
 import Json.Decode exposing (Decoder, Value, andThen, field, int, map, oneOf, value)
-import Socket.Types exposing (MessageId(..))
+import Socket.MessageId exposing (MessageId(..))
 
 
 {-| A reply received through a websocket.

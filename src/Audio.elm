@@ -1,6 +1,5 @@
 module Audio exposing (LoadRequest, makeLoadRequest)
 
-import Model exposing (Model)
 import Song.Types exposing (SongId, getRawSongId)
 import String exposing (fromInt)
 

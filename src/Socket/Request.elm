@@ -1,7 +1,7 @@
 module Socket.Request exposing (makeRequest)
 
 import Json.Encode exposing (Value, int, object, string)
-import Socket.Types exposing (MessageId, getRawMessageId)
+import Socket.MessageId exposing (MessageId, getRawMessageId)
 
 
 makeRequest : MessageId -> String -> Maybe Value -> Value

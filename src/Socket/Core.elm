@@ -11,15 +11,13 @@ import Msg exposing (Msg(..))
 import Ports
 import Routing exposing (getWebsocketUrl)
 import Socket.Actions exposing (addListener)
-import Socket.Listener exposing (Listener)
 import Socket.Message as Message exposing (Message(..), parse)
-import Socket.Model
+import Socket.MessageId exposing (MessageId(..), getRawMessageId)
 import Socket.Notification exposing (Notification)
 import Socket.Request
 import Socket.RequestData exposing (RequestData)
 import Socket.Response exposing (Response)
 import Socket.Select exposing (getListener, getNotificationListener)
-import Socket.Types exposing (MessageId(..), getRawMessageId)
 import Types exposing (Update, UpdateWithReturn)
 
 
@@ -53,10 +51,10 @@ sendMessageWithId request force model =
             getSocketModel model
 
         messageId =
-            socket.websocketId
+            socket.nextMessageId
 
         incremented =
-            setSocketModel model { socket | websocketId = increment messageId }
+            setSocketModel model { socket | nextMessageId = increment messageId }
     in
     if force || (getSocketModel model).isOpen then
         sendMessageNowWithId messageId request incremented
@@ -173,10 +171,6 @@ sendMessageNowWithId messageId request model =
 -}
 messageIn : String -> Update Model.Model Msg
 messageIn json model =
-    let
-        socket =
-            getSocketModel model
-    in
     case parse json of
         Ok msg ->
             case msg of
@@ -186,7 +180,7 @@ messageIn json model =
                 Message.Notification n ->
                     notificationIn n model
 
-        Err e ->
+        Err _ ->
             ( model, Cmd.none )
 
 

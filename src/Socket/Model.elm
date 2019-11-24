@@ -3,17 +3,16 @@ module Socket.Model exposing (Listeners(..), Model, NotificationListeners(..))
 import Dict exposing (Dict)
 import Msg exposing (Msg)
 import Socket.Listener exposing (Listener)
+import Socket.MessageId exposing (MessageId)
 import Socket.NotificationListener exposing (NotificationListener)
 import Socket.RequestData exposing (RequestData)
-import Socket.Types exposing (MessageId)
-import Types exposing (Update, UpdateWithReturn)
 
 
 type alias Model m =
     { listeners : Listeners m
     , notificationListeners : NotificationListeners m
     , messageQueue : List ( MessageId, RequestData m )
-    , websocketId : MessageId -- The next unused ID for a websocket message
+    , nextMessageId : MessageId -- The next unused ID for a websocket message
     , isOpen : Bool
     , ticket : Maybe String
     }

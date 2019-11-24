@@ -1,7 +1,7 @@
 module Socket.DTO.Playlist exposing (Playlist, convert, decode)
 
 import Entities.Playlist
-import Json.Decode exposing (Decoder, field, int, list, map3, maybe, string)
+import Json.Decode exposing (Decoder, field, int, list, map3, string)
 import Socket.DTO.SongSummary exposing (SongSummary)
 
 

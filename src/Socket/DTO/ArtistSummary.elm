@@ -2,7 +2,7 @@ module Socket.DTO.ArtistSummary exposing (ArtistSummary, convert, decode)
 
 import Artist.Types exposing (ArtistId(..))
 import Entities.ArtistSummary
-import Json.Decode exposing (Decoder, field, int, map2, maybe, string)
+import Json.Decode exposing (Decoder, field, int, map2, string)
 
 
 type alias ArtistSummary =

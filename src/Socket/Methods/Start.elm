@@ -5,9 +5,7 @@ import Msg exposing (Msg)
 import Socket.Core exposing (sendMessage, sendQueuedMessage)
 import Socket.Methods.GetArtists exposing (getArtists)
 import Socket.Methods.GetPlaylists exposing (getPlaylists)
-import Socket.RequestData exposing (RequestData)
-import Socket.Types exposing (MessageId)
-import Types exposing (Update, combine, combineMany)
+import Types exposing (Update, combineMany)
 
 
 {-| This should be run once the websocket handshake is complete.

@@ -1,6 +1,6 @@
 module Views.Home exposing (view)
 
-import Artist.Types exposing (ArtistId, getRawArtistId)
+import Artist.Types exposing (getRawArtistId)
 import Dict
 import Entities.ArtistSummary exposing (ArtistSummaries)
 import Entities.PlaylistSummary exposing (PlaylistSummaries)

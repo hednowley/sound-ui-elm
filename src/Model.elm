@@ -12,7 +12,6 @@ import Entities.Playlist exposing (Playlist)
 import Entities.PlaylistSummary exposing (PlaylistSummaries)
 import Entities.SongSummary exposing (SongSummary)
 import Loadable exposing (Loadable(..))
-import Msg exposing (Msg)
 import Routing exposing (Route)
 import Socket.Model
 import Song.Types exposing (SongId)

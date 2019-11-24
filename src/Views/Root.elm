@@ -2,8 +2,8 @@ module Views.Root exposing (view)
 
 import Array
 import Audio.AudioMsg exposing (AudioMsg(..))
-import Html exposing (div, text)
-import Html.Attributes exposing (class)
+import Html exposing (a, div, text)
+import Html.Attributes exposing (class, href)
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Routing exposing (Route(..))
@@ -18,7 +18,8 @@ import Views.PlaylistItem
 view : Model -> Html.Html Msg
 view model =
     div [ class "app__wrap" ]
-        [ div [ class "app__main" ]
+        [ div [ class "app__header" ] [ a [ href "/" ] [ text "Home" ] ]
+        , div [ class "app__main" ]
             [ case model.route of
                 Nothing ->
                     Views.Home.view model

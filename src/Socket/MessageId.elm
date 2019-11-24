@@ -1,6 +1,4 @@
-module Socket.Types exposing (MessageId(..), getRawMessageId)
-
-import Msg exposing (Msg)
+module Socket.MessageId exposing (MessageId(..), getRawMessageId)
 
 
 type MessageId

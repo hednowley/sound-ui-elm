@@ -1,6 +1,5 @@
 module Song.Select exposing (getSong)
 
-import Array
 import AudioState exposing (State(..))
 import Dict
 import Entities.SongSummary exposing (SongSummary)

@@ -3,7 +3,6 @@ module Album.Select exposing (getAlbum, getAlbumArt, getAlbumSongs)
 import Album.Types exposing (AlbumId, getRawAlbumId)
 import Dict
 import Entities.Album exposing (Album)
-import Entities.AlbumSummary exposing (AlbumSummary)
 import Entities.SongSummary exposing (SongSummary)
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)

@@ -1,12 +1,12 @@
 module Socket.Select exposing (getListener, getNotificationListener)
 
-import Dict exposing (Dict)
+import Dict
 import Model
 import Msg exposing (Msg)
 import Socket.Listener exposing (Listener)
+import Socket.MessageId exposing (MessageId, getRawMessageId)
 import Socket.Model exposing (Listeners(..), NotificationListeners(..))
 import Socket.NotificationListener exposing (NotificationListener)
-import Socket.Types exposing (MessageId, getRawMessageId)
 
 
 type alias Model =

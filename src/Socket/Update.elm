@@ -7,11 +7,11 @@ import Msg exposing (Msg(..))
 import Rest.Core as Rest
 import Socket.Core exposing (messageIn, sendMessage)
 import Socket.Listeners.ScanStatus
+import Socket.MessageId exposing (MessageId(..))
 import Socket.Methods.Handshake
 import Socket.Methods.Start
 import Socket.Model exposing (Listeners(..), NotificationListeners(..))
 import Socket.SocketMsg exposing (SocketMsg(..))
-import Socket.Types exposing (MessageId(..))
 import Types exposing (Update)
 
 
@@ -24,7 +24,7 @@ emptyModel =
                 [ ( "scanStatus", Socket.Listeners.ScanStatus.listener )
                 ]
     , messageQueue = []
-    , websocketId = MessageId 1
+    , nextMessageId = MessageId 1
     , isOpen = False
     , ticket = Nothing
     }

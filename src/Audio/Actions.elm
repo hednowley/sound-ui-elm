@@ -32,7 +32,7 @@ import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (Msg)
 import Ports
-import Random exposing (Generator)
+import Random
 import Random.Array exposing (shuffle)
 import Routing exposing (Route(..))
 import Song.Types exposing (SongId(..), getRawSongId)

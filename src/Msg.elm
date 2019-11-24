@@ -3,7 +3,6 @@ module Msg exposing (Msg(..))
 import Audio.AudioMsg exposing (AudioMsg)
 import Browser
 import DTO.Authenticate
-import Entities.Playlist exposing (Playlist)
 import Http
 import Socket.SocketMsg exposing (SocketMsg)
 import Url

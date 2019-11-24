@@ -1,6 +1,6 @@
 module Socket.DTO.Artist exposing (Artist, convert, decode)
 
-import Artist.Types exposing (ArtistId(..), getRawArtistId)
+import Artist.Types exposing (ArtistId(..))
 import Entities.Artist
 import Json.Decode exposing (Decoder, field, int, list, map3, string)
 import Socket.DTO.AlbumSummary exposing (AlbumSummary)

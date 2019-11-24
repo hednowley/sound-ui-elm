@@ -17,8 +17,6 @@ import Ports
 import Rest.Core as Rest
 import Routing exposing (Route(..))
 import Socket.Core as Socket
-import Socket.Listeners.ScanStatus
-import Socket.Methods.Start
 import Socket.Methods.StartScan
 import Socket.SocketMsg exposing (SocketMsg(..))
 import Socket.Update

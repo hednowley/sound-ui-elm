@@ -1,6 +1,6 @@
 module Loadable exposing (Loadable(..), fromMaybe, toMaybe)
 
-import Socket.Types exposing (MessageId)
+import Socket.MessageId exposing (MessageId)
 
 
 {-| Something which takes time to load.

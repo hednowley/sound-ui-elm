@@ -8,7 +8,7 @@ import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Socket.Core
-import Socket.Types exposing (MessageId(..))
+import Socket.MessageId exposing (MessageId(..))
 import String exposing (fromInt)
 import Types exposing (Update)
 import Updaters exposing (logOut)

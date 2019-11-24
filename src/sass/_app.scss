@@ -5,12 +5,17 @@
 
     display: grid;
     grid-template-areas:
+      "header"
       "main"
       "playlist"
       "player";
-    grid-template-rows: 1fr auto auto;
+    grid-template-rows: auto 1fr auto auto;
 
     overflow: hidden;
+  }
+
+  &__header {
+    grid-area: header;
   }
 
   &__main {

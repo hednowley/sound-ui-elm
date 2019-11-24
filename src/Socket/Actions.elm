@@ -4,9 +4,9 @@ import Dict
 import Model exposing (getSocketModel, setSocketModel)
 import Msg exposing (Msg)
 import Socket.Listener exposing (Listener, combineListeners)
+import Socket.MessageId exposing (MessageId, getRawMessageId)
 import Socket.Model exposing (Listeners(..), Model)
 import Socket.Select exposing (getListener)
-import Socket.Types exposing (MessageId, getRawMessageId)
 
 
 type alias Model =
@@ -27,7 +27,7 @@ addListenerExternal id listener model =
 addListener : MessageId -> Listener Model.Model Msg -> Model -> Model
 addListener id listener model =
     let
-        (Listeners listeners) =
+        (Listeners _) =
             model.listeners
     in
     case getListener id model of

@@ -1,6 +1,6 @@
 module Socket.DTO.AlbumSummary exposing (AlbumSummary, convert, decode)
 
-import Album.Types exposing (AlbumId(..), getRawAlbumId)
+import Album.Types exposing (AlbumId(..))
 import Entities.AlbumSummary
 import Json.Decode exposing (Decoder, field, int, map5, maybe, string)
 
