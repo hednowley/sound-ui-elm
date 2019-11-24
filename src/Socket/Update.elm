@@ -2,7 +2,7 @@ module Socket.Update exposing (emptyModel, reconnect, update)
 
 import Dict
 import Loadable exposing (Loadable(..))
-import Model exposing (Model, getSocketModel, setSocketModel)
+import Model exposing (getSocketModel, setSocketModel)
 import Msg exposing (Msg(..))
 import Rest.Core as Rest
 import Socket.Core exposing (messageIn, sendMessage)
@@ -10,19 +10,18 @@ import Socket.Listeners.ScanStatus
 import Socket.MessageId exposing (MessageId(..))
 import Socket.Methods.Handshake
 import Socket.Methods.Start
-import Socket.Model exposing (Listeners(..), NotificationListeners(..))
+import Socket.Model
 import Socket.SocketMsg exposing (SocketMsg(..))
 import Types exposing (Update)
 
 
-emptyModel : Socket.Model.Model Model
+emptyModel : Socket.Model.Model Model.Model
 emptyModel =
-    { listeners = Listeners Dict.empty
+    { listeners = Dict.empty
     , notificationListeners =
-        NotificationListeners <|
-            Dict.fromList
-                [ ( "scanStatus", Socket.Listeners.ScanStatus.listener )
-                ]
+        Dict.fromList
+            [ ( "scanStatus", Socket.Listeners.ScanStatus.listener )
+            ]
     , messageQueue = []
     , nextMessageId = MessageId 1
     , isOpen = False
@@ -30,7 +29,7 @@ emptyModel =
     }
 
 
-update : SocketMsg -> Update Model Msg
+update : SocketMsg -> Update Model.Model Msg
 update msg model =
     let
         socket =
@@ -54,7 +53,7 @@ update msg model =
             messageIn message model
 
 
-negotiateSocket : String -> Update Model Msg
+negotiateSocket : String -> Update Model.Model Msg
 negotiateSocket ticket model =
     sendMessage
         (Socket.Methods.Handshake.prepareRequest ticket Socket.Methods.Start.start)
@@ -64,7 +63,7 @@ negotiateSocket ticket model =
 
 {-| Tries to connect to the websocket if there is cached token.
 -}
-reconnect : Model -> Cmd Msg
+reconnect : Model.Model -> Cmd Msg
 reconnect model =
     case model.token of
         Loadable.Loaded _ ->

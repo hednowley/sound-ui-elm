@@ -5,7 +5,7 @@ import Model
 import Msg exposing (Msg)
 import Socket.Listener exposing (Listener)
 import Socket.MessageId exposing (MessageId, getRawMessageId)
-import Socket.Model exposing (Listeners(..), NotificationListeners(..))
+import Socket.Model
 import Socket.NotificationListener exposing (NotificationListener)
 
 
@@ -17,19 +17,11 @@ type alias Model =
 -}
 getListener : MessageId -> Model -> Maybe (Listener Model.Model Msg)
 getListener id model =
-    let
-        (Listeners listeners) =
-            model.listeners
-    in
-    Dict.get (getRawMessageId id) listeners
+    Dict.get (getRawMessageId id) model.listeners
 
 
 {-| Try and retrieve the notification listener for the given method.
 -}
 getNotificationListener : String -> Model -> Maybe (NotificationListener Model.Model Msg)
 getNotificationListener method model =
-    let
-        (NotificationListeners listeners) =
-            model.notificationListeners
-    in
-    Dict.get method listeners
+    Dict.get method model.notificationListeners
