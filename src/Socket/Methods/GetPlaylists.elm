@@ -2,10 +2,10 @@ module Socket.Methods.GetPlaylists exposing (getPlaylists)
 
 import Dict
 import Json.Decode exposing (field, int, list, string)
-import Model exposing (Model, removeListener)
+import Model exposing (Model)
 import Msg exposing (Msg)
 import Socket.Listener exposing (Listener, makeIrresponsibleListener)
-import Socket.Types exposing (RequestData)
+import Socket.RequestData exposing (RequestData)
 import Types exposing (Update)
 
 
@@ -19,7 +19,7 @@ type alias Playlist =
     }
 
 
-getPlaylists : RequestData
+getPlaylists : RequestData Model
 getPlaylists =
     { method = "getPlaylists"
     , params = Nothing
@@ -42,7 +42,7 @@ responseDecoder =
 onResponse : Listener Model Msg
 onResponse =
     makeIrresponsibleListener
-        (.id >> removeListener)
+        Nothing
         responseDecoder
         setPlaylists
 

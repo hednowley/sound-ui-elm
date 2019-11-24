@@ -8,6 +8,7 @@ import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Socket.Core
+import Socket.Types exposing (MessageId(..))
 import String exposing (fromInt)
 import Types exposing (Update)
 import Updaters exposing (logOut)
@@ -21,7 +22,7 @@ authenticate password model =
         credentials =
             DTO.Credentials.credentialsEncoder model.username password
     in
-    ( { model | token = Loading 1337 }
+    ( { model | token = Loading <| MessageId 1337 }
     , Http.riskyRequest
         { method = "POST"
         , headers = []

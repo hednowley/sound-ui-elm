@@ -2,10 +2,10 @@ module Socket.Methods.Handshake exposing (makeRequest, prepareRequest)
 
 import Json.Decode
 import Json.Encode
-import Model exposing (Model, removeListener)
+import Model exposing (Model)
 import Msg exposing (Msg)
 import Socket.Listener exposing (Listener, makeIrresponsibleListener)
-import Socket.Types exposing (RequestData)
+import Socket.RequestData exposing (RequestData)
 import Types exposing (Update)
 
 
@@ -27,7 +27,7 @@ makeRequest ticket =
 
 {-| Make a message which starts the websocket handshake.
 -}
-prepareRequest : String -> Update Model Msg -> RequestData
+prepareRequest : String -> Update Model Msg -> RequestData Model
 prepareRequest ticket onHandshakeSuccess =
     { method = "handshake"
     , params = makeRequest ticket |> Just
@@ -38,7 +38,7 @@ prepareRequest ticket onHandshakeSuccess =
 onResponse : Update Model Msg -> Listener Model Msg
 onResponse onHandshakeSuccess =
     makeIrresponsibleListener
-        (.id >> removeListener)
+        Nothing
         responseDecoder
         (onSuccess onHandshakeSuccess)
 

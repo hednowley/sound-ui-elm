@@ -1,4 +1,4 @@
-module Model exposing (Model)
+module Model exposing (Model, SocketModelWrap(..), getSocketModel, setSocketModel)
 
 import Array exposing (Array)
 import AudioState
@@ -14,6 +14,7 @@ import Entities.SongSummary exposing (SongSummary)
 import Loadable exposing (Loadable(..))
 import Msg exposing (Msg)
 import Routing exposing (Route)
+import Socket.Model
 import Song.Types exposing (SongId)
 import Url exposing (Url)
 
@@ -40,4 +41,27 @@ type alias Model =
     , songCache : Dict Int AudioState.State
     , playing : Maybe Int
     , playlist : Array SongId
+    , socket : SocketModelWrap
+    }
+
+
+{-| Type to avoid type recursion
+-}
+type SocketModelWrap
+    = SocketModelWrap (Socket.Model.Model Model)
+
+
+getSocketModel : Model -> Socket.Model.Model Model
+getSocketModel model =
+    let
+        (SocketModelWrap s) =
+            model.socket
+    in
+    s
+
+
+setSocketModel : Model -> Socket.Model.Model Model -> Model
+setSocketModel model socket =
+    { model
+        | socket = SocketModelWrap socket
     }

@@ -1,22 +1,44 @@
-module Socket.Update exposing (reconnect, update)
+module Socket.Update exposing (emptyModel, reconnect, update)
 
+import Dict
 import Loadable exposing (Loadable(..))
-import Model exposing (Model)
+import Model exposing (Model, getSocketModel, setSocketModel)
 import Msg exposing (Msg(..))
 import Rest.Core as Rest
 import Socket.Core exposing (messageIn, sendMessage)
+import Socket.Listeners.ScanStatus
 import Socket.Methods.Handshake
 import Socket.Methods.Start
+import Socket.Model exposing (Listeners(..), NotificationListeners(..))
 import Socket.SocketMsg exposing (SocketMsg(..))
+import Socket.Types exposing (MessageId(..))
 import Types exposing (Update)
+
+
+emptyModel : Socket.Model.Model Model
+emptyModel =
+    { listeners = Listeners Dict.empty
+    , notificationListeners =
+        NotificationListeners <|
+            Dict.fromList
+                [ ( "scanStatus", Socket.Listeners.ScanStatus.listener )
+                ]
+    , websocketId = MessageId 1
+    , isOpen = False
+    , ticket = Nothing
+    }
 
 
 update : SocketMsg -> Update Model Msg
 update msg model =
+    let
+        socket =
+            getSocketModel model
+    in
     case msg of
         -- Start the ticket handshake now that websocket is open
         SocketOpened ->
-            case model.websocketTicket of
+            case socket.ticket of
                 Just ticket ->
                     sendMessage
                         (Socket.Methods.Handshake.prepareRequest ticket Socket.Methods.Start.start)
@@ -27,7 +49,7 @@ update msg model =
 
         SocketClosed ->
             -- Try to reopen the websocket
-            ( { model | websocketIsOpen = False }, reconnect model )
+            ( setSocketModel model { socket | isOpen = False }, reconnect model )
 
         SocketIn message ->
             messageIn message model

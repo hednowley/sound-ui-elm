@@ -4,15 +4,15 @@ import Artist.Types exposing (ArtistId, getRawArtistId)
 import Json.Decode exposing (int)
 import Json.Encode
 import Loadable exposing (Loadable(..))
-import Model exposing (Model, removeListener)
+import Model exposing (Model)
 import Msg exposing (Msg)
 import Socket.DTO.Artist exposing (Artist, convert, decode)
 import Socket.Listener exposing (Listener, makeIrresponsibleListener)
-import Socket.Types exposing (RequestData)
+import Socket.RequestData exposing (RequestData)
 import Types exposing (Update)
 
 
-getArtist : ArtistId -> RequestData
+getArtist : ArtistId -> RequestData Model
 getArtist id =
     { method = "getArtist"
     , params = Just <| makeRequest id
@@ -29,7 +29,7 @@ makeRequest id =
 onResponse : Listener Model Msg
 onResponse =
     makeIrresponsibleListener
-        (.id >> removeListener)
+        Nothing
         decode
         setArtist
 

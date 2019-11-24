@@ -6,7 +6,6 @@ import Types exposing (Update, combine, noOp)
 
 
 {-| Describes how to transform the model and dispatch commands with an incoming websocket message.
-First parameter is the ID of the incoming message.
 -}
 type alias Listener model msg =
     Response -> Update model msg
@@ -27,16 +26,21 @@ combineListeners first second response =
 {-| Make a new listener which has error handling.
 -}
 makeResponsibleListener :
-    (Response -> model -> model)
+    Maybe (Response -> model -> model)
     -> Decoder a
     -> (a -> Update model msg)
     -> Decoder b
     -> (b -> Update model msg)
     -> Listener model msg
-makeResponsibleListener cleanup successDecoder onSuccess errorDecoder onError response model =
+makeResponsibleListener maybeCleanup successDecoder onSuccess errorDecoder onError response model =
     let
         cleaned =
-            cleanup response model
+            case maybeCleanup of
+                Just cleanup ->
+                    cleanup response model
+
+                Nothing ->
+                    model
     in
     case response.body of
         Ok success ->
@@ -49,14 +53,19 @@ makeResponsibleListener cleanup successDecoder onSuccess errorDecoder onError re
 {-| Make a new listener which has no error handling.
 -}
 makeIrresponsibleListener :
-    (Response -> model -> model)
+    Maybe (Response -> model -> model)
     -> Decoder a
     -> (a -> Update model msg)
     -> Listener model msg
-makeIrresponsibleListener cleanup successDecoder onSuccess response model =
+makeIrresponsibleListener maybeCleanup successDecoder onSuccess response model =
     let
         cleaned =
-            cleanup response model
+            case maybeCleanup of
+                Just cleanup ->
+                    cleanup response model
+
+                Nothing ->
+                    model
     in
     case response.body of
         Ok success ->

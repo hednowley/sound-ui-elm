@@ -1,13 +1,14 @@
 module Socket.Response exposing (Response, decode)
 
 import Json.Decode exposing (Decoder, Value, andThen, field, int, map, oneOf, value)
+import Socket.Types exposing (MessageId(..))
 
 
 {-| A reply received through a websocket.
 The body represents either the success JSON or error JSON of a response.
 -}
 type alias Response =
-    { id : Int
+    { id : MessageId
     , body : Result Value Value
     }
 
@@ -22,7 +23,7 @@ decodeInner : Int -> Decoder Response
 decodeInner id =
     let
         make =
-            Response id
+            Response (MessageId id)
     in
     oneOf
         [ map (Err >> make) (field "error" value)

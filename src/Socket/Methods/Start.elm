@@ -1,6 +1,6 @@
 module Socket.Methods.Start exposing (start)
 
-import Model exposing (Model)
+import Model exposing (Model, getSocketModel, setSocketModel)
 import Msg exposing (Msg)
 import Socket.Core as Socket
 import Socket.Methods.GetArtists exposing (getArtists)
@@ -19,4 +19,8 @@ start =
 
 setWebsocketOpen : Update Model Msg
 setWebsocketOpen model =
-    ( { model | websocketIsOpen = True }, Cmd.none )
+    let
+        socket =
+            getSocketModel model
+    in
+    ( setSocketModel model { socket | isOpen = True }, Cmd.none )

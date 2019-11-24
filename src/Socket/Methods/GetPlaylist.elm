@@ -5,11 +5,11 @@ import Entities.Album
 import Json.Decode exposing (int)
 import Json.Encode
 import Loadable exposing (Loadable(..))
-import Model exposing (Model, removeListener)
+import Model exposing (Model)
 import Msg exposing (Msg)
 import Socket.DTO.Album exposing (Album, convert, decode)
 import Socket.Listener exposing (Listener, makeIrresponsibleListener)
-import Socket.Types exposing (RequestData)
+import Socket.RequestData exposing (RequestData)
 import Song.Types exposing (SongId(..), getRawSongId)
 import Types exposing (Update)
 import Util exposing (insertMany)
@@ -19,7 +19,7 @@ type alias Callback =
     Entities.Album.Album -> Update Model Msg
 
 
-getPlaylist : Int -> Maybe Callback -> RequestData
+getPlaylist : Int -> Maybe Callback -> RequestData Model
 getPlaylist id callback =
     { method = "getPlaylist"
     , params = Just (makeRequest id)
@@ -36,7 +36,7 @@ makeRequest id =
 onResponse : Maybe Callback -> Listener Model Msg
 onResponse callback =
     makeIrresponsibleListener
-        (.id >> removeListener)
+        Nothing
         decode
         (onSuccess callback)
 

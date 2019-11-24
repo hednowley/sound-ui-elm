@@ -11,7 +11,7 @@ import Dict
 import Html exposing (div, text)
 import Json.Decode
 import Loadable exposing (Loadable(..))
-import Model exposing (Listeners, Model)
+import Model exposing (Model, SocketModelWrap(..), getSocketModel)
 import Msg exposing (Msg(..))
 import Ports
 import Rest.Core as Rest
@@ -88,16 +88,8 @@ emptyModel key url config =
     , password = ""
     , message = ""
     , token = Absent
-    , websocketTicket = Nothing
     , isScanning = False
     , scanCount = 0
-    , websocketListeners = Model.Listeners Dict.empty
-    , notificationListeners =
-        Model.NotificationListeners <|
-            Dict.fromList
-                [ ( "scanStatus", Socket.Listeners.ScanStatus.listener )
-                ]
-    , websocketId = 1
     , scanShouldUpdate = False
     , scanShouldDelete = False
     , playlists = Dict.empty
@@ -107,11 +99,11 @@ emptyModel key url config =
     , songs = Dict.empty
     , albums = Dict.empty
     , config = config
-    , websocketIsOpen = False
     , route = Nothing
     , songCache = Dict.empty
     , playing = Nothing
     , playlist = Array.empty
+    , socket = SocketModelWrap Socket.Update.emptyModel
     }
 
 
@@ -204,7 +196,7 @@ view model =
                     div [] [ text "Getting token..." ]
 
                 _ ->
-                    if model.websocketIsOpen then
+                    if (getSocketModel model).isOpen then
                         Views.Root.view model
 
                     else

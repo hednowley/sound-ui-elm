@@ -5,13 +5,15 @@ import Entities.Playlist exposing (Playlist)
 import Json.Decode exposing (int)
 import Json.Encode
 import Loadable exposing (Loadable(..))
-import Model exposing (Model, addListener, removeListener)
+import Model exposing (Model)
 import Msg exposing (Msg)
 import Playlist.Select exposing (getPlaylistSongs)
+import Socket.Actions exposing (addListenerExternal)
 import Socket.Core exposing (sendMessageWithId)
 import Socket.DTO.Playlist exposing (convert, decode)
 import Socket.Listener exposing (Listener, makeIrresponsibleListener)
-import Socket.Types exposing (RequestData)
+import Socket.RequestData exposing (RequestData)
+import Socket.Types exposing (MessageId)
 import Song.Types exposing (SongId(..), getRawSongId)
 import Types exposing (Update)
 import Util exposing (insertMany)
@@ -21,7 +23,7 @@ type alias Callback =
     Playlist -> Update Model Msg
 
 
-recordFetchingPlaylist : Int -> Int -> Model -> Model
+recordFetchingPlaylist : Int -> MessageId -> Model -> Model
 recordFetchingPlaylist playlistId messageId model =
     { model | loadedPlaylists = Dict.insert playlistId (Loading messageId) model.loadedPlaylists }
 
@@ -45,7 +47,7 @@ fetchPlaylist playlistId maybeCallback model =
         Loading requestId ->
             case maybeCallback of
                 Just callback ->
-                    ( addListener requestId (onResponse (Just callback)) model, Cmd.none )
+                    ( addListenerExternal requestId (onResponse (Just callback)) model, Cmd.none )
 
                 Nothing ->
                     ( model, Cmd.none )
@@ -60,7 +62,7 @@ fetchPlaylist playlistId maybeCallback model =
                     ( model, Cmd.none )
 
 
-makeFetchPlaylistMessage : Int -> Maybe Callback -> RequestData
+makeFetchPlaylistMessage : Int -> Maybe Callback -> RequestData Model
 makeFetchPlaylistMessage id callback =
     { method = "getPlaylist"
     , params = Just (makeRequest id)
@@ -77,7 +79,7 @@ makeRequest id =
 onResponse : Maybe Callback -> Listener Model Msg
 onResponse callback =
     makeIrresponsibleListener
-        (.id >> removeListener)
+        Nothing
         decode
         (onSuccess callback)
 

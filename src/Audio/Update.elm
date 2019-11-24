@@ -20,7 +20,7 @@ import Audio.Actions
         )
 import Audio.AudioMsg exposing (AudioMsg(..))
 import AudioState
-import Model exposing (Listeners, Model)
+import Model exposing (Model)
 import Msg exposing (Msg)
 import Playlist.Update exposing (playPlaylist)
 import Song.Types exposing (SongId(..))

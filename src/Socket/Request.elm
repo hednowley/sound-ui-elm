@@ -1,15 +1,16 @@
 module Socket.Request exposing (makeRequest)
 
 import Json.Encode exposing (Value, int, object, string)
+import Socket.Types exposing (MessageId, getRawMessageId)
 
 
-makeRequest : Int -> String -> Maybe Value -> Value
+makeRequest : MessageId -> String -> Maybe Value -> Value
 makeRequest id method params =
     object
         [ ( "jsonrpc", string "2.0" )
         , ( "method", string method )
         , ( "params", maybeEncode params )
-        , ( "id", int id )
+        , ( "id", int <| getRawMessageId id )
         ]
 
 

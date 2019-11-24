@@ -16,6 +16,7 @@ import Routing exposing (Route(..))
 import Socket.Core as Socket
 import Socket.Methods.GetArtist exposing (getArtist)
 import Socket.Methods.GetPlaylist exposing (getPlaylist)
+import Socket.Types exposing (MessageId(..))
 import Types exposing (Update)
 import Url exposing (Url)
 
@@ -38,7 +39,7 @@ onUrlChange url model =
         Just (Artist id) ->
             Socket.sendMessage
                 (getArtist id)
-                { m | artist = Loadable.Loading 1337 }
+                { m | artist = Loadable.Loading <| MessageId 1337 }
 
         Just (Album id) ->
             loadAlbum id Nothing m

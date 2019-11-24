@@ -3,11 +3,11 @@ module Socket.Methods.GetArtists exposing (getArtists)
 import Artist.Types exposing (ArtistId, getRawArtistId)
 import Dict
 import Json.Decode exposing (field, int, list, string)
-import Model exposing (Model, removeListener)
+import Model exposing (Model)
 import Msg exposing (Msg)
 import Socket.DTO.ArtistSummary exposing (convert, decode)
 import Socket.Listener exposing (Listener, makeIrresponsibleListener)
-import Socket.Types exposing (RequestData)
+import Socket.RequestData exposing (RequestData)
 import Types exposing (Update)
 
 
@@ -21,7 +21,7 @@ type alias Artist =
     }
 
 
-getArtists : RequestData
+getArtists : RequestData Model
 getArtists =
     { method = "getArtists"
     , params = Nothing
@@ -40,7 +40,7 @@ responseDecoder =
 onResponse : Listener Model Msg
 onResponse =
     makeIrresponsibleListener
-        (.id >> removeListener)
+        Nothing
         responseDecoder
         setArtists
 

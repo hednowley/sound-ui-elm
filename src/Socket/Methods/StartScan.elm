@@ -1,10 +1,11 @@
 module Socket.Methods.StartScan exposing (prepareRequest)
 
 import Json.Encode
-import Socket.Types exposing (RequestData)
+import Model exposing (Model)
+import Socket.RequestData exposing (RequestData)
 
 
-prepareRequest : Bool -> Bool -> RequestData
+prepareRequest : Bool -> Bool -> RequestData Model
 prepareRequest shouldUpdate shouldDelete =
     { method = "startScan"
     , params = makeRequest shouldUpdate shouldDelete |> Just

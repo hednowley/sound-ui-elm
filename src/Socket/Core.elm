@@ -1,43 +1,65 @@
 module Socket.Core exposing
-    ( addListener
-    , messageIn
+    ( messageIn
     , open
     , sendMessage
     , sendMessageWithId
     )
 
-import Model exposing (Model)
+import Model exposing (getSocketModel, setSocketModel)
 import Msg exposing (Msg(..))
 import Ports
 import Routing exposing (getWebsocketUrl)
+import Socket.Actions exposing (addListener)
 import Socket.Listener exposing (Listener)
 import Socket.Message as Message exposing (Message(..), parse)
+import Socket.Model
 import Socket.Notification exposing (Notification)
 import Socket.Request
+import Socket.RequestData exposing (RequestData)
 import Socket.Response exposing (Response)
-import Socket.Types exposing (RequestData)
+import Socket.Select exposing (getListener, getNotificationListener)
+import Socket.Types exposing (MessageId(..), getRawMessageId)
 import Types exposing (Update, UpdateWithReturn)
+
+
+increment : MessageId -> MessageId
+increment id =
+    MessageId <| getRawMessageId id + 1
 
 
 {-| Open a new websocket.
 -}
-open : String -> Update Model Msg
+open : String -> Update Model.Model Msg
 open ticket model =
-    ( { model | websocketTicket = Just ticket }, Ports.websocketOpen <| getWebsocketUrl model.url )
+    let
+        socket =
+            getSocketModel model
+    in
+    ( setSocketModel model { socket | ticket = Just ticket }
+    , Ports.websocketOpen <| getWebsocketUrl model.url
+    )
 
 
 {-| Sends a message.
 -}
-sendMessageWithId : RequestData -> UpdateWithReturn Model Msg Int
+sendMessageWithId : RequestData Model.Model -> UpdateWithReturn Model.Model Msg MessageId
 sendMessageWithId request model =
     let
-        messageId =
-            model.websocketId
+        socket =
+            getSocketModel model
 
-        newModel =
-            addListener messageId request.listener model
+        messageId =
+            socket.websocketId
+
+        added =
+            case request.listener of
+                Just listener ->
+                    addListener messageId listener socket
+
+                Nothing ->
+                    socket
     in
-    ( ( { newModel | websocketId = messageId + 1 }
+    ( ( setSocketModel model { added | websocketId = increment messageId }
       , Ports.websocketOut <| Socket.Request.makeRequest messageId request.method request.params
       )
     , messageId
@@ -46,8 +68,12 @@ sendMessageWithId request model =
 
 {-| Sends a message.
 -}
-sendMessage : RequestData -> Update Model Msg
+sendMessage : RequestData Model.Model -> Update Model.Model Msg
 sendMessage request model =
+    let
+        socket =
+            getSocketModel model
+    in
     let
         ( result, _ ) =
             sendMessageWithId request model
@@ -55,22 +81,14 @@ sendMessage request model =
     result
 
 
-{-| Store a websocket listener in the given model.
--}
-addListener : Int -> Maybe (Listener Model Msg) -> Model -> Model
-addListener id maybeListener model =
-    case maybeListener of
-        Just listener ->
-            Model.addListener id listener model
-
-        Nothing ->
-            model
-
-
 {-| Handles a message arriving through the websocket.
 -}
-messageIn : String -> Update Model Msg
+messageIn : String -> Update Model.Model Msg
 messageIn json model =
+    let
+        socket =
+            getSocketModel model
+    in
     case parse json of
         Ok msg ->
             case msg of
@@ -81,12 +99,16 @@ messageIn json model =
                     notificationIn n model
 
         Err e ->
-            ( { model | message = e }, Cmd.none )
+            ( model, Cmd.none )
 
 
-responseIn : Response -> Update Model Msg
+responseIn : Response -> Update Model.Model Msg
 responseIn response model =
-    case Model.getListener response.id model of
+    let
+        socket =
+            getSocketModel model
+    in
+    case getListener response.id socket of
         Just listener ->
             listener response model
 
@@ -94,9 +116,13 @@ responseIn response model =
             ( model, Cmd.none )
 
 
-notificationIn : Notification -> Update Model Msg
+notificationIn : Notification -> Update Model.Model Msg
 notificationIn notification model =
-    case Model.getNotificationListener notification.method model of
+    let
+        socket =
+            getSocketModel model
+    in
+    case getNotificationListener notification.method socket of
         Just listener ->
             listener notification model
 
