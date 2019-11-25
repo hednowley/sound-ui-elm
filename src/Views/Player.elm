@@ -7,6 +7,7 @@ import Html.Attributes exposing (class, style)
 import Html.Events exposing (onClick)
 import Model exposing (Model)
 import Msg exposing (Msg(..))
+import Player.Msg exposing (PlayerMsg(..))
 import Player.Select exposing (getCurrentSongId, getCurrentSongState)
 import Routing exposing (Route(..))
 import Song.Select exposing (getSong)
@@ -49,10 +50,10 @@ playButton state =
     case state of
         AudioState.Playing { paused } ->
             if paused then
-                button [ onClick <| AudioMsg Resume ] [ text "Play" ]
+                button [ onClick <| PlayerMsg Resume ] [ text "Play" ]
 
             else
-                button [ onClick <| AudioMsg Pause ] [ text "Pause" ]
+                button [ onClick <| PlayerMsg Pause ] [ text "Pause" ]
 
         _ ->
             text ""
@@ -72,7 +73,7 @@ nextButton : State -> Html.Html Msg
 nextButton state =
     case state of
         AudioState.Playing _ ->
-            button [ onClick <| AudioMsg Next ] [ text ">|" ]
+            button [ onClick <| PlayerMsg Next ] [ text ">|" ]
 
         _ ->
             text ""
@@ -82,7 +83,7 @@ prevButton : State -> Html.Html Msg
 prevButton state =
     case state of
         AudioState.Playing _ ->
-            button [ onClick <| AudioMsg Prev ] [ text "|<" ]
+            button [ onClick <| PlayerMsg Prev ] [ text "|<" ]
 
         _ ->
             text ""
@@ -90,7 +91,7 @@ prevButton state =
 
 shuffleButton : Html.Html Msg
 shuffleButton =
-    button [ onClick <| AudioMsg Shuffle ] [ text "Shuffle" ]
+    button [ onClick <| PlayerMsg Shuffle ] [ text "Shuffle" ]
 
 
 songDetails : Model -> Html.Html Msg

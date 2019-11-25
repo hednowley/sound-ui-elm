@@ -9,6 +9,7 @@ import Html.Attributes exposing (class, href, src)
 import Html.Events exposing (onClick)
 import Loadable exposing (Loadable(..))
 import Msg exposing (Msg(..))
+import Player.Msg exposing (PlayerMsg(..))
 import String exposing (fromInt)
 
 
@@ -18,6 +19,6 @@ view album =
         [ div []
             [ img [ class "artist__album--art", src <| getAlbumArt album.artId ] []
             , a [ href <| "/album/" ++ fromInt (getRawAlbumId album.id) ] [ text album.name ]
-            , button [ onClick <| AudioMsg (PlayAlbum album.id) ] [ text "Play" ]
+            , button [ onClick <| PlayerMsg (PlayAlbum album.id) ] [ text "Play" ]
             ]
         ]

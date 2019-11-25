@@ -31,27 +31,6 @@ update msg model =
         CanPlay songId ->
             onSongLoaded songId model
 
-        PlayItem index ->
-            playItem index model
-
-        Play songId ->
-            queueAndPlaySong songId model
-
-        PlayAlbum albumId ->
-            playAlbum albumId model
-
-        PlayPlaylist playlistId ->
-            playPlaylist playlistId model
-
-        Pause ->
-            pauseCurrent model
-
-        Resume ->
-            resumeCurrent model
-
-        Queue songId ->
-            ( queueSong songId model, Cmd.none )
-
         Ended _ ->
             onSongEnded model
 
@@ -81,15 +60,3 @@ update msg model =
                 model
             , Cmd.none
             )
-
-        Next ->
-            goNext model
-
-        Prev ->
-            goPrev model
-
-        Shuffle ->
-            shuffle model
-
-        Shuffled playlist ->
-            ( shuffled playlist model, Cmd.none )

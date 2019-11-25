@@ -9,6 +9,7 @@ import Html.Events exposing (onClick)
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (Msg(..))
+import Player.Msg exposing (PlayerMsg(..))
 import Views.Song
 
 
@@ -26,7 +27,7 @@ view id model =
                 [ div []
                     [ div [] [ text album.name ]
                     , img [ class "album__art", src <| getAlbumArt album.artId ] []
-                    , button [ onClick <| AudioMsg (PlayAlbum id) ] [ text "Play album" ]
+                    , button [ onClick <| PlayerMsg (PlayAlbum id) ] [ text "Play album" ]
                     ]
                 , div [] <|
                     List.map (Views.Song.view model) (getAlbumSongs album)

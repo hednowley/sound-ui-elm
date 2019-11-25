@@ -6,6 +6,7 @@ import Html.Events exposing (onClick)
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (Msg(..))
+import Player.Msg exposing (PlayerMsg(..))
 import Playlist.Select exposing (getPlaylist, getPlaylistSongs)
 import Views.Song
 
@@ -23,7 +24,7 @@ view playlistId model =
             div []
                 [ div []
                     [ div [] [ text playlist.name ]
-                    , button [ onClick <| AudioMsg (PlayPlaylist playlistId) ] [ text "Play playlist" ]
+                    , button [ onClick <| PlayerMsg (PlayPlaylist playlistId) ] [ text "Play playlist" ]
                     ]
                 , div [] <|
                     List.map (Views.Song.view model) (getPlaylistSongs playlist)

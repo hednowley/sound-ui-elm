@@ -14,6 +14,8 @@ import Loadable exposing (Loadable(..))
 import Model exposing (Model, SocketModelWrap(..), getSocketModel)
 import Msg exposing (Msg(..))
 import Player.Model
+import Player.Msg exposing (PlayerMsg(..))
+import Player.Update
 import Ports
 import Rest.Core as Rest
 import Routing exposing (Route(..))
@@ -118,8 +120,8 @@ subscriptions _ =
         , Ports.audioPlaying <| Audio.AudioMsg.Playing >> Msg.AudioMsg
         , Ports.audioPaused <| Audio.AudioMsg.Paused >> Msg.AudioMsg
         , Ports.audioTimeChanged <| Audio.AudioMsg.TimeChanged >> Msg.AudioMsg
-        , Ports.audioNextPressed <| always (Msg.AudioMsg Next)
-        , Ports.audioPrevPressed <| always (Msg.AudioMsg Prev)
+        , Ports.audioNextPressed <| always (Msg.PlayerMsg Next)
+        , Ports.audioPrevPressed <| always (Msg.PlayerMsg Prev)
         ]
 
 
@@ -173,8 +175,11 @@ update msg model =
         SocketMsg socketMsg ->
             Socket.Update.update socketMsg model
 
-        AudioMsg audioMsg ->
-            Audio.Update.update audioMsg model
+        AudioMsg a ->
+            Audio.Update.update a model
+
+        PlayerMsg p ->
+            Player.Update.update p model
 
 
 

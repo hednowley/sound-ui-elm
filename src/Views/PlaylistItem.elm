@@ -7,6 +7,7 @@ import Html.Events exposing (onClick)
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (Msg(..))
+import Player.Msg exposing (PlayerMsg(..))
 import Song.Select exposing (getSong)
 import Song.Types exposing (SongId)
 
@@ -16,7 +17,7 @@ view model index songId =
     case getSong model songId of
         Just song ->
             div [ class "playlist__item" ]
-                [ button [ onClick <| AudioMsg (PlayItem index) ] [ text "Play" ]
+                [ button [ onClick <| PlayerMsg (PlayItem index) ] [ text "Play" ]
                 , div [] [ text song.name ]
                 ]
 

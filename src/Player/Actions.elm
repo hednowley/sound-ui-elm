@@ -23,6 +23,7 @@ import Dict
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (Msg)
+import Player.Msg exposing (PlayerMsg(..))
 import Player.Select exposing (getCurrentSongId, getCurrentSongState, getSongId)
 import Ports
 import Random
@@ -123,7 +124,7 @@ shuffle model =
             in
             ( model
             , Random.generate
-                (Msg.AudioMsg << Audio.AudioMsg.Shuffled)
+                (Shuffled >> Msg.PlayerMsg)
                 (Random.Array.shuffle upcoming)
             )
 
