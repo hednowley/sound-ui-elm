@@ -14,12 +14,8 @@ module Player.Actions exposing
     )
 
 import Array exposing (Array, append, fromList, length, push, slice)
-import Audio exposing (makeLoadRequest)
 import Audio.Actions exposing (loadSong, playSong)
-import Audio.AudioMsg
-import Audio.Select exposing (getSongState)
 import AudioState exposing (State(..))
-import Dict
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (Msg)

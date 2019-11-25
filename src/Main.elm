@@ -1,6 +1,5 @@
 module Main exposing (main)
 
-import Array
 import Audio.AudioMsg exposing (AudioMsg(..))
 import Audio.Update
 import Browser

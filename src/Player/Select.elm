@@ -3,11 +3,10 @@ module Player.Select exposing (getCurrentSongId, getCurrentSongState, getSongId)
 import Array
 import Audio.Select exposing (getSongState)
 import AudioState exposing (State(..))
-import Dict
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Routing exposing (Route(..))
-import Song.Types exposing (SongId(..), getRawSongId)
+import Song.Types exposing (SongId(..))
 
 
 {-| Gets the ID of the song at the given position in the playlist.

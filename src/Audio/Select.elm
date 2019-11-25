@@ -1,6 +1,5 @@
 module Audio.Select exposing (getSongState)
 
-import Array
 import AudioState exposing (State(..))
 import Dict
 import Loadable exposing (Loadable(..))

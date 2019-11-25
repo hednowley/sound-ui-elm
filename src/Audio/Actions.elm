@@ -6,22 +6,18 @@ module Audio.Actions exposing
     , updateSongState
     )
 
-import Array exposing (Array, append, fromList, length, push, slice)
 import Audio exposing (makeLoadRequest)
-import Audio.AudioMsg
 import Audio.Select exposing (getSongState)
 import AudioState exposing (State(..))
 import Dict
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (Msg)
-import Player.Select exposing (getCurrentSongId, getCurrentSongState, getSongId)
+import Player.Select exposing (getSongId)
 import Ports
-import Random
-import Random.Array exposing (shuffle)
 import Routing exposing (Route(..))
 import Song.Types exposing (SongId(..), getRawSongId)
-import Types exposing (Update, combine)
+import Types exposing (Update)
 
 
 updateSongState : SongId -> AudioState.State -> Model -> Model

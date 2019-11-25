@@ -1,22 +1,18 @@
 module Player.Update exposing (update)
 
 import Album.Update exposing (playAlbum)
-import Audio.Actions exposing (onSongLoaded, onTimeChanged, updateSongState)
 import Audio.AudioMsg exposing (AudioMsg(..))
-import AudioState
 import Model exposing (Model)
 import Msg
 import Player.Actions
     exposing
         ( goNext
         , goPrev
-        , onSongEnded
         , pauseCurrent
         , playItem
         , queueAndPlaySong
         , queueSong
         , resumeCurrent
-        , setCurrentTime
         , shuffle
         , shuffled
         )
