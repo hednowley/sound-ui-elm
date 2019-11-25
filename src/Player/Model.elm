@@ -9,7 +9,14 @@ emptyModel =
     { shuffle = False
     , repeat = All
     , playlist = Array.empty
+    , unshuffledPlaylist = Array.empty
     , playing = Nothing
+    }
+
+
+type alias PlaylistEntry =
+    { songId : SongId
+    , suffledWith : Maybe Int
     }
 
 
@@ -17,6 +24,7 @@ type alias Model =
     { shuffle : Bool
     , repeat : Repeat
     , playlist : Array SongId
+    , unshuffledPlaylist : Array SongId
     , playing : Maybe Int
     }
 

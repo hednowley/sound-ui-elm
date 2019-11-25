@@ -8,7 +8,7 @@ import Html.Events exposing (onClick)
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Player.Msg exposing (PlayerMsg(..))
-import Player.Select exposing (getCurrentSongId, getCurrentSongState)
+import Player.Select exposing (getCurrentSongId, getCurrentSongState, shuffleIsOn)
 import Routing exposing (Route(..))
 import Song.Select exposing (getSong)
 import String exposing (fromFloat)
@@ -25,7 +25,7 @@ view model =
                     , playButton state
                     , forwardButton state
                     , nextButton state
-                    , shuffleButton
+                    , shuffleButton model
                     , songDetails model
                     ]
                 , slider state
@@ -89,9 +89,13 @@ prevButton state =
             text ""
 
 
-shuffleButton : Html.Html Msg
-shuffleButton =
-    button [ onClick <| PlayerMsg Shuffle ] [ text "Shuffle" ]
+shuffleButton : Model -> Html.Html Msg
+shuffleButton model =
+    if shuffleIsOn model then
+        button [ onClick <| PlayerMsg (SetShuffle False) ] [ text "No shuffle" ]
+
+    else
+        button [ onClick <| PlayerMsg (SetShuffle True) ] [ text "Shuffle" ]
 
 
 songDetails : Model -> Html.Html Msg

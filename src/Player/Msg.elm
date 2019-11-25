@@ -15,5 +15,5 @@ type PlayerMsg
     | PlayPlaylist Int
     | Next
     | Prev
-    | Shuffle
+    | SetShuffle Bool
     | Shuffled (Array SongId)

@@ -1,4 +1,4 @@
-module Player.Select exposing (getCurrentSongId, getCurrentSongState, getSongId)
+module Player.Select exposing (getCurrentSongId, getCurrentSongState, getSongId, shuffleIsOn)
 
 import Array
 import Audio.Select exposing (getSongState)
@@ -27,3 +27,8 @@ getCurrentSongId model =
 getCurrentSongState : Model -> Maybe State
 getCurrentSongState model =
     getCurrentSongId model |> Maybe.andThen (\s -> getSongState s model)
+
+
+shuffleIsOn : Model -> Bool
+shuffleIsOn model =
+    model.player.shuffle

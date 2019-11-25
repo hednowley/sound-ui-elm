@@ -1,5 +1,6 @@
 module Player.Actions exposing
-    ( goNext
+    ( finishShufflePlaylist
+    , goNext
     , goPrev
     , onSongEnded
     , pauseCurrent
@@ -9,8 +10,8 @@ module Player.Actions exposing
     , replacePlaylist
     , resumeCurrent
     , setCurrentTime
-    , shuffle
-    , shuffled
+    , setShuffle
+    , shufflePlaylist
     )
 
 import Array exposing (Array, append, fromList, length, push, slice)
@@ -110,8 +111,31 @@ goPrev model =
             ( model, Cmd.none )
 
 
-shuffle : Update Model Msg
-shuffle model =
+setShuffle : Bool -> Update Model Msg
+setShuffle on model =
+    let
+        player =
+            model.player
+
+        updated =
+            { model
+                | player =
+                    { player
+                        | shuffle = on
+                    }
+            }
+    in
+    if on then
+        shufflePlaylist updated
+
+    else
+        ( updated, Cmd.none )
+
+
+{-| Shuffles the remaining tracks in the current playlist.
+-}
+shufflePlaylist : Update Model Msg
+shufflePlaylist model =
     case model.player.playing of
         Just index ->
             let
@@ -128,8 +152,10 @@ shuffle model =
             ( model, Cmd.none )
 
 
-shuffled : Array SongId -> Model -> Model
-shuffled s model =
+{-| Uses the random generator output to complete the playlist shuffle.
+-}
+finishShufflePlaylist : Array SongId -> Model -> Model
+finishShufflePlaylist s model =
     case model.player.playing of
         Just index ->
             let

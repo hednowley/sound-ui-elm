@@ -6,15 +6,15 @@ import Model exposing (Model)
 import Msg
 import Player.Actions
     exposing
-        ( goNext
+        ( finishShufflePlaylist
+        , goNext
         , goPrev
         , pauseCurrent
         , playItem
         , queueAndPlaySong
         , queueSong
         , resumeCurrent
-        , shuffle
-        , shuffled
+        , setShuffle
         )
 import Player.Msg exposing (PlayerMsg(..))
 import Playlist.Update exposing (playPlaylist)
@@ -52,8 +52,8 @@ update msg model =
         Prev ->
             goPrev model
 
-        Shuffle ->
-            shuffle model
+        SetShuffle on ->
+            setShuffle on model
 
         Shuffled playlist ->
-            ( shuffled playlist model, Cmd.none )
+            ( finishShufflePlaylist playlist model, Cmd.none )
