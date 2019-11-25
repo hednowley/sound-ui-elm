@@ -13,6 +13,7 @@ import Json.Decode
 import Loadable exposing (Loadable(..))
 import Model exposing (Model, SocketModelWrap(..), getSocketModel)
 import Msg exposing (Msg(..))
+import Player.Model
 import Ports
 import Rest.Core as Rest
 import Routing exposing (Route(..))
@@ -99,9 +100,8 @@ emptyModel key url config =
     , config = config
     , route = Nothing
     , songCache = Dict.empty
-    , playing = Nothing
-    , playlist = Array.empty
     , socket = SocketModelWrap Socket.Update.emptyModel
+    , player = Player.Model.emptyModel
     }
 
 

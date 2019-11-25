@@ -1,6 +1,5 @@
 module Model exposing (Model, SocketModelWrap(..), getSocketModel, setSocketModel)
 
-import Array exposing (Array)
 import AudioState
 import Browser.Navigation exposing (Key)
 import Config exposing (Config)
@@ -12,9 +11,9 @@ import Entities.Playlist exposing (Playlist)
 import Entities.PlaylistSummary exposing (PlaylistSummaries)
 import Entities.SongSummary exposing (SongSummary)
 import Loadable exposing (Loadable(..))
+import Player.Model
 import Routing exposing (Route)
 import Socket.Model
-import Song.Types exposing (SongId)
 import Url exposing (Url)
 
 
@@ -38,9 +37,8 @@ type alias Model =
     , config : Config
     , route : Maybe Route
     , songCache : Dict Int AudioState.State
-    , playing : Maybe Int
-    , playlist : Array SongId
     , socket : SocketModelWrap
+    , player : Player.Model.Model
     }
 
 

@@ -1,13 +1,16 @@
 module Audio.Update exposing (update)
 
 import Album.Update exposing (playAlbum)
-import Audio.Actions
+import Audio.Actions exposing (onSongLoaded, onTimeChanged, updateSongState)
+import Audio.AudioMsg exposing (AudioMsg(..))
+import AudioState
+import Model exposing (Model)
+import Msg exposing (Msg)
+import Player.Actions
     exposing
         ( goNext
         , goPrev
         , onSongEnded
-        , onSongLoaded
-        , onTimeChanged
         , pauseCurrent
         , playItem
         , queueAndPlaySong
@@ -16,12 +19,7 @@ import Audio.Actions
         , setCurrentTime
         , shuffle
         , shuffled
-        , updateSongState
         )
-import Audio.AudioMsg exposing (AudioMsg(..))
-import AudioState
-import Model exposing (Model)
-import Msg exposing (Msg)
 import Playlist.Update exposing (playPlaylist)
 import Song.Types exposing (SongId(..))
 import Types exposing (Update)
@@ -94,4 +92,4 @@ update msg model =
             shuffle model
 
         Shuffled playlist ->
-            shuffled playlist model
+            ( shuffled playlist model, Cmd.none )

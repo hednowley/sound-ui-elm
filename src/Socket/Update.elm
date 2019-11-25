@@ -36,10 +36,10 @@ update msg model =
             getSocketModel model
     in
     case msg of
-        -- Start the ticket handshake now that websocket is open
         SocketOpened ->
             case socket.ticket of
                 Just ticket ->
+                    -- Start the ticket handshake now that websocket is open
                     negotiateSocket ticket model
 
                 Nothing ->
@@ -55,6 +55,7 @@ update msg model =
 
 negotiateSocket : String -> Update Model.Model Msg
 negotiateSocket ticket model =
+    -- Force send since the socket is unauthenticated!
     sendMessage
         (Socket.Methods.Handshake.prepareRequest ticket Socket.Methods.Start.start)
         True
