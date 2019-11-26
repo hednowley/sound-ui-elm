@@ -5,13 +5,15 @@ require("./src/css/reset.css");
 require("./src/sass/styles.scss");
 var Elm = require("./src/Main.elm");
 
-navigator.mediaSession.setActionHandler("previoustrack", () =>
-  app.ports.audioPrevPressed.send(null)
-);
+if (navigator.mediaSession && navigator.mediaSession.setActionHandler) {
+  navigator.mediaSession.setActionHandler("previoustrack", () =>
+    app.ports.audioPrevPressed.send(null)
+  );
 
-navigator.mediaSession.setActionHandler("nexttrack", () =>
-  app.ports.audioNextPressed.send(null)
-);
+  navigator.mediaSession.setActionHandler("nexttrack", () =>
+    app.ports.audioNextPressed.send(null)
+  );
+}
 
 // Start elm with the possible serialised model from local storage
 var stored = localStorage.getItem("sound-ui-elm");
