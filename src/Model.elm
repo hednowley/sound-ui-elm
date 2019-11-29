@@ -34,7 +34,7 @@ type alias Model =
     , artist : Loadable Artist
     , songs : Dict Int SongSummary
     , albums : Dict Int (Loadable Album)
-    , config : Config
+    , config : Config 
     , route : Maybe Route
     , songCache : Dict Int AudioState.State
     , socket : SocketModelWrap

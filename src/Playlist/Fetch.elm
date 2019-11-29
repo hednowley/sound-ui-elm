@@ -17,18 +17,19 @@ import Socket.RequestData exposing (RequestData)
 import Song.Types exposing (SongId(..), getRawSongId)
 import Types exposing (Update)
 import Util exposing (insertMany)
+import Playlist.Types exposing (PlaylistId, getRawPlaylistId)
 
 
 type alias Callback =
     Playlist -> Update Model Msg
 
 
-recordFetchingPlaylist : Int -> MessageId -> Model -> Model
+recordFetchingPlaylist : PlaylistId -> MessageId -> Model -> Model
 recordFetchingPlaylist playlistId messageId model =
-    { model | loadedPlaylists = Dict.insert playlistId (Loading messageId) model.loadedPlaylists }
+    { model | loadedPlaylists = Dict.insert (getRawPlaylistId playlistId) (Loading messageId) model.loadedPlaylists }
 
 
-fetchPlaylist : Int -> Maybe Callback -> Update Model Msg
+fetchPlaylist : PlaylistId -> Maybe Callback -> Update Model Msg
 fetchPlaylist playlistId maybeCallback model =
     case Playlist.Select.getPlaylist playlistId model of
         {- This playlist has never been fetched. -}
@@ -63,10 +64,10 @@ fetchPlaylist playlistId maybeCallback model =
                     ( model, Cmd.none )
 
 
-makeFetchPlaylistMessage : Int -> Maybe Callback -> RequestData Model
+makeFetchPlaylistMessage : PlaylistId -> Maybe Callback -> RequestData Model
 makeFetchPlaylistMessage id callback =
     { method = "getPlaylist"
-    , params = Just (makeRequest id)
+    , params = Just (makeRequest (getRawPlaylistId id))
     , listener = Just (onResponse callback)
     }
 

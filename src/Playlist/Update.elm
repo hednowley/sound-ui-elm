@@ -9,6 +9,7 @@ import Player.Actions exposing (replacePlaylist)
 import Playlist.Fetch exposing (fetchPlaylist)
 import Playlist.Select exposing (getPlaylistSongs)
 import Types exposing (Update)
+import Playlist.Types exposing (PlaylistId)
 
 
 playLoadedPlaylist : Playlist -> Update Model Msg
@@ -20,7 +21,7 @@ playLoadedPlaylist playlist =
     replacePlaylist songs
 
 
-playPlaylist : Int -> Update Model Msg
+playPlaylist : PlaylistId -> Update Model Msg
 playPlaylist playlistId =
     fetchPlaylist
         playlistId

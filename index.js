@@ -121,6 +121,10 @@ app.ports.websocketOpen.subscribe(url => {
       app.ports.websocketClosed.send(null);
     };
 
+    socket.onerror = () => {
+      app.ports.websocketClosed.send(null);
+    };
+
     app.ports.websocketOpened.send(null);
   };
 

@@ -20,7 +20,7 @@ view model =
     div [ class "app__wrap" ]
         [ div [ class "app__header" ] [ a [ href "/" ] [ text "Home" ] ]
         , div [ class "app__main" ]
-            [ case model.route of
+            [ case model.route of 
                 Nothing ->
                     Views.Home.view model
 

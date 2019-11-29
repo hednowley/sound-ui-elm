@@ -5,6 +5,7 @@ import Artist.Types exposing (ArtistId(..))
 import String exposing (fromInt)
 import Url exposing (Url)
 import Url.Parser exposing ((</>), Parser, int, map, oneOf, parse, s)
+import Playlist.Types exposing (PlaylistId(..))
 
 
 getWebsocketUrl : Url -> String
@@ -24,7 +25,7 @@ getWebsocketUrl url =
 type Route
     = Artist ArtistId
     | Album AlbumId
-    | Playlist Int
+    | Playlist PlaylistId
 
 
 parseUrl : Url -> Maybe Route
@@ -35,7 +36,7 @@ parseUrl =
 routeParser : Parser (Route -> a) a
 routeParser =
     oneOf
-        [ map (Artist << ArtistId) (s "artist" </> int)
-        , map (Album << AlbumId) (s "album" </> int)
-        , map Playlist (s "playlist" </> int)
+        [ map (ArtistId >>  Artist) (s "artist" </> int)
+        , map (AlbumId >> Album) (s "album" </> int)
+        , map (PlaylistId >> Playlist) (s "playlist" </> int)
         ]

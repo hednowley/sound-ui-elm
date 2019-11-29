@@ -1,6 +1,7 @@
 module Player.Msg exposing (PlayerMsg(..))
 
 import Album.Types exposing (AlbumId)
+import Playlist.Types exposing (PlaylistId)
 import Array exposing (Array)
 import Song.Types exposing (SongId)
 
@@ -12,7 +13,7 @@ type PlayerMsg
     | Resume
     | Queue SongId
     | PlayAlbum AlbumId
-    | PlayPlaylist Int
+    | PlayPlaylist PlaylistId
     | Next
     | Prev
     | SetShuffle Bool

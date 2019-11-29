@@ -9,9 +9,10 @@ import Msg exposing (Msg(..))
 import Player.Msg exposing (PlayerMsg(..))
 import Playlist.Select exposing (getPlaylist, getPlaylistSongs)
 import Views.Song
+import Playlist.Types exposing (PlaylistId)
 
 
-view : Int -> Model -> Html.Html Msg
+view : PlaylistId -> Model -> Html.Html Msg
 view playlistId model =
     case getPlaylist playlistId model of
         Absent ->
