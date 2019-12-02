@@ -39,6 +39,7 @@ fetchPlaylist maybeCallback =
         convert
         (\m -> m.loadedPlaylists)
         (\repo -> \m -> { m | loadedPlaylists = repo })
+        saveSongs
         maybeCallback
 
 
@@ -56,15 +57,13 @@ makeRequest id =
         [ ( "id", Json.Encode.int id ) ]
 
 
-saveSongs : Playlist -> Update Model Msg
+saveSongs : Playlist -> Model -> Model
 saveSongs playlist model =
-    ( { model
+    { model
         | songs =
             insertMany
                 (.id >> getRawSongId)
                 identity
                 playlist.songs
                 model.songs
-      }
-    , Cmd.none
-    )
+    }

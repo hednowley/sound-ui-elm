@@ -28,6 +28,10 @@ type alias SetRepo obj =
     Dict Int (Loadable obj) -> Model -> Model
 
 
+type alias OnFetch obj =
+    obj -> Model -> Model
+
+
 fetch :
     (id -> Int)
     -> MakeMessage id
@@ -35,10 +39,11 @@ fetch :
     -> (dto -> obj)
     -> GetRepo obj
     -> SetRepo obj
+    -> OnFetch obj
     -> MaybeCallback obj
     -> id
     -> Update Model Msg
-fetch extractId makeMessage decoder convert getDict setDict maybeCallback id model =
+fetch extractId makeMessage decoder convert getDict setDict onFetch maybeCallback id model =
     let
         extractedId =
             extractId id
@@ -58,6 +63,7 @@ fetch extractId makeMessage decoder convert getDict setDict maybeCallback id mod
                                 setDict
                                 convert
                                 decoder
+                                onFetch
                                 maybeCallback
                                 extractedId
                             )
@@ -81,6 +87,7 @@ fetch extractId makeMessage decoder convert getDict setDict maybeCallback id mod
                             setDict
                             convert
                             decoder
+                            onFetch
                             (Just callback)
                             extractedId
                         )
@@ -106,25 +113,27 @@ onResponse :
     -> SetRepo obj
     -> (dto -> obj)
     -> Decoder dto
+    -> OnFetch obj
     -> MaybeCallback obj
     -> Int
     -> Listener Model Msg
-onResponse getRepo setRepo convert decoder maybeCallback id =
+onResponse getRepo setRepo convert decoder onFetch maybeCallback id =
     makeIrresponsibleListener
         Nothing
         decoder
-        (onSuccess getRepo setRepo convert maybeCallback id)
+        (onSuccess getRepo setRepo convert onFetch maybeCallback id)
 
 
 onSuccess :
     GetRepo obj
     -> SetRepo obj
     -> (dto -> obj)
+    -> OnFetch obj
     -> MaybeCallback obj
     -> Int
     -> dto
     -> Update Model Msg
-onSuccess getRepo setRepo convert maybeCallback id dto model =
+onSuccess getRepo setRepo convert onFetch maybeCallback id dto model =
     let
         thing =
             convert dto
@@ -132,8 +141,11 @@ onSuccess getRepo setRepo convert maybeCallback id dto model =
         insertedDict =
             Dict.insert id (Loaded thing) (getRepo model)
 
-        newModel =
+        inserted =
             setRepo insertedDict model
+
+        newModel =
+            onFetch thing inserted
     in
     case maybeCallback of
         Nothing ->
