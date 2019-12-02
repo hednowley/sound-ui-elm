@@ -7,7 +7,9 @@ import Json.Encode
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (Msg)
+import Nexus.Fetch exposing (fetch)
 import Playlist.Select
+import Playlist.Types exposing (PlaylistId, getRawPlaylistId)
 import Socket.Actions exposing (addListenerExternal)
 import Socket.Core exposing (sendMessageWithId)
 import Socket.DTO.Playlist exposing (convert, decode)
@@ -17,7 +19,6 @@ import Socket.RequestData exposing (RequestData)
 import Song.Types exposing (SongId(..), getRawSongId)
 import Types exposing (Update)
 import Util exposing (insertMany)
-import Playlist.Types exposing (PlaylistId, getRawPlaylistId)
 
 
 type alias Callback =
@@ -29,46 +30,23 @@ recordFetchingPlaylist playlistId messageId model =
     { model | loadedPlaylists = Dict.insert (getRawPlaylistId playlistId) (Loading messageId) model.loadedPlaylists }
 
 
-fetchPlaylist : PlaylistId -> Maybe Callback -> Update Model Msg
-fetchPlaylist playlistId maybeCallback model =
-    case Playlist.Select.getPlaylist playlistId model of
-        {- This playlist has never been fetched. -}
-        Absent ->
-            let
-                ( ( newModel, cmd ), messageId ) =
-                    sendMessageWithId
-                        (makeFetchPlaylistMessage playlistId maybeCallback)
-                        False
-                        model
-            in
-            ( recordFetchingPlaylist playlistId messageId newModel
-            , cmd
-            )
-
-        {- There is already an in-flight fetch for this playlist. -}
-        Loading requestId ->
-            case maybeCallback of
-                Just callback ->
-                    ( addListenerExternal requestId (onResponse (Just callback)) model, Cmd.none )
-
-                Nothing ->
-                    ( model, Cmd.none )
-
-        {- This playlist has already been fetched -}
-        Loaded playlist ->
-            case maybeCallback of
-                Just callback ->
-                    callback playlist model
-
-                Nothing ->
-                    ( model, Cmd.none )
+fetchPlaylist : Maybe Callback -> PlaylistId -> Update Model Msg
+fetchPlaylist maybeCallback =
+    fetch
+        getRawPlaylistId
+        makeFetchPlaylistMessage
+        decode
+        convert
+        (\m -> m.loadedPlaylists)
+        (\repo -> \m -> { m | loadedPlaylists = repo })
+        maybeCallback
 
 
-makeFetchPlaylistMessage : PlaylistId -> Maybe Callback -> RequestData Model
-makeFetchPlaylistMessage id callback =
+makeFetchPlaylistMessage : PlaylistId -> Listener Model Msg -> RequestData Model
+makeFetchPlaylistMessage id listener =
     { method = "getPlaylist"
     , params = Just (makeRequest (getRawPlaylistId id))
-    , listener = Just (onResponse callback)
+    , listener = Just listener
     }
 
 
@@ -78,37 +56,15 @@ makeRequest id =
         [ ( "id", Json.Encode.int id ) ]
 
 
-onResponse : Maybe Callback -> Listener Model Msg
-onResponse callback =
-    makeIrresponsibleListener
-        Nothing
-        decode
-        (onSuccess callback)
-
-
-onSuccess : Maybe Callback -> Socket.DTO.Playlist.Playlist -> Update Model Msg
-onSuccess maybeCallback dto model =
-    let
-        playlist =
-            convert dto
-    in
-    let
-        newModel =
-            { model
-                | songs =
-                    insertMany
-                        (.id >> getRawSongId)
-                        identity
-                        playlist.songs
-                        model.songs
-
-                -- Store the songs
-                , loadedPlaylists = Dict.insert playlist.id (Loaded playlist) model.loadedPlaylists -- Store the playlist
-            }
-    in
-    case maybeCallback of
-        Nothing ->
-            ( newModel, Cmd.none )
-
-        Just callback ->
-            callback playlist newModel
+saveSongs : Playlist -> Update Model Msg
+saveSongs playlist model =
+    ( { model
+        | songs =
+            insertMany
+                (.id >> getRawSongId)
+                identity
+                playlist.songs
+                model.songs
+      }
+    , Cmd.none
+    )

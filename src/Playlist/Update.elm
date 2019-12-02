@@ -8,8 +8,8 @@ import Msg exposing (Msg(..))
 import Player.Actions exposing (replacePlaylist)
 import Playlist.Fetch exposing (fetchPlaylist)
 import Playlist.Select exposing (getPlaylistSongs)
-import Types exposing (Update)
 import Playlist.Types exposing (PlaylistId)
+import Types exposing (Update)
 
 
 playLoadedPlaylist : Playlist -> Update Model Msg
@@ -24,5 +24,5 @@ playLoadedPlaylist playlist =
 playPlaylist : PlaylistId -> Update Model Msg
 playPlaylist playlistId =
     fetchPlaylist
-        playlistId
         (Just playLoadedPlaylist)
+        playlistId

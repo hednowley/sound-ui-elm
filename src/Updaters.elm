@@ -45,4 +45,4 @@ onUrlChange url model =
             loadAlbum id Nothing m
 
         Just (Playlist id) ->
-            fetchPlaylist id Nothing m
+            fetchPlaylist Nothing id m

@@ -13,6 +13,14 @@ if (navigator.mediaSession && navigator.mediaSession.setActionHandler) {
   navigator.mediaSession.setActionHandler("nexttrack", () =>
     app.ports.audioNextPressed.send(null)
   );
+
+  navigator.mediaSession.setActionHandler("seekbackward", () => {
+    console.log("seekbackward");
+  });
+
+  navigator.mediaSession.setActionHandler("seekforward", () => {
+    console.log("seekforward");
+  });
 }
 
 // Start elm with the possible serialised model from local storage
@@ -31,7 +39,7 @@ let socket;
 window.app = app;
 
 app.ports.playAudio.subscribe(songId => {
-  console.log(`playAudio ${songId}`);
+  //console.log(`playAudio ${songId}`);
   const audio = audios.get(songId);
   if (audio) {
     audio.pause();
@@ -41,7 +49,7 @@ app.ports.playAudio.subscribe(songId => {
 });
 
 app.ports.pauseAudio.subscribe(songId => {
-  console.log(`pause ${songId}`);
+  //console.log(`pause ${songId}`);
   const audio = audios.get(songId);
   if (audio) {
     audio.pause();
@@ -49,7 +57,7 @@ app.ports.pauseAudio.subscribe(songId => {
 });
 
 app.ports.resumeAudio.subscribe(songId => {
-  console.log(`resume ${songId}`);
+  //console.log(`resume ${songId}`);
   const audio = audios.get(songId);
   if (audio) {
     audio.play();
@@ -57,33 +65,74 @@ app.ports.resumeAudio.subscribe(songId => {
 });
 
 app.ports.loadAudio.subscribe(({ url, songId }) => {
-  console.log(`loadAudio ${songId}`);
+  //console.log(`loadAudio ${songId}`);
 
   var a = new Audio(url);
 
   a.oncanplay = () => {
-    console.log(`oncanplay ${songId}`);
+    //console.log(`oncanplay ${songId}`);
     app.ports.canPlayAudio.send(songId);
     a.oncanplay = null;
   };
 
   a.ondurationchange = () => {
-    console.log(`ondurationchange ${songId}`);
-    app.ports.audioDurationChanged.send({ songId, duration: a.duration });
+    // console.log(`ondurationchange ${songId}`);
+    // app.ports.audioDurationChanged.send({ songId, duration: a.duration });
   };
 
   a.ontimeupdate = () => {
-    console.log(`ontimeupdate ${songId}`);
+    // console.log(`ontimeupdate ${songId}`);
     app.ports.audioTimeChanged.send({ songId, time: a.currentTime });
   };
 
   a.onended = () => {
-    console.log(`onended ${songId}`);
+    // console.log(`onended ${songId}`);
     app.ports.audioEnded.send(songId);
   };
 
   a.onplay = () => {
-    console.log(`onplay ${songId}`);
+    //console.log(`onplay ${songId}`);
+
+    if (navigator.mediaSession) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: `Unforgettable track #${songId}`,
+        artist: "Nat King Cole",
+        album: "The Ultimate Collection (Remastered)",
+        artwork: [
+          {
+            src: "https://dummyimage.com/96x96",
+            sizes: "96x96",
+            type: "image/png"
+          },
+          {
+            src: "https://dummyimage.com/128x128",
+            sizes: "128x128",
+            type: "image/png"
+          },
+          {
+            src: "https://dummyimage.com/192x192",
+            sizes: "192x192",
+            type: "image/png"
+          },
+          {
+            src: "https://dummyimage.com/256x256",
+            sizes: "256x256",
+            type: "image/png"
+          },
+          {
+            src: "https://dummyimage.com/384x384",
+            sizes: "384x384",
+            type: "image/png"
+          },
+          {
+            src: "https://dummyimage.com/512x512",
+            sizes: "512x512",
+            type: "image/png"
+          }
+        ]
+      });
+    }
+
     app.ports.audioPlaying.send({
       songId,
       time: a.currentTime,
@@ -92,7 +141,7 @@ app.ports.loadAudio.subscribe(({ url, songId }) => {
   };
 
   a.onpause = () => {
-    console.log(`onpause ${songId}`);
+    //console.log(`onpause ${songId}`);
     app.ports.audioPaused.send({
       songId,
       time: a.currentTime,
