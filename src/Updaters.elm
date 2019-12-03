@@ -3,7 +3,8 @@ module Updaters exposing
     , onUrlChange
     )
 
-import Album.Update exposing (loadAlbum)
+import Album.Fetch exposing (fetchAlbum)
+import Artist.Fetch exposing (fetchArtist)
 import Artist.Types exposing (ArtistId(..))
 import Audio.Select exposing (..)
 import AudioState exposing (State(..))
@@ -15,7 +16,6 @@ import Ports
 import Routing exposing (Route(..))
 import Socket.Core as Socket
 import Socket.MessageId exposing (MessageId(..))
-import Socket.Methods.GetArtist exposing (getArtist)
 import Types exposing (Update)
 import Url exposing (Url)
 
@@ -36,13 +36,10 @@ onUrlChange url model =
             ( m, Cmd.none )
 
         Just (Artist id) ->
-            Socket.sendMessage
-                (getArtist id)
-                False
-                { m | artist = Loadable.Loading <| MessageId 1337 }
+            fetchArtist Nothing id m
 
         Just (Album id) ->
-            loadAlbum id Nothing m
+            fetchAlbum Nothing id m
 
         Just (Playlist id) ->
             fetchPlaylist Nothing id m

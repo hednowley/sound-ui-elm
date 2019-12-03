@@ -26,6 +26,7 @@
     "build:prod": "webpack --config webpack.prod.js",
     "start": "webpack-dev-server -d --config webpack.dev.js",
     "start:home": "webpack-dev-server -d --config webpack.home.js",
+    "start:live": "webpack-dev-server -d --config webpack.live.js",
     "analyse": "elm-analyse -s"
   },
   "repository": {

@@ -2,6 +2,7 @@ module Nexus.Fetch exposing (fetch)
 
 import Dict exposing (Dict)
 import Json.Decode exposing (Decoder)
+import Json.Encode
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (Msg)
@@ -14,10 +15,6 @@ import Types exposing (Update)
 
 type alias MaybeCallback a =
     Maybe (a -> Update Model Msg)
-
-
-type alias MakeMessage id =
-    id -> Listener Model Msg -> RequestData Model
 
 
 type alias GetRepo obj =
@@ -34,7 +31,7 @@ type alias OnFetch obj =
 
 fetch :
     (id -> Int)
-    -> MakeMessage id
+    -> String
     -> Decoder dto
     -> (dto -> obj)
     -> GetRepo obj
@@ -43,7 +40,7 @@ fetch :
     -> MaybeCallback obj
     -> id
     -> Update Model Msg
-fetch extractId makeMessage decoder convert getDict setDict onFetch maybeCallback id model =
+fetch extractId method decoder convert getDict setDict onFetch maybeCallback id model =
     let
         extractedId =
             extractId id
@@ -57,7 +54,8 @@ fetch extractId makeMessage decoder convert getDict setDict onFetch maybeCallbac
             let
                 ( ( sentModel, cmd ), messageId ) =
                     sendMessageWithId
-                        (makeMessage id
+                        (makeMessage extractedId
+                            method
                             (onResponse
                                 getDict
                                 setDict
@@ -106,6 +104,20 @@ fetch extractId makeMessage decoder convert getDict setDict onFetch maybeCallbac
 
                 Nothing ->
                     ( model, Cmd.none )
+
+
+makeMessage : Int -> String -> Listener Model Msg -> RequestData Model
+makeMessage id method listener =
+    { method = method
+    , params = Just (makeRequest id)
+    , listener = Just listener
+    }
+
+
+makeRequest : Int -> Json.Encode.Value
+makeRequest id =
+    Json.Encode.object
+        [ ( "id", Json.Encode.int id ) ]
 
 
 onResponse :

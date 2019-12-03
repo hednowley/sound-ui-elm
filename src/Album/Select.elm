@@ -10,7 +10,7 @@ import Model exposing (Model)
 
 getAlbum : AlbumId -> Model -> Loadable Album
 getAlbum albumId model =
-    Dict.get (getRawAlbumId albumId) model.albums |> Maybe.withDefault Absent
+    Dict.get (getRawAlbumId albumId) model.loadedAlbums |> Maybe.withDefault Absent
 
 
 getAlbumSongs : Album -> List SongSummary

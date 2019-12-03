@@ -30,11 +30,11 @@ type alias Model =
     , scanShouldDelete : Bool
     , playlists : PlaylistSummaries
     , loadedPlaylists : Dict Int (Loadable Playlist)
+    , loadedArtists : Dict Int (Loadable Artist)
+    , loadedAlbums : Dict Int (Loadable Album)
     , artists : ArtistSummaries
-    , artist : Loadable Artist
     , songs : Dict Int SongSummary
-    , albums : Dict Int (Loadable Album)
-    , config : Config 
+    , config : Config
     , route : Maybe Route
     , songCache : Dict Int AudioState.State
     , socket : SocketModelWrap

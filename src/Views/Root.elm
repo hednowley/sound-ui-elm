@@ -20,12 +20,12 @@ view model =
     div [ class "app__wrap" ]
         [ div [ class "app__header" ] [ a [ href "/" ] [ text "Home" ] ]
         , div [ class "app__main" ]
-            [ case model.route of 
+            [ case model.route of
                 Nothing ->
                     Views.Home.view model
 
-                Just (Artist _) ->
-                    Views.Artist.view model
+                Just (Artist id) ->
+                    Views.Artist.view id model
 
                 Just (Album id) ->
                     Views.Album.view id model

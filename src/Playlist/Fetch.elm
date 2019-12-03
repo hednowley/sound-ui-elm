@@ -21,40 +21,17 @@ import Types exposing (Update)
 import Util exposing (insertMany)
 
 
-type alias Callback =
-    Playlist -> Update Model Msg
-
-
-recordFetchingPlaylist : PlaylistId -> MessageId -> Model -> Model
-recordFetchingPlaylist playlistId messageId model =
-    { model | loadedPlaylists = Dict.insert (getRawPlaylistId playlistId) (Loading messageId) model.loadedPlaylists }
-
-
-fetchPlaylist : Maybe Callback -> PlaylistId -> Update Model Msg
+fetchPlaylist : Maybe (Playlist -> Update Model Msg) -> PlaylistId -> Update Model Msg
 fetchPlaylist maybeCallback =
     fetch
         getRawPlaylistId
-        makeFetchPlaylistMessage
+        "getPlaylist"
         decode
         convert
-        (\m -> m.loadedPlaylists)
+        .loadedPlaylists
         (\repo -> \m -> { m | loadedPlaylists = repo })
         saveSongs
         maybeCallback
-
-
-makeFetchPlaylistMessage : PlaylistId -> Listener Model Msg -> RequestData Model
-makeFetchPlaylistMessage id listener =
-    { method = "getPlaylist"
-    , params = Just (makeRequest (getRawPlaylistId id))
-    , listener = Just listener
-    }
-
-
-makeRequest : Int -> Json.Encode.Value
-makeRequest id =
-    Json.Encode.object
-        [ ( "id", Json.Encode.int id ) ]
 
 
 saveSongs : Playlist -> Model -> Model
