@@ -5,11 +5,12 @@
 
     display: grid;
     grid-template-areas:
-      "header"
-      "main"
-      "playlist"
-      "player";
+      "header header"
+      "side main"
+      "playlist playlist"
+      "player player";
     grid-template-rows: auto 1fr auto auto;
+    grid-template-columns: auto 1fr;
 
     overflow: hidden;
   }
@@ -21,6 +22,10 @@
   &__main {
     grid-area: main;
     overflow-y: auto;
+  }
+
+  &__side {
+    grid-area: side;
   }
 
   &__playlist {

@@ -8,17 +8,22 @@ import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Routing exposing (Route(..))
 import Views.Album
+import Views.Albums
 import Views.Artist
+import Views.Artists
 import Views.Home
 import Views.Player
 import Views.Playlist
 import Views.PlaylistItem
+import Views.Playlists
+import Views.Sidebar
 
 
 view : Model -> Html.Html Msg
 view model =
     div [ class "app__wrap" ]
-        [ div [ class "app__header" ] [ a [ href "/" ] [ text "Home" ] ]
+        [ div [ class "app__header" ] []
+        , div [ class "app__side" ] [ Views.Sidebar.view model ]
         , div [ class "app__main" ]
             [ case model.route of
                 Nothing ->
@@ -32,6 +37,15 @@ view model =
 
                 Just (Playlist id) ->
                     Views.Playlist.view id model
+
+                Just Artists ->
+                    Views.Artists.view model
+
+                Just Albums ->
+                    Views.Albums.view model
+
+                Just Playlists ->
+                    Views.Playlists.view model
             ]
         , div [ class "app__playlist" ]
             [ div [] [ text "Playlist" ]

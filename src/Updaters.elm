@@ -14,7 +14,11 @@ import Msg exposing (Msg)
 import Playlist.Fetch exposing (fetchPlaylist)
 import Ports
 import Routing exposing (Route(..))
+import Socket.Core exposing (sendMessage)
 import Socket.MessageId exposing (MessageId(..))
+import Socket.Methods.GetAlbums exposing (getAlbums)
+import Socket.Methods.GetArtists exposing (getArtists)
+import Socket.Methods.GetPlaylists exposing (getPlaylists)
 import Types exposing (Update)
 import Url exposing (Url)
 
@@ -31,9 +35,6 @@ onUrlChange url model =
             { model | route = Routing.parseUrl url }
     in
     case m.route of
-        Nothing ->
-            ( m, Cmd.none )
-
         Just (Artist id) ->
             fetchArtist Nothing id m
 
@@ -42,3 +43,15 @@ onUrlChange url model =
 
         Just (Playlist id) ->
             fetchPlaylist Nothing id m
+
+        Just Playlists ->
+            sendMessage getPlaylists False m
+
+        Just Albums ->
+            sendMessage getAlbums False m
+
+        Just Artists ->
+            sendMessage getArtists False m
+
+        Nothing ->
+            ( m, Cmd.none )

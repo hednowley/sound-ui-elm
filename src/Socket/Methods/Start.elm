@@ -4,7 +4,6 @@ import Model exposing (Model, getSocketModel, setSocketModel)
 import Msg exposing (Msg)
 import Socket.Core exposing (sendMessage, sendQueuedMessage)
 import Socket.Methods.GetArtists exposing (getArtists)
-import Socket.Methods.GetPlaylists exposing (getPlaylists)
 import Types exposing (Update, combineMany)
 
 
@@ -16,7 +15,6 @@ start =
         [ setWebsocketOpen
         , processQueue
         , sendMessage getArtists False
-        , sendMessage getPlaylists False
         ]
 
 

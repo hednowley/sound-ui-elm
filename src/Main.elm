@@ -96,6 +96,7 @@ emptyModel key url config =
     , playlists = Dict.empty
     , nexus = Nexus.Model.empty
     , artists = Dict.empty
+    , albums = Dict.empty
     , songs = Dict.empty
     , config = config
     , route = Nothing

@@ -4,6 +4,7 @@ import AudioState
 import Browser.Navigation exposing (Key)
 import Config exposing (Config)
 import Dict exposing (Dict)
+import Entities.AlbumSummary exposing (AlbumSummaries)
 import Entities.ArtistSummary exposing (ArtistSummaries)
 import Entities.PlaylistSummary exposing (PlaylistSummaries)
 import Entities.SongSummary exposing (SongSummary)
@@ -29,6 +30,7 @@ type alias Model =
     , playlists : PlaylistSummaries
     , nexus : Nexus.Model.Model
     , artists : ArtistSummaries
+    , albums : AlbumSummaries
     , songs : Dict Int SongSummary
     , config : Config
     , route : Maybe Route
