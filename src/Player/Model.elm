@@ -14,12 +14,6 @@ emptyModel =
     }
 
 
-type alias PlaylistEntry =
-    { songId : SongId
-    , suffledWith : Maybe Int
-    }
-
-
 type alias Model =
     { shuffle : Bool
     , repeat : Repeat

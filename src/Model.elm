@@ -4,13 +4,11 @@ import AudioState
 import Browser.Navigation exposing (Key)
 import Config exposing (Config)
 import Dict exposing (Dict)
-import Entities.Album exposing (Album)
-import Entities.Artist exposing (Artist)
 import Entities.ArtistSummary exposing (ArtistSummaries)
-import Entities.Playlist exposing (Playlist)
 import Entities.PlaylistSummary exposing (PlaylistSummaries)
 import Entities.SongSummary exposing (SongSummary)
 import Loadable exposing (Loadable(..))
+import Nexus.Model
 import Player.Model
 import Routing exposing (Route)
 import Socket.Model
@@ -29,9 +27,7 @@ type alias Model =
     , scanShouldUpdate : Bool
     , scanShouldDelete : Bool
     , playlists : PlaylistSummaries
-    , loadedPlaylists : Dict Int (Loadable Playlist)
-    , loadedArtists : Dict Int (Loadable Artist)
-    , loadedAlbums : Dict Int (Loadable Album)
+    , nexus : Nexus.Model.Model
     , artists : ArtistSummaries
     , songs : Dict Int SongSummary
     , config : Config

@@ -14,7 +14,6 @@ import Msg exposing (Msg)
 import Playlist.Fetch exposing (fetchPlaylist)
 import Ports
 import Routing exposing (Route(..))
-import Socket.Core as Socket
 import Socket.MessageId exposing (MessageId(..))
 import Types exposing (Update)
 import Url exposing (Url)

@@ -12,6 +12,7 @@ import Json.Decode
 import Loadable exposing (Loadable(..))
 import Model exposing (Model, SocketModelWrap(..), getSocketModel)
 import Msg exposing (Msg(..))
+import Nexus.Model
 import Player.Model
 import Player.Msg exposing (PlayerMsg(..))
 import Player.Update
@@ -93,9 +94,7 @@ emptyModel key url config =
     , scanShouldUpdate = False
     , scanShouldDelete = False
     , playlists = Dict.empty
-    , loadedPlaylists = Dict.empty
-    , loadedArtists = Dict.empty
-    , loadedAlbums = Dict.empty
+    , nexus = Nexus.Model.empty
     , artists = Dict.empty
     , songs = Dict.empty
     , config = config

@@ -6,6 +6,8 @@ import Json.Encode
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (Msg)
+import Nexus.Callback exposing (Callback, combine)
+import Nexus.Model
 import Socket.Actions exposing (addListenerExternal)
 import Socket.Core exposing (sendMessageWithId)
 import Socket.Listener exposing (Listener, makeIrresponsibleListener)
@@ -13,20 +15,26 @@ import Socket.RequestData exposing (RequestData)
 import Types exposing (Update)
 
 
-type alias MaybeCallback a =
-    Maybe (a -> Update Model Msg)
+{-| A place to store things.
+-}
+type alias Repo obj =
+    Dict Int (Loadable obj)
 
 
-type alias GetRepo obj =
-    Model -> Dict Int (Loadable obj)
+{-| Tells you how to get and set a repo.
+-}
+type alias RepoAccessor obj =
+    { get : Nexus.Model.Model -> Repo obj
+    , set : Repo obj -> Nexus.Model.Model -> Nexus.Model.Model
+    }
 
 
-type alias SetRepo obj =
-    Dict Int (Loadable obj) -> Model -> Model
+type alias SaveObject obj =
+    Loadable obj -> Model -> Model
 
 
 type alias OnFetch obj =
-    obj -> Model -> Model
+    obj -> Update Model Msg
 
 
 fetch :
@@ -34,64 +42,57 @@ fetch :
     -> String
     -> Decoder dto
     -> (dto -> obj)
-    -> GetRepo obj
-    -> SetRepo obj
+    -> RepoAccessor obj
     -> OnFetch obj
-    -> MaybeCallback obj
+    -> Maybe (Callback obj)
     -> id
     -> Update Model Msg
-fetch extractId method decoder convert getDict setDict onFetch maybeCallback id model =
+fetch extractId method decoder convert accessRepo onFetch maybeCallback id model =
     let
         extractedId =
             extractId id
 
         stored =
-            Dict.get extractedId (getDict model)
+            Dict.get extractedId (accessRepo.get model.nexus)
     in
     case Maybe.withDefault Absent stored of
         {- This thing has never been fetched. -}
         Absent ->
             let
+                listener =
+                    makeListener
+                        accessRepo
+                        convert
+                        decoder
+                        (combine (Just onFetch) maybeCallback)
+                        extractedId
+
                 ( ( sentModel, cmd ), messageId ) =
                     sendMessageWithId
-                        (makeMessage extractedId
-                            method
-                            (onResponse
-                                getDict
-                                setDict
-                                convert
-                                decoder
-                                onFetch
-                                maybeCallback
-                                extractedId
-                            )
-                        )
+                        (makeRequest extractedId method listener)
                         False
                         model
 
-                insertedDict =
-                    Dict.insert extractedId (Loading messageId) (getDict sentModel)
+                saved =
+                    saveObject accessRepo extractedId (Loading messageId) sentModel
             in
-            ( setDict insertedDict sentModel, cmd )
+            ( saved, cmd )
 
         {- There is already an in-flight fetch for this thing. -}
         Loading requestId ->
             case maybeCallback of
                 Just callback ->
-                    ( addListenerExternal
-                        requestId
-                        (onResponse
-                            getDict
-                            setDict
-                            convert
-                            decoder
-                            onFetch
-                            (Just callback)
-                            extractedId
-                        )
-                        model
-                    , Cmd.none
-                    )
+                    let
+                        -- Don't include onFetch as we can assume it's in the existing listener
+                        listener =
+                            makeListener
+                                accessRepo
+                                convert
+                                decoder
+                                callback
+                                extractedId
+                    in
+                    ( addListenerExternal requestId listener model, Cmd.none )
 
                 Nothing ->
                     ( model, Cmd.none )
@@ -106,62 +107,57 @@ fetch extractId method decoder convert getDict setDict onFetch maybeCallback id 
                     ( model, Cmd.none )
 
 
-makeMessage : Int -> String -> Listener Model Msg -> RequestData Model
-makeMessage id method listener =
+{-| Makes a socket request.
+-}
+makeRequest : Int -> String -> Listener Model Msg -> RequestData Model
+makeRequest id method listener =
     { method = method
-    , params = Just (makeRequest id)
+    , params = Just <| Json.Encode.object [ ( "id", Json.Encode.int id ) ]
     , listener = Just listener
     }
 
 
-makeRequest : Int -> Json.Encode.Value
-makeRequest id =
-    Json.Encode.object
-        [ ( "id", Json.Encode.int id ) ]
+saveObject : RepoAccessor obj -> Int -> SaveObject obj
+saveObject accessRepo id loadable model =
+    let
+        repo =
+            Dict.insert id loadable (accessRepo.get model.nexus)
+    in
+    { model | nexus = accessRepo.set repo model.nexus }
 
 
-onResponse :
-    GetRepo obj
-    -> SetRepo obj
+{-| Makes a socket listener which
+-}
+makeListener :
+    RepoAccessor obj
     -> (dto -> obj)
     -> Decoder dto
-    -> OnFetch obj
-    -> MaybeCallback obj
+    -> Callback obj
     -> Int
     -> Listener Model Msg
-onResponse getRepo setRepo convert decoder onFetch maybeCallback id =
+makeListener accessRepo convert decoder callback id =
     makeIrresponsibleListener
         Nothing
         decoder
-        (onSuccess getRepo setRepo convert onFetch maybeCallback id)
+        (onSuccess
+            convert
+            (saveObject accessRepo id)
+            callback
+        )
 
 
 onSuccess :
-    GetRepo obj
-    -> SetRepo obj
-    -> (dto -> obj)
-    -> OnFetch obj
-    -> MaybeCallback obj
-    -> Int
+    (dto -> obj)
+    -> SaveObject obj
+    -> Callback obj
     -> dto
     -> Update Model Msg
-onSuccess getRepo setRepo convert onFetch maybeCallback id dto model =
+onSuccess convert save callback dto model =
     let
         thing =
             convert dto
 
-        insertedDict =
-            Dict.insert id (Loaded thing) (getRepo model)
-
-        inserted =
-            setRepo insertedDict model
-
-        newModel =
-            onFetch thing inserted
+        saved =
+            save (Loaded thing) model
     in
-    case maybeCallback of
-        Nothing ->
-            ( newModel, Cmd.none )
-
-        Just callback ->
-            callback thing newModel
+    callback thing saved
