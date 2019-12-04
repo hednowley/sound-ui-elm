@@ -4,16 +4,17 @@ import Album.Select exposing (getAlbumArt)
 import Album.Types exposing (getRawAlbumId)
 import Audio.AudioMsg exposing (AudioMsg(..))
 import Entities.AlbumSummary exposing (AlbumSummary)
-import Html exposing (a, button, div, img, text)
-import Html.Attributes exposing (class, href, src)
-import Html.Events exposing (onClick)
+import Html
+import Html.Styled exposing (Html, a, button, div, img, text)
+import Html.Styled.Attributes exposing (class, href, src)
+import Html.Styled.Events exposing (onClick)
 import Loadable exposing (Loadable(..))
 import Msg exposing (Msg(..))
 import Player.Msg exposing (PlayerMsg(..))
 import String exposing (fromInt)
 
 
-view : AlbumSummary -> Html.Html Msg
+view : AlbumSummary -> Html Msg
 view album =
     div [ class "home__artist" ]
         [ div []

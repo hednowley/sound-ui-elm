@@ -2,8 +2,10 @@ module Views.Root exposing (view)
 
 import Array
 import Audio.AudioMsg exposing (AudioMsg(..))
-import Html exposing (a, div, text)
-import Html.Attributes exposing (class, href)
+import Css exposing (..)
+import Html
+import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (class, css, href, src)
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Routing exposing (Route(..))
@@ -19,9 +21,13 @@ import Views.Playlists
 import Views.Sidebar
 
 
-view : Model -> Html.Html Msg
+view : Model -> Html Msg
 view model =
-    div [ class "app__wrap" ]
+    div
+        [ class "app__wrap"
+        , css
+            [ backgroundColor (rgb 240 240 240) ]
+        ]
         [ div [ class "app__header" ] []
         , div [ class "app__side" ] [ Views.Sidebar.view model ]
         , div [ class "app__main" ]

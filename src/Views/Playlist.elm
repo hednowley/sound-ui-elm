@@ -1,18 +1,19 @@
 module Views.Playlist exposing (view)
 
 import Audio.AudioMsg exposing (AudioMsg(..))
-import Html exposing (button, div, text)
-import Html.Events exposing (onClick)
+import Html
+import Html.Styled exposing (Html, button, div, text)
+import Html.Styled.Events exposing (onClick)
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Player.Msg exposing (PlayerMsg(..))
 import Playlist.Select exposing (getPlaylist, getPlaylistSongs)
-import Views.Song
 import Playlist.Types exposing (PlaylistId)
+import Views.Song
 
 
-view : PlaylistId -> Model -> Html.Html Msg
+view : PlaylistId -> Model -> Html Msg
 view playlistId model =
     case getPlaylist playlistId model of
         Absent ->

@@ -25,7 +25,7 @@ getAlbums =
 responseDecoder : Json.Decode.Decoder Body
 responseDecoder =
     Json.Decode.map Body
-        (field "Albums"
+        (field "albums"
             (list decode)
         )
 

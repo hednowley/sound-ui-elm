@@ -7,7 +7,8 @@ import Browser.Navigation as Nav exposing (Key)
 import Cache exposing (makeCache, makeModel, tryDecode)
 import Config exposing (Config)
 import Dict
-import Html exposing (div, text)
+import Html
+import Html.Styled exposing (Html, div, text, toUnstyled)
 import Json.Decode
 import Loadable exposing (Loadable(..))
 import Model exposing (Model, SocketModelWrap(..), getSocketModel)
@@ -189,21 +190,22 @@ view : Model -> Browser.Document Msg
 view model =
     { title = "Sound"
     , body =
-        [ div []
-            [ div [] [ text model.message ]
-            , case model.token of
-                Absent ->
-                    Views.Login.view model
+        [ toUnstyled <|
+            div []
+                [ div [] [ text model.message ]
+                , case model.token of
+                    Absent ->
+                        Views.Login.view model
 
-                Loadable.Loading _ ->
-                    div [] [ text "Getting token..." ]
+                    Loadable.Loading _ ->
+                        div [] [ text "Getting token..." ]
 
-                _ ->
-                    if (getSocketModel model).isOpen then
-                        Views.Root.view model
+                    _ ->
+                        if (getSocketModel model).isOpen then
+                            Views.Root.view model
 
-                    else
-                        div [] [ text "Websocket not open" ]
-            ]
+                        else
+                            div [] [ text "Websocket not open" ]
+                ]
         ]
     }

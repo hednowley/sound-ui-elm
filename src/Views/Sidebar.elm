@@ -1,12 +1,13 @@
 module Views.Sidebar exposing (view)
 
-import Html exposing (a, div, text)
-import Html.Attributes exposing (class, href)
+import Html
+import Html.Styled exposing (Html, a, div, text)
+import Html.Styled.Attributes exposing (class, href)
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 
 
-view : Model -> Html.Html Msg
+view : Model -> Html Msg
 view model =
     div
         []

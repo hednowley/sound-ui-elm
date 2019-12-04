@@ -4,15 +4,16 @@ import Artist.Types exposing (getRawArtistId)
 import Dict
 import Entities.ArtistSummary exposing (ArtistSummaries)
 import Entities.PlaylistSummary exposing (PlaylistSummaries)
-import Html exposing (Html, a, button, div, input, label, span, text)
-import Html.Attributes exposing (checked, class, href, type_)
-import Html.Events exposing (onClick)
+import Html
+import Html.Styled exposing (Html, a, button, div, input, label, span, text)
+import Html.Styled.Attributes exposing (checked, class, href, type_)
+import Html.Styled.Events exposing (onClick)
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import String exposing (fromInt)
 
 
-view : Model -> Html.Html Msg
+view : Model -> Html Msg
 view model =
     div [ class "home__wrap" ]
         [ viewPlaylists model.playlists

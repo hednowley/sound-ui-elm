@@ -1,14 +1,15 @@
 module Views.Login exposing (view)
 
-import Html exposing (Html, button, div, form, input, text)
-import Html.Attributes exposing (class, disabled, name, placeholder, type_, value)
-import Html.Events exposing (onInput)
+import Html
+import Html.Styled exposing (Html, button, div, form, input, text)
+import Html.Styled.Attributes exposing (class, disabled, name, placeholder, type_, value)
+import Html.Styled.Events exposing (onInput)
 import Json.Decode
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 
 
-view : Model -> Html.Html Msg
+view : Model -> Html Msg
 view model =
     div [ class "login__wrap" ]
         [ form [ class "login__container" ]
@@ -25,6 +26,6 @@ viewInput n t p v toMsg =
     input [ name n, type_ t, placeholder p, value v, onInput toMsg, class "login__input" ] []
 
 
-onClickNoBubble : msg -> Html.Attribute msg
+onClickNoBubble : msg -> Html.Styled.Attribute msg
 onClickNoBubble message =
-    Html.Events.custom "click" (Json.Decode.succeed { message = message, stopPropagation = True, preventDefault = True })
+    Html.Styled.Events.custom "click" (Json.Decode.succeed { message = message, stopPropagation = True, preventDefault = True })

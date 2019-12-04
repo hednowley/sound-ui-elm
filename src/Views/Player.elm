@@ -2,9 +2,10 @@ module Views.Player exposing (view)
 
 import Audio.AudioMsg exposing (AudioMsg(..))
 import AudioState exposing (State(..))
-import Html exposing (button, div, text)
-import Html.Attributes exposing (class, style)
-import Html.Events exposing (onClick)
+import Html
+import Html.Styled exposing (Html, button, div, text)
+import Html.Styled.Attributes exposing (class, style)
+import Html.Styled.Events exposing (onClick)
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Player.Msg exposing (PlayerMsg(..))
@@ -14,7 +15,7 @@ import Song.Select exposing (getSong)
 import String exposing (fromFloat)
 
 
-view : Model -> Html.Html Msg
+view : Model -> Html Msg
 view model =
     div [ class "player__wrap" ] <|
         case getCurrentSongState model of
@@ -35,7 +36,7 @@ view model =
                 []
 
 
-backButton : State -> Html.Html Msg
+backButton : State -> Html Msg
 backButton state =
     case state of
         AudioState.Playing { time } ->
@@ -45,7 +46,7 @@ backButton state =
             text ""
 
 
-playButton : State -> Html.Html Msg
+playButton : State -> Html Msg
 playButton state =
     case state of
         AudioState.Playing { paused } ->
@@ -59,7 +60,7 @@ playButton state =
             text ""
 
 
-forwardButton : State -> Html.Html Msg
+forwardButton : State -> Html Msg
 forwardButton state =
     case state of
         AudioState.Playing { time } ->
@@ -69,7 +70,7 @@ forwardButton state =
             text ""
 
 
-nextButton : State -> Html.Html Msg
+nextButton : State -> Html Msg
 nextButton state =
     case state of
         AudioState.Playing _ ->
@@ -79,7 +80,7 @@ nextButton state =
             text ""
 
 
-prevButton : State -> Html.Html Msg
+prevButton : State -> Html Msg
 prevButton state =
     case state of
         AudioState.Playing _ ->
@@ -89,7 +90,7 @@ prevButton state =
             text ""
 
 
-shuffleButton : Model -> Html.Html Msg
+shuffleButton : Model -> Html Msg
 shuffleButton model =
     if shuffleIsOn model then
         button [ onClick <| PlayerMsg (SetShuffle False) ] [ text "No shuffle" ]
@@ -98,7 +99,7 @@ shuffleButton model =
         button [ onClick <| PlayerMsg (SetShuffle True) ] [ text "Shuffle" ]
 
 
-songDetails : Model -> Html.Html Msg
+songDetails : Model -> Html Msg
 songDetails model =
     let
         title =
@@ -114,7 +115,7 @@ songDetails model =
     div [] [ text title ]
 
 
-slider : State -> Html.Html Msg
+slider : State -> Html Msg
 slider state =
     div [ class "player__slider--wrap" ]
         [ case state of
