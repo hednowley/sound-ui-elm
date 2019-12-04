@@ -21,12 +21,16 @@ import Views.Playlists
 import Views.Sidebar
 
 
+containerStyle : Style
+containerStyle =
+    Css.batch [ backgroundColor (rgb 240 240 240) ]
+
+
 view : Model -> Html Msg
 view model =
     div
         [ class "app__wrap"
-        , css
-            [ backgroundColor (rgb 240 240 240) ]
+        , css [ containerStyle ]
         ]
         [ div [ class "app__header" ] []
         , div [ class "app__side" ] [ Views.Sidebar.view model ]
