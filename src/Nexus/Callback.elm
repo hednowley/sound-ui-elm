@@ -1,4 +1,4 @@
-module Nexus.Callback exposing (Callback, combine)
+module Nexus.Callback exposing (Callback, resolve)
 
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
@@ -15,10 +15,3 @@ resolve maybeCallback =
     Maybe.withDefault
         (\a -> \m -> ( m, Cmd.none ))
         maybeCallback
-
-
-combine : Maybe (Callback a) -> Maybe (Callback a) -> Callback a
-combine maybeA maybeB obj =
-    Types.combine
-        (resolve maybeA obj)
-        (resolve maybeB obj)

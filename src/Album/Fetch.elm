@@ -7,6 +7,7 @@ import Model exposing (Model)
 import Msg exposing (Msg)
 import Nexus.Fetch exposing (fetch)
 import Socket.DTO.Album exposing (convert, decode)
+import Socket.DTO.SongSummary exposing (convertMany)
 import Song.Types exposing (SongId(..), getRawSongId)
 import Types exposing (Update)
 import Util exposing (insertMany)
@@ -18,23 +19,25 @@ fetchAlbum maybeCallback =
         getRawAlbumId
         "getAlbum"
         decode
+        saveSongs
         convert
         { get = .albums
         , set = \repo -> \m -> { m | albums = repo }
         }
-        saveSongs
         maybeCallback
 
 
-saveSongs : Album -> Update Model Msg
+saveSongs : Socket.DTO.Album.Album -> Model -> Model
 saveSongs album model =
-    ( { model
+    let
+        songs =
+            convertMany album.songs
+    in
+    { model
         | songs =
             insertMany
                 (.id >> getRawSongId)
                 identity
-                album.songs
+                songs
                 model.songs
-      }
-    , Cmd.none
-    )
+    }

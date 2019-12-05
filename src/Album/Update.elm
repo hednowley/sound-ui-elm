@@ -14,11 +14,7 @@ import Types exposing (Update)
 
 playLoadedAlbum : Album -> Update Model Msg
 playLoadedAlbum album =
-    let
-        playlist =
-            List.map .id (getAlbumSongs album)
-    in
-    replacePlaylist playlist
+    replacePlaylist album.songs
 
 
 playAlbum : AlbumId -> Update Model Msg

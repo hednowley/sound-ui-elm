@@ -11,15 +11,20 @@ import Song.Types exposing (SongId(..))
 import Types exposing (Update)
 
 
+noOp : Socket.DTO.Artist.Artist -> Model -> Model
+noOp _ model =
+    model
+
+
 fetchArtist : Maybe (Artist -> Update Model Msg) -> ArtistId -> Update Model Msg
 fetchArtist maybeCallback =
     fetch
         getRawArtistId
         "getArtist"
         decode
+        noOp
         convert
         { get = .artists
         , set = \repo -> \m -> { m | artists = repo }
         }
-        (\o -> \m -> ( m, Cmd.none ))
         maybeCallback

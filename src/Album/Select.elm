@@ -6,6 +6,7 @@ import Entities.Album exposing (Album)
 import Entities.SongSummary exposing (SongSummary)
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
+import Song.Select exposing (getSong)
 
 
 getAlbum : AlbumId -> Model -> Loadable Album
@@ -13,9 +14,13 @@ getAlbum albumId model =
     Dict.get (getRawAlbumId albumId) model.nexus.albums |> Maybe.withDefault Absent
 
 
-getAlbumSongs : Album -> List SongSummary
-getAlbumSongs album =
-    List.sortBy .track album.songs
+getAlbumSongs : Album -> Model -> List (Maybe SongSummary)
+getAlbumSongs album model =
+    List.map (getSong model) album.songs
+
+
+
+-- |> List.sortBy .track
 
 
 getAlbumArt : Maybe String -> String

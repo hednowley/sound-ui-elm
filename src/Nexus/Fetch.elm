@@ -6,7 +6,7 @@ import Json.Encode
 import Loadable exposing (Loadable(..))
 import Model exposing (Model)
 import Msg exposing (Msg)
-import Nexus.Callback exposing (Callback, combine)
+import Nexus.Callback exposing (Callback, resolve)
 import Nexus.Model
 import Socket.Actions exposing (addListenerExternal)
 import Socket.Core exposing (sendMessageWithId)
@@ -33,21 +33,26 @@ type alias SaveObject obj =
     Loadable obj -> Model -> Model
 
 
-type alias OnFetch obj =
-    obj -> Update Model Msg
+type alias OnDecode obj =
+    obj -> Model -> Model
+
+
+noDecode : OnDecode obj
+noDecode _ model =
+    model
 
 
 fetch :
     (id -> Int)
     -> String
     -> Decoder dto
+    -> OnDecode dto
     -> (dto -> obj)
     -> RepoAccessor obj
-    -> OnFetch obj
     -> Maybe (Callback obj)
     -> id
     -> Update Model Msg
-fetch extractId method decoder convert accessRepo onFetch maybeCallback id model =
+fetch extractId method decoder onDecode convert accessRepo maybeCallback id model =
     let
         extractedId =
             extractId id
@@ -62,9 +67,10 @@ fetch extractId method decoder convert accessRepo onFetch maybeCallback id model
                 listener =
                     makeListener
                         accessRepo
-                        convert
                         decoder
-                        (combine (Just onFetch) maybeCallback)
+                        onDecode
+                        convert
+                        (resolve maybeCallback)
                         extractedId
 
                 ( ( sentModel, cmd ), messageId ) =
@@ -83,12 +89,13 @@ fetch extractId method decoder convert accessRepo onFetch maybeCallback id model
             case maybeCallback of
                 Just callback ->
                     let
-                        -- Don't include onFetch as we can assume it's in the existing listener
+                        -- Don't include onDecode as we can assume it's in the existing listener
                         listener =
                             makeListener
                                 accessRepo
-                                convert
                                 decoder
+                                noDecode
+                                convert
                                 callback
                                 extractedId
                     in
@@ -130,34 +137,44 @@ saveObject accessRepo id loadable model =
 -}
 makeListener :
     RepoAccessor obj
-    -> (dto -> obj)
     -> Decoder dto
+    -> OnDecode dto
+    -> (dto -> obj)
     -> Callback obj
     -> Int
     -> Listener Model Msg
-makeListener accessRepo convert decoder callback id =
+makeListener accessRepo decoder onDecode convert callback id =
     makeIrresponsibleListener
         Nothing
         decoder
         (onSuccess
+            onDecode
             convert
             (saveObject accessRepo id)
             callback
         )
 
 
+
+-- TODO : FIX THIS
+
+
 onSuccess :
-    (dto -> obj)
+    OnDecode dto
+    -> (dto -> obj)
     -> SaveObject obj
     -> Callback obj
     -> dto
     -> Update Model Msg
-onSuccess convert save callback dto model =
+onSuccess onDecode convert save callback dto model =
     let
+        m1 =
+            onDecode dto model
+
         thing =
             convert dto
 
         saved =
-            save (Loaded thing) model
+            save (Loaded thing) m1
     in
     callback thing saved

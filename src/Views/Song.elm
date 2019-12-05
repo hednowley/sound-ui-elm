@@ -13,11 +13,16 @@ import Player.Msg exposing (PlayerMsg(..))
 import String exposing (fromInt)
 
 
-view : Model -> SongSummary -> Html Msg
-view model song =
-    div [ class "album__song" ]
-        [ button [ onClick <| PlayerMsg (Play song.id) ] [ text "Play" ]
-        , button [ onClick <| PlayerMsg (Queue song.id) ] [ text "Queue" ]
-        , div [] [ text <| fromInt song.track ]
-        , div [] [ text song.name ]
-        ]
+view : Model -> Maybe SongSummary -> Html Msg
+view model maybeSong =
+    case maybeSong of
+        Just song ->
+            div [ class "album__song" ]
+                [ button [ onClick <| PlayerMsg (Play song.id) ] [ text "Play" ]
+                , button [ onClick <| PlayerMsg (Queue song.id) ] [ text "Queue" ]
+                , div [] [ text <| fromInt song.track ]
+                , div [] [ text song.name ]
+                ]
+
+        Nothing ->
+            div [ class "album__song" ] []

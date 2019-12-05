@@ -29,5 +29,5 @@ view playlistId model =
                     , button [ onClick <| PlayerMsg (PlayPlaylist playlistId) ] [ text "Play playlist" ]
                     ]
                 , div [] <|
-                    List.map (Views.Song.view model) (getPlaylistSongs playlist)
+                    List.map (Views.Song.view model) (getPlaylistSongs playlist model)
                 ]

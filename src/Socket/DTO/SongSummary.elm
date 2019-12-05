@@ -1,4 +1,4 @@
-module Socket.DTO.SongSummary exposing (SongSummary, convert, decode)
+module Socket.DTO.SongSummary exposing (SongSummary, convert, convertMany, decode)
 
 import Entities.SongSummary
 import Json.Decode exposing (Decoder, field, int, map3, string)
@@ -26,3 +26,8 @@ convert song =
     , name = song.name
     , track = song.track
     }
+
+
+convertMany : List SongSummary -> List Entities.SongSummary.SongSummary
+convertMany list =
+    List.map convert list

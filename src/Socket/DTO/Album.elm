@@ -3,6 +3,7 @@ module Socket.DTO.Album exposing (Album, convert, decode)
 import Entities.Album
 import Json.Decode exposing (Decoder, field, int, list, map6, maybe, string)
 import Socket.DTO.SongSummary exposing (SongSummary)
+import Song.Types exposing (SongId(..))
 
 
 type alias Album =
@@ -31,5 +32,5 @@ convert album =
     { id = album.id
     , artId = album.artId
     , name = album.name
-    , songs = List.map Socket.DTO.SongSummary.convert album.songs
+    , songs = List.map (.id >> SongId) album.songs
     }
