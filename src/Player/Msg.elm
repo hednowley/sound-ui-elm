@@ -1,8 +1,8 @@
 module Player.Msg exposing (PlayerMsg(..))
 
 import Album.Types exposing (AlbumId)
-import Playlist.Types exposing (PlaylistId)
 import Array exposing (Array)
+import Playlist.Types exposing (PlaylistId)
 import Song.Types exposing (SongId)
 
 
