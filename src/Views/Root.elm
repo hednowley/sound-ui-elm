@@ -3,9 +3,8 @@ module Views.Root exposing (view)
 import Array
 import Audio.AudioMsg exposing (AudioMsg(..))
 import Css exposing (..)
-import Html
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (class, css, href, src)
+import Html.Styled.Attributes exposing (class, css)
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Routing exposing (Route(..))

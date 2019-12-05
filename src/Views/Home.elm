@@ -1,11 +1,7 @@
 module Views.Home exposing (view)
 
-import Artist.Types exposing (getRawArtistId)
-import Dict
-import Entities.ArtistSummary exposing (ArtistSummaries)
-import Entities.PlaylistSummary exposing (PlaylistSummaries)
-import Html.Styled exposing (Html, a, button, div, input, label, span, text)
-import Html.Styled.Attributes exposing (checked, class, href, type_)
+import Html.Styled exposing (Html, button, div, input, label, span, text)
+import Html.Styled.Attributes exposing (checked, class, type_)
 import Html.Styled.Events exposing (onClick)
 import Model exposing (Model)
 import Msg exposing (Msg(..))

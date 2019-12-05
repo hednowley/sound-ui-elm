@@ -1,6 +1,5 @@
 module Entities.Album exposing (Album)
 
-import Entities.SongSummary exposing (SongSummary)
 import Song.Types exposing (SongId)
 
 

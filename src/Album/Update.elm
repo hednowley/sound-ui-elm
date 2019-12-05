@@ -1,7 +1,6 @@
 module Album.Update exposing (playAlbum)
 
 import Album.Fetch exposing (fetchAlbum)
-import Album.Select exposing (getAlbumSongs)
 import Album.Types exposing (AlbumId)
 import Audio.AudioMsg exposing (AudioMsg(..))
 import Entities.Album exposing (Album)

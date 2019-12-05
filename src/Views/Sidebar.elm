@@ -1,6 +1,5 @@
 module Views.Sidebar exposing (view)
 
-import Html
 import Html.Styled exposing (Html, a, div, text)
 import Html.Styled.Attributes exposing (class, href)
 import Model exposing (Model)

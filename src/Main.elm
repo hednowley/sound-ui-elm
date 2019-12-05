@@ -7,8 +7,7 @@ import Browser.Navigation as Nav exposing (Key)
 import Cache exposing (makeCache, makeModel, tryDecode)
 import Config exposing (Config)
 import Dict
-import Html
-import Html.Styled exposing (Html, div, text, toUnstyled)
+import Html.Styled exposing (div, text, toUnstyled)
 import Json.Decode
 import Loadable exposing (Loadable(..))
 import Model exposing (Model, SocketModelWrap(..), getSocketModel)

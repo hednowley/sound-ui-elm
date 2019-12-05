@@ -3,7 +3,6 @@ module Views.Artist exposing (view)
 import Artist.Select exposing (getArtist)
 import Artist.Types exposing (ArtistId)
 import Audio.AudioMsg exposing (AudioMsg(..))
-import Html
 import Html.Styled exposing (Html, div, text)
 import Html.Styled.Attributes exposing (class)
 import Loadable exposing (Loadable(..))

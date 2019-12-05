@@ -2,7 +2,6 @@ module Views.Song exposing (view)
 
 import Audio.AudioMsg exposing (AudioMsg(..))
 import Entities.SongSummary exposing (SongSummary)
-import Html
 import Html.Styled exposing (Html, button, div, text)
 import Html.Styled.Attributes exposing (class)
 import Html.Styled.Events exposing (onClick)

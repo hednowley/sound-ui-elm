@@ -2,7 +2,6 @@ module Views.Player exposing (view)
 
 import Audio.AudioMsg exposing (AudioMsg(..))
 import AudioState exposing (State(..))
-import Html
 import Html.Styled exposing (Html, button, div, text)
 import Html.Styled.Attributes exposing (class, style)
 import Html.Styled.Events exposing (onClick)

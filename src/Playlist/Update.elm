@@ -7,7 +7,6 @@ import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Player.Actions exposing (replacePlaylist)
 import Playlist.Fetch exposing (fetchPlaylist)
-import Playlist.Select exposing (getPlaylistSongs)
 import Playlist.Types exposing (PlaylistId)
 import Types exposing (Update)
 

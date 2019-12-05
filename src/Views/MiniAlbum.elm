@@ -4,7 +4,6 @@ import Album.Select exposing (getAlbumArt)
 import Album.Types exposing (getRawAlbumId)
 import Audio.AudioMsg exposing (AudioMsg(..))
 import Entities.AlbumSummary exposing (AlbumSummary)
-import Html
 import Html.Styled exposing (Html, a, button, div, img, text)
 import Html.Styled.Attributes exposing (class, href, src)
 import Html.Styled.Events exposing (onClick)

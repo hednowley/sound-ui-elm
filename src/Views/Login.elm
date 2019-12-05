@@ -1,6 +1,5 @@
 module Views.Login exposing (view)
 
-import Html
 import Html.Styled exposing (Html, button, div, form, input, text)
 import Html.Styled.Attributes exposing (class, disabled, name, placeholder, type_, value)
 import Html.Styled.Events exposing (onInput)

@@ -1,14 +1,10 @@
 module Views.Albums exposing (view)
 
-import Album.Types exposing (AlbumId, getRawAlbumId)
-import Artist.Types exposing (getRawArtistId)
+import Album.Types exposing (getRawAlbumId)
 import Dict
 import Entities.AlbumSummary exposing (AlbumSummaries)
-import Entities.ArtistSummary exposing (ArtistSummaries)
-import Html
-import Html.Styled exposing (Html, a, button, div, input, label, span, text)
-import Html.Styled.Attributes exposing (checked, class, href, type_)
-import Html.Styled.Events exposing (onClick)
+import Html.Styled exposing (Html, a, div, text)
+import Html.Styled.Attributes exposing (class, href)
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import String exposing (fromInt)

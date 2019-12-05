@@ -3,7 +3,6 @@ module Views.Album exposing (view)
 import Album.Select exposing (getAlbum, getAlbumArt, getAlbumSongs)
 import Album.Types exposing (AlbumId)
 import Audio.AudioMsg exposing (AudioMsg(..))
-import Html
 import Html.Styled exposing (Html, button, div, img, text)
 import Html.Styled.Attributes exposing (class, src)
 import Html.Styled.Events exposing (onClick)
